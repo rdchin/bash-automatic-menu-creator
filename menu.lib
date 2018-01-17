@@ -1,0 +1,542 @@
+#!/bin/bash
+#
+# ©2018 Copyright 2018 Robert D. Chin
+#
+# Usage: bash menu.sh
+#        (not sh menu.sh)
+#
+VERSION="2018-01-17 17:30"
+THIS_FILE="menu.lib"
+#
+# +------------------------------------+
+# |          Function f_about          |
+# +------------------------------------+
+#
+#  Inputs: $1=GUI.
+#          THIS_FILE, VERSION.
+#    Uses: None.
+# Outputs: None.
+#
+f_about () {
+case $GUI in
+     "dialog" | "whiptail") 
+     f_about_gui $GUI
+     ;;
+     "text")
+     f_about_txt
+     ;;
+ esac
+
+      } # End of f_about.
+#
+# +------------------------------------+
+# |        Function f_about_txt        |
+# +------------------------------------+
+#
+#  Inputs: None..
+#          THIS_FILE, VERSION.
+#    Uses: None.
+# Outputs: None.
+#
+f_about_txt () {
+      THIS_FILE="menu.sh"
+      clear # Blank the screen.
+      echo
+      echo "Script $THIS_FILE."
+      echo "Version: $VERSION"
+      echo
+      f_press_enter_key_to_continue
+      } # End of f_about_txt.
+#
+# +------------------------------------+
+# |        Function f_about_gui        |
+# +------------------------------------+
+#
+#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#          THIS_FILE, VERSION.
+#    Uses: None.
+# Outputs: None.
+#
+f_about_gui () {
+      #
+      # Display text (all lines beginning with "#@" but do not print "#@").
+      # sed substitutes null for "#@" at the beginning of each line
+      # so it is not printed.
+      # less -P customizes prompt for
+      # %f <FILENAME> page <num> of <pages> (Spacebar, PgUp/PgDn . . .)
+      #
+      THIS_FILE="menu.sh"
+      echo "Script: $THIS_FILE. Version: $VERSION" >temp.txt
+      echo >>temp.txt
+      sed -n 's/^#@//'p $THIS_DIR/$THIS_FILE >> temp.txt
+      # Get the screen resolution or X-window size.
+      # Get rows (height).
+      Y=$(stty size | awk '{ print $1 }')
+      # Get columns (width).
+      X=$(stty size | awk '{ print $2 }')
+      #
+      $1 --title "About $THIS_FILE (use arrow keys to scroll up/down/side-ways)" --textbox temp.txt $Y $X
+      #
+      if [ -r temp.txt ] ; then
+         rm temp.txt
+      fi
+      } # End of f_about_gui.
+#
+# +------------------------------------+
+# |      Function f_code_history       |
+# +------------------------------------+
+#
+#  Inputs: $1=GUI.
+#          THIS_FILE, VERSION.
+#    Uses: None.
+# Outputs: None.
+#
+f_code_history () {
+case $GUI in
+     "dialog" | "whiptail") 
+     f_code_history_gui $GUI
+     ;;
+     "text")
+     f_code_history_txt
+     ;;
+ esac
+
+      } # End of f_code_history.
+#
+# +----------------------------------------+
+# |       Function f_code_history_txt      |
+# +----------------------------------------+
+#
+#  Inputs: THIS_DIR, THIS_FILE.
+#    Uses: None.
+# Outputs: None.
+#
+f_code_history_txt () {
+      THIS_FILE="menu.sh"
+      clear # Blank the screen.
+      # Display Help (all lines beginning with "#@" but do not print "#@").
+      # sed substitutes null for "#@" at the beginning of each line
+      # so it is not printed.
+      # less -P customizes prompt for
+      # %f <FILENAME> page <num> of <pages> (Spacebar, PgUp/PgDn . . .)
+      sed -n 's/^##//'p $THIS_DIR/$THIS_FILE | less -P '(Spacebar, PgUp/PgDn, Up/Dn arrows, press q to quit)'
+}  # End of function f_code_history_txt.
+#
+# +----------------------------------------+
+# |       Function f_code_history_gui      |
+# +----------------------------------------+
+#
+#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#          THIS_DIR, THIS_FILE.
+#    Uses: None.
+# Outputs: temp.txt.
+#
+f_code_history_gui () {
+      # Display text (all lines beginning with "#@" but do not print "#@").
+      # sed substitutes null for "#@" at the beginning of each line
+      # so it is not printed.
+      # less -P customizes prompt for
+      # %f <FILENAME> page <num> of <pages> (Spacebar, PgUp/PgDn . . .)
+      #
+      THIS_FILE="menu.sh"
+      f_script_path
+      echo "Script: $THIS_FILE. Version: $VERSION" >temp.txt
+      echo >>temp.txt
+      sed -n 's/^##//'p $THIS_DIR/$THIS_FILE >> temp.txt
+      # Get the screen resolution or X-window size.
+      # Get rows (height).
+      Y=$(stty size | awk '{ print $1 }')
+      # Get columns (width).
+      X=$(stty size | awk '{ print $2 }')
+      #
+      $1 --title "Code History (use arrow keys to scroll up/down/side-ways)" --textbox temp.txt $Y $X
+      #
+      if [ -r temp.txt ] ; then
+         rm temp.txt
+      fi
+} # End of function f_code_history_gui.
+#
+# +----------------------------------------+
+# |        Function f_menu_arrays          |
+# +----------------------------------------+
+#
+#  Inputs:  $1=file of menu choice strings.
+#    Uses: XSTR, SERVER_NAME, NEXT_SERVER_NAME, SERVER_NUM, ARRAY_NUM.
+# Outputs: SERVER[$SERVER_NUM]=<Name of server>^<Description of shared directory>.
+#          SRV[$SERVER_NUM]=<1st 2-letters of server name for pattern matching in menu case statement>.
+#          SERVER_SP[SERVER_NUM]=<Server's shared directory to be mounted>.
+#          LOCAL_MP[SERVER_NUM]=<Mount-point of local PC>.
+#          SERVER_DESC[1]=<Description of Shared Directory contents>.
+#
+f_menu_arrays () {
+      # Create arrays to handle mount-point names and server source directory names.f_
+      #
+      # Example:
+      # Menu option name is "Directory Listing"
+      # Shared directory to be mounted is "//hansolo/public/contacts"
+      # Local PC mount-point is "/mnt/hansolo/contacts"
+      #
+      #     CHOICE[1]="Directory Listing"
+      #     LETTERS[1]="di" <1st 2-letters of CHOICE[1] name for pattern matching in menu case statement>
+      #     SUMMARY[1]="get a listing of files in a directory."
+      #     FUNC[1]="f_dir_listing"     # Function to do command "ls -l".
+      #
+      unset CHOICE SUMMARY FUNC  # Delete arrays in memory.
+      ARRAY_NUM=1
+      TEMP_FILE="menu_temp.txt"
+      #
+      #                                 Field-1                      Field-2                     Field-3
+      # Format of XSTR="<Delimiter> <Choice Title> <Delimiter> <Short Description> <Delimiter> <function>"
+      # Read line of data having 3 delimiters and 4 fields. Save fields 2, 3, 4.
+      # echo $(awk -F "$DELIMITER" '{ if ( $3 ) { print $2 "^" $3; }}' $THIS_FILE)
+      #
+      if [ -r $TEMP_FILE ] ; then
+         rm $TEMP_FILE
+      fi
+      #
+      while read XSTR
+      do
+            case $XSTR in
+                  \#@@*) echo $XSTR >>$TEMP_FILE
+                  ;;
+            esac
+      done < $1  # Read lines from file $1.
+      #
+      # Delete last line which is from the case statement pattern immediately above.
+      sed -i /echo*/d $TEMP_FILE # Delete last line in $TEMP_FILE which is actual code not data.
+      #
+      while read XSTR
+      do
+            # Set array CHOICE[n] = <field-1> or "Choice Title" of XSTR.
+            ARRAY_NAME="CHOICE"
+            ARRAY_VALUE=$(echo $XSTR | awk -F "#@@" '{ if ( $3 ) { print $2 }}')
+            ARRAY_VALUE=$(echo $ARRAY_VALUE | tr ' ' '_')
+            eval $ARRAY_NAME[$ARRAY_NUM]=$ARRAY_VALUE
+            #
+            # Set array SUMMARY[n]=<field-2> or "Summary" of XSTR.
+            ARRAY_NAME="SUMMARY"
+            ARRAY_VALUE=$(echo $XSTR | awk -F "#@@" '{ if ( $3 ) { print $3 }}')
+            ARRAY_VALUE=$(echo $ARRAY_VALUE | tr ' ' '_')
+            eval $ARRAY_NAME[$ARRAY_NUM]=$ARRAY_VALUE
+            #
+            # Set array $SERVER_NAME_MP[SERVER_NUM]=<field-3> of XSTR.
+            ARRAY_NAME="FUNC"
+            ARRAY_VALUE=$(echo $XSTR | awk -F "#@@" '{ if ( $3 ) { print $4 }}')
+            ARRAY_VALUE=$(echo $ARRAY_VALUE | tr ' ' '_')
+            eval $ARRAY_NAME[$ARRAY_NUM]=$ARRAY_VALUE
+            #
+            let ARRAY_NUM=$ARRAY_NUM+1
+      done < $TEMP_FILE
+      if [ -r $TEMP_FILE ] ; then
+         rm $TEMP_FILE
+      fi
+      unset XSTR SERVER_NUM ARRAY_NUM SERVER_NAME NEXT_SERVER_NAME # Throw out this variable.
+} # End of f_menu_arrays.
+#
+# +----------------------------------------+
+# |       Function f_create_show_menu      |
+# +----------------------------------------+
+#
+#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#          $2=GENERATED_FILE.
+#          $3=Menu Title.
+#          $4=Previous menu function.
+#    Uses: GENERATED_FILE, ARRAY_NAME, ARRAY_LEN, XNUM, SERVER.
+# Outputs: None.
+#
+f_create_show_menu () {
+
+
+     case $1 in
+           "dialog" | "whiptail")
+           f_update_menu_gui $1 $2 $3 $4
+           ;;
+           "text")
+           f_update_menu_txt $1 $2 $3
+           ;;
+      esac
+      #
+      . $2  # Invoke Generated file.
+      #
+      # Use generated menu script to display menu.
+      case $1 in
+           "dialog" | "whiptail") 
+           f_menu_gui $1 $3
+           ;;
+           "text")
+           f_menu_txt
+           ;;
+       esac
+      #
+      if [ -r $2 ] ; then
+         rm $2
+      fi
+} # End of function f_create_show_menu.
+#
+
+
+
+# +----------------------------------------+
+# |        Function f_update_menu_txt      |
+# +----------------------------------------+
+#
+#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#          $2=GENERATED_FILE.
+#          $3=Menu Title.
+#    Uses: GENERATED_FILE, ARRAY_NAME, ARRAY_LEN, XNUM, SERVER.
+# Outputs: None.
+#
+f_update_menu_txt () {
+      echo "#!/bin/bash" >$2
+      echo "#" >>$2
+      echo "# ©2018 Copyright 2018 Robert D. Chin" >>$2
+      echo "#" >>$2
+      echo "# Usage: bash menu.sh" >>$2
+      echo "#        (not sh menu.sh)" >>$2
+      echo "#" >>$2
+      echo "VERSION=\"$VERSION\"" >>$2
+      echo "#" >>$2
+      echo "#***********************************CAUTION***********************************" >>$2
+      echo "# Any edits made to this code will be lost since this code is" >>$2
+      echo "# automatically generated and updated by running the script," >>$2
+      echo "# \"menu.sh\" which contains data for the menu." >>$2
+      echo "#***********************************CAUTION***********************************" >>$2
+      echo "#" >>$2
+      echo "# +----------------------------------------+" >>$2
+      echo "# |           Function f_menu_txt          |" >>$2
+      echo "# +----------------------------------------+" >>$2
+      echo "#" >>$2
+      echo "#  Inputs: $1=GUI" >>$2
+      echo "#    Uses: X, MENU_TITLE, ARRAY_NAME, ARRAY_LEN, CHOICE, SUMMARY, FUNC." >>$2
+      echo "# Outputs: None." >>$2
+      echo "#" >>$2
+      echo "f_menu_txt () {" >>$2
+      echo "      # Invoke the file menu.lib functions to display menu." >>$2
+      echo "      . menu.lib   # invoke the necessary files". >>$2
+      echo "      . $ARRAY_FILE   # invoke the necessary files". >>$2
+      echo "      #" >>$2
+      echo "      CHOICE=\"\"  # Initialize variable." >>$2
+      echo "      until [ \"\$CHOICE\" = \"QUIT\" ]" >>$2
+      echo "            do    # Start of menu until loop." >>$2
+      echo "               clear  #Clear screen." >>$2
+                           MENU_TITLE=$(echo $3 | tr '_' ' ')
+      echo "               MENU_TITLE=\"$MENU_TITLE\"" >>$2
+      echo "               echo \"               \$MENU_TITLE\"; echo" >>$2
+      # Get display screen or window size to get maximum width.
+      # Get the screen resolution or X-window size.
+      # Get rows (height).
+      Y=$(stty size | awk '{ print $1 }')
+      # Get columns (width).
+      X=$(stty size | awk '{ print $2 }')
+      #
+      # Read the CHOICE array to get the maximum string length of the choices
+      # to be able to right indent justify the summary string for prettiness.
+      ARRAY_NAME="CHOICE"
+      ARRAY_LEN=$(eval "echo \$\{#$ARRAY_NAME[@]\}")
+      ARRAY_LEN=$(eval echo $ARRAY_LEN)
+      MAX_LENGTH=0
+      for (( XNUM=1; XNUM<=${ARRAY_LEN}; XNUM++ ));
+          do
+             ARRAY_NAME="CHOICE"
+             CHOICE=$(eval "echo \$\{$ARRAY_NAME[$XNUM]\}")
+             CHOICE=$(eval echo $CHOICE)
+             CHOICE=$(echo $CHOICE | tr '_' ' ')
+             #
+             if [ -n "$CHOICE" ] ; then
+                # Read next menu choice string.
+                CHOICE_LENGTH=${#CHOICE}
+                # Is the length of string CHOICE plus SUMMARY > Maximum window width?
+                if [ $CHOICE_LENGTH -gt $MAX_LENGTH ] ; then
+                   # Save new maximum string length.
+                   MAX_LENGTH=$CHOICE_LENGTH
+                fi
+             fi
+          done
+      #
+      # Read both CHOICE and SUMMARY arrays and format strings to display
+      # in a pretty formatted menu.
+      ARRAY_NAME="CHOICE"
+      ARRAY_LEN=$(eval "echo \$\{#$ARRAY_NAME[@]\}")
+      ARRAY_LEN=$(eval echo $ARRAY_LEN)
+      for (( XNUM=1; XNUM<=${ARRAY_LEN}; XNUM++ ));
+          do
+             ARRAY_NAME="CHOICE"
+             CHOICE=$(eval "echo \$\{$ARRAY_NAME[$XNUM]\}")
+             CHOICE=$(eval echo $CHOICE)
+             CHOICE=$(echo $CHOICE | tr '_' ' ')
+             #
+             ARRAY_NAME="SUMMARY"
+             SUMMARY=$(eval "echo \$\{$ARRAY_NAME[$XNUM]\}")
+             SUMMARY=$(eval echo $SUMMARY)
+             SUMMARY=$(echo $SUMMARY | tr '_' ' ')
+             #
+             if [ -n "$CHOICE" ] ; then
+                # Read next menu choice string.
+                CHOICE_LENGTH=${#CHOICE}
+                if [ $CHOICE_LENGTH -lt $MAX_LENGTH ] ; then
+                   let PAD=$MAX_LENGTH-$CHOICE_LENGTH
+                   until [ $PAD -eq 0 ]
+                   do
+                      # Pad spaces to right (left-justify CHOICE).
+                      # CHOICE     - Summary description.
+                      CHOICE=$CHOICE" "
+                      #
+                      # Pad spaces to left (right-justify CHOICE).
+                      #     CHOICE - Summary description.
+                      #CHOICE=" "$CHOICE
+                      #
+                      let PAD=$PAD-1
+                   done
+                fi
+                # Truncate "CHOICE - Summary description"
+                # if longer than maximum window or screen width.
+                #
+                let YNUM=XNUM-1  # Start numbering choices from zero so zero selects CHOICE[1]
+                #
+                # Example: "$YNUM $CHOICE - $SUMMARY"
+                # CHOICE="0 Quit - Quit to command-line prompt." where array CHOICE[1]="Quit"
+                CHOICE="$YNUM $CHOICE - $SUMMARY"
+                CHOICE_LENGTH=${#CHOICE}
+                # Is the length of string CHOICE plus SUMMARY > Maximum window width?
+                if [ $CHOICE_LENGTH -gt $X ] ; then
+                   # Yes, truncate SUMMARY length to fit maximum window or screen width.
+                   let X=$X-3
+                   CHOICE=${CHOICE:0:$X}"..."
+                fi
+                # No, leave length alone, just print to screen.
+                echo "               echo \"$CHOICE\"" >>$2
+             fi
+          done
+      echo "               echo" >>$2
+      echo "               echo -n \" Enter 0-$YNUM or letters (0): \" ; read CHOICE" >>$2
+      echo "               #CHOICE Convert to lower-case." >>$2
+      echo "               CHOICE=\$(echo \$CHOICE | tr \'[:upper:]\' \'[:lower:]\')" >>$2
+      echo "               #" >>$2
+      echo "               case \$CHOICE in" >>$2
+      echo "                    \"\") CHOICE=\"QUIT\" ;;  # Set default choice pattern match." >>$2
+      #
+      # Read both CHOICE and FUNC arrays to set up the pattern matching case statement.
+      ARRAY_NAME="CHOICE"
+      ARRAY_LEN=$(eval "echo \$\{#$ARRAY_NAME[@]\}")
+      ARRAY_LEN=$(eval echo $ARRAY_LEN)
+            for (( XNUM=1; XNUM<${ARRAY_LEN}; XNUM++ ));
+                do
+                   ARRAY_NAME="CHOICE"
+                   CHOICE=$(eval "echo \$\{$ARRAY_NAME[$XNUM]\}")
+                   CHOICE=$(eval echo $CHOICE)
+                   CHOICE=$(echo $CHOICE | tr \'[:upper:]\' \'[:lower:]\')
+                   CHOICE=$(echo $CHOICE | tr '_' ' ')
+                   #
+                   ARRAY_NAME="FUNC"
+                   FUNC=$(eval "echo \$\{$ARRAY_NAME[$XNUM]\}")
+                   FUNC=$(eval echo $FUNC)
+                   let YNUM=XNUM-1  # Start numbering choices from zero so zero selects CHOICE[1]
+                   if [ -n "$CHOICE" ] ; then
+                      echo "                    $YNUM | \"${CHOICE:0:1}\" | \"${CHOICE:0:2}\" | \"${CHOICE:0:3}\" | \"${CHOICE:0:4}\" | \"${CHOICE:0:5}\" | \"${CHOICE:0:6}\" | \"${CHOICE:0:7}\" | \"${CHOICE:0:8}\" | \"${CHOICE:0:9}\" | \"${CHOICE:0:10}\" | \"${CHOICE:0:11}\" | \"${CHOICE:0:12}\" | \"${CHOICE:0:13}\" | \"${CHOICE:0:14}\" | \"${CHOICE:0:15}\"*) $FUNC  ;;" >>$2
+                   fi
+                done
+      echo "               esac" >>$2
+      echo "           done" >>$2
+      echo "       unset MENU_TITLE CHOICE  # Throw out this variable." >>$2
+      echo "       #" >>$2
+      echo "       } # End of function f_menu_txt." >>$2
+      unset X MENU_TITLE ARRAY_NAME ARRAY_LEN CHOICE SUMMARY FUNC
+} # End of function f_update_menu_txt.
+#
+# +----------------------------------------+
+# |        Function f_update_menu_gui      |
+# +----------------------------------------+
+#
+#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#          $2=GENERATED_FILE.
+#          $3=Menu Title.
+#          $4=Previous menu function.
+#    Uses: GENERATED_FILE, ARRAY_NAME, ARRAY_LEN, XNUM, SERVER.
+# Outputs: None.
+#
+f_update_menu_gui () {
+      echo "#!/bin/bash" >$2
+      echo "#" >>$2
+      echo "# ©2018 Copyright 2018 Robert D. Chin" >>$2
+      echo "#" >>$2
+      echo "# Usage: bash menu.sh" >>$2
+      echo "#        (not sh menu.sh)" >>$2
+      echo "#" >>$2
+      echo "VERSION=\"$VERSION\"" >>$2
+      echo "#" >>$2
+      echo "#***********************************CAUTION***********************************" >>$2
+      echo "# Any edits made to this code will be lost since this code is" >>$2
+      echo "# automatically generated and updated by running the script," >>$2
+      echo "# \"menu.sh\" which contains data for the Main menu." >>$2
+      echo "#***********************************CAUTION***********************************" >>$2
+      echo "#" >>$2
+      echo "# +----------------------------------------+" >>$2
+      echo "# |           Function f_menu_gui          |" >>$2
+      echo "# +----------------------------------------+" >>$2
+      echo "#" >>$2
+      echo "#  Inputs: \$1=GUI." >>$2
+      echo "#          \$2=MENU_TITLE" >>$2
+      echo "#    Uses: VERSION, THIS_FILE, CHOICE, SUMMARY, MENU_TITLE." >>$2
+      echo "# Outputs: None." >>$2
+      echo "#" >>$2
+      echo "f_menu_gui () {" >>$2
+      echo "      # Invoke the file menu.lib functions to display menu." >>$2
+      echo "      . menu.lib   # invoke the necessary files". >>$2
+      echo "      . $ARRAY_FILE   # invoke the necessary files". >>$2
+      echo "      #" >>$2
+      echo "      CHOICE=\"\"  # Initialize variable." >>$2
+      echo "      until [ \"\$CHOICE\" = \"QUIT\" ]" >>$2
+      echo "            do    # Start of Menu until loop." >>$2
+                           MENU_TITLE=$(echo $3 | tr '_' ' ')
+      echo "               MENU_TITLE=\"$MENU_TITLE\"" >>$2
+      echo "               CHOICE=\$(\$GUI --clear --title \"\$MENU_TITLE\" --menu \"\n\nUse (up/down arrow keys) or (letters):\" 20 80 11 \\" >>$2
+      ARRAY_NAME="CHOICE"
+      ARRAY_LEN=$(eval "echo \$\{#$ARRAY_NAME[@]\}")
+      ARRAY_LEN=$(eval echo $ARRAY_LEN)
+            for (( XNUM=1; XNUM<=${ARRAY_LEN}; XNUM++ ));
+                do
+                   ARRAY_NAME="CHOICE"
+                   CHOICE=$(eval "echo \$\{$ARRAY_NAME[$XNUM]\}")
+                   CHOICE=$(eval echo $CHOICE)
+                   CHOICE=$(echo $CHOICE | tr '_' ' ')
+                   #
+                   ARRAY_NAME="SUMMARY"
+                   SUMMARY=$(eval "echo \$\{$ARRAY_NAME[$XNUM]\}")
+                   SUMMARY=$(eval echo $SUMMARY)
+                   SUMMARY=$(echo $SUMMARY | tr '_' ' ')
+                   #
+                   if [ -n "$CHOICE" ] ; then
+                       echo "                     \"$CHOICE\" \"$SUMMARY\" \\" >>$2
+                   fi
+                done
+      echo "               2>&1 >/dev/tty)" >>$2
+      echo "               case \$CHOICE in" >>$2
+      #
+      ARRAY_NAME="CHOICE"
+      ARRAY_LEN=$(eval "echo \$\{#$ARRAY_NAME[@]\}")
+      ARRAY_LEN=$(eval echo $ARRAY_LEN)
+            for (( XNUM=1; XNUM<${ARRAY_LEN}; XNUM++ ));
+                do
+                   ARRAY_NAME="CHOICE"
+                   CHOICE=$(eval "echo \$\{$ARRAY_NAME[$XNUM]\}")
+                   CHOICE=$(eval echo $CHOICE)
+                   CHOICE=$(echo $CHOICE | tr '_' ' ')
+                   #
+                   ARRAY_NAME="FUNC"
+                   FUNC=$(eval "echo \$\{$ARRAY_NAME[$XNUM]\}")
+                   FUNC=$(eval echo $FUNC)
+                   #
+                   if [ -n "$CHOICE" ] ; then
+                      echo "                    \"$CHOICE\") $FUNC  ;;" >>$2
+                   fi
+                done
+      echo "               esac" >>$2
+      echo "            done" >>$2
+      echo "       unset VERSION THIS_FILE CHOICE_SERVER MENU_TITLE  # Throw out this variable." >>$2
+      echo "       #" >>$2
+      echo "       $4  # Return to previous menu (if any). Needed for GUI: $GUI." >>$2
+      echo "       } # End of function f_menu_gui." >>$2
+      unset ARRAY_NAME ARRAY_LEN XNUM SERVER
+} # End of function f_update_menu_gui.
+#
+

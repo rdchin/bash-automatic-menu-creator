@@ -1,0 +1,97 @@
+#!/bin/bash
+#
+# ©2018 Copyright 2018 Robert D. Chin
+#
+# Usage: bash menu.sh
+#        (not sh menu.sh)
+#
+VERSION="2018-01-17 17:30"
+THIS_FILE="menu_module_main.lib"
+#
+# +--------------------------------------------------------------------------+
+# |                                                                          |
+# |                 Customize Menu choice options below.                     |
+# |                                                                          |
+# +--------------------------------------------------------------------------+
+#
+# Format: <#@@> <Menu Option> <#@@> <Description of Menu Option> <#@@> <Corresponding function or action or cammand>
+#
+#@@Quit#@@Quit to command-line prompt.#@@CHOICE=QUIT
+#
+#@@Directory Listing#@@list files in a directory and everything else which directory may be automatically hidden from view.#@@f_dir_listing
+#
+#@@Size of Directory#@@total size MB of a directory.#@@f_du_hsc
+#
+#@@Hidden Directory Listing#@@list hidden files in a directory.#@@f_dir_listing_hidden
+#
+#@@Next Page#@@Next page of choices.#@@f_next
+#
+#@@About#@@Version information of this script#@@f_about
+#
+#@@Code History#@@Display code change history of this script.#@@f_code_history
+# +----------------------------------------+
+# |          Function f_dir_listing        |
+# +----------------------------------------+
+#
+#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#          THIS_DIR, THIS_FILE.
+#    Uses: None.
+# Outputs: temp.txt.
+#
+f_dir_listing () {
+      ls -ha
+      f_press_enter_key_to_continue
+      clear  # Clear screen.
+}  # End of function f_dir_listing.
+#
+# +----------------------------------------+
+# |            Function f_du_hsc           |
+# +----------------------------------------+
+#
+#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#          THIS_DIR, THIS_FILE.
+#    Uses: None.
+# Outputs: temp.txt.
+#
+f_du_hsc () {
+      du -h -s -c
+      f_press_enter_key_to_continue
+      clear  # Clear screen.
+}  # End of function f_du_hsc.
+#
+# +----------------------------------------+
+# |     Function f_dir_listing_hidden      |
+# +----------------------------------------+
+#
+#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#          THIS_DIR, THIS_FILE.
+#    Uses: None.
+# Outputs: temp.txt.
+#
+f_dir_listing_hidden () {
+      ls -lh
+      f_press_enter_key_to_continue
+      clear  # Clear screen.
+}  # End of function f_dir_listing_hidden.
+#
+# +----------------------------------------+
+# |          Function f_next               |
+# +----------------------------------------+
+#
+#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#          THIS_DIR, THIS_FILE.
+#    Uses: None.
+# Outputs: temp.txt.
+#
+f_next () {
+      GENERATED_FILE="menu_generated.lib"
+      MENU_TITLE="Sub-menu_One"  # Menu title must substitute underscores for spaces
+      #
+      # Create arrays from data.
+      ARRAY_FILE="menu_module_sub1.lib"
+      f_menu_arrays $ARRAY_FILE
+      #
+      # Create generated menu script from array data.
+      f_create_show_menu $GUI $GENERATED_FILE $MENU_TITLE f_main_menu
+       }  # End of function f_next.
+

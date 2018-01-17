@@ -1,0 +1,105 @@
+#!/bin/bash
+#
+# ©2018 Copyright 2018 Robert D. Chin
+#
+# Usage: bash menu.sh
+#        (not sh menu.sh)
+#
+VERSION="2018-01-15 23:59"
+THIS_FILE="menu_module_sub1.lib"
+#
+# +--------------------------------------------------------------------------+
+# |                                                                          |
+# |                 Customize Menu choice options below.                     |
+# |                                                                          |
+# +--------------------------------------------------------------------------+
+#
+# Format: <#@@> <Menu Option> <#@@> <Description of Menu Option> <#@@> <Corresponding function or action or cammand>
+#
+#@@Exit#@@Return to previous menu.#@@CHOICE=QUIT
+#
+#@@Hello World#@@Print Hello World.#@@f_hello_world
+#
+#@@Goodbye World#@@Print Goodbye World.#@@f_goodbye_world
+#
+#@@Good Morning World#@@Print Good Morning World.#@@f_good_morning_world
+#
+#@@Good Night World#@@Print GoodNight World.#@@f_good_night_world
+#
+#@@GN#@@Print GNight World.#@@f_gn
+# +----------------------------------------+
+# |          Function f_hello_world        |
+# +----------------------------------------+
+#
+#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#          THIS_DIR, THIS_FILE.
+#    Uses: None.
+# Outputs: temp.txt.
+#
+f_hello_world () {
+      echo "Hello World"
+      f_press_enter_key_to_continue
+      clear  # Clear screen.
+
+} # End of function f_hello_world.
+#
+# +----------------------------------------+
+# |        Function f_goodbye_world        |
+# +----------------------------------------+
+#
+#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#          THIS_DIR, THIS_FILE.
+#    Uses: None.
+# Outputs: temp.txt.
+#
+f_goodbye_world () {
+      echo "Goodbye World"
+      f_press_enter_key_to_continue
+      clear  # Clear screen.
+} # End of function f_goodbye_world.
+#
+# +----------------------------------------+
+# |     Function f_good_morning_world      |
+# +----------------------------------------+
+#
+#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#          THIS_DIR, THIS_FILE.
+#    Uses: None.
+# Outputs: temp.txt.
+#
+f_good_morning_world () {
+      echo "Good Morning World!"
+      f_press_enter_key_to_continue
+      clear  # Clear screen.
+} # End of function f_good_morning_world.
+#
+# +----------------------------------------+
+# |      Function f_good_night_world       |
+# +----------------------------------------+
+#
+#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#          THIS_DIR, THIS_FILE.
+#    Uses: None.
+# Outputs: temp.txt.
+#
+f_good_night_world () {
+      echo "Good Night World!"
+      f_press_enter_key_to_continue
+      clear  # Clear screen.
+} # End of function f_good_night_world.
+#
+# +----------------------------------------+
+# |             Function f_gn              |
+# +----------------------------------------+
+#
+#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#          THIS_DIR, THIS_FILE.
+#    Uses: None.
+# Outputs: temp.txt.
+#
+f_gn () {
+      echo "G'Night World!"
+      f_press_enter_key_to_continue
+      clear  # Clear screen.
+} # End of function f_gn.
+#
