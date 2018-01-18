@@ -5,7 +5,7 @@
 # Usage: bash menu.sh
 #        (not sh menu.sh)
 #
-VERSION="2018-01-17 17:30"
+VERSION="2018-01-18 01:32"
 THIS_FILE="menu.lib"
 #
 # +------------------------------------+
@@ -66,19 +66,24 @@ f_about_gui () {
       # %f <FILENAME> page <num> of <pages> (Spacebar, PgUp/PgDn . . .)
       #
       THIS_FILE="menu.sh"
-      echo "Script: $THIS_FILE. Version: $VERSION" >temp.txt
-      echo >>temp.txt
-      sed -n 's/^#@//'p $THIS_DIR/$THIS_FILE >> temp.txt
-      # Get the screen resolution or X-window size.
-      # Get rows (height).
-      Y=$(stty size | awk '{ print $1 }')
-      # Get columns (width).
-      X=$(stty size | awk '{ print $2 }')
+      TEMP_FILE="menu_temp.txt"
+      echo "Script: $THIS_FILE. Version: $VERSION" >$TEMP_FILE
+      echo >>$TEMP_FILE
+      sed -n 's/^#@//'p $THIS_DIR/$THIS_FILE >> $TEMP_FILE
+      # Calculate longest line length in TEMP_FILE to find maximum menu width for Dialog or Whiptail.
+      # The "Word Count" wc command output will not include the TEMP_FILE name
+      # if you redirect "<$TEMP_FILE" into wc.
+      X=$(wc --max-line-length <$TEMP_FILE)
+      let X=X+6
       #
-      $1 --title "About $THIS_FILE (use arrow keys to scroll up/down/side-ways)" --textbox temp.txt $Y $X
+      # Calculate number of lines or Menu Choices to find maximum menu lines for Dialog or Whiptail.
+      Y=$(wc --lines <$TEMP_FILE)
+      let Y=Y+6
       #
-      if [ -r temp.txt ] ; then
-         rm temp.txt
+      $1 --title "About $THIS_FILE (use arrow keys to scroll up/down/side-ways)" --textbox $TEMP_FILE $Y $X
+      #
+      if [ -r $TEMP_FILE ] ; then
+         rm $TEMP_FILE
       fi
       } # End of f_about_gui.
 #
@@ -139,20 +144,25 @@ f_code_history_gui () {
       # %f <FILENAME> page <num> of <pages> (Spacebar, PgUp/PgDn . . .)
       #
       THIS_FILE="menu.sh"
+      TEMP_FILE="menu_temp.txt"
       f_script_path
-      echo "Script: $THIS_FILE. Version: $VERSION" >temp.txt
-      echo >>temp.txt
-      sed -n 's/^##//'p $THIS_DIR/$THIS_FILE >> temp.txt
-      # Get the screen resolution or X-window size.
-      # Get rows (height).
-      Y=$(stty size | awk '{ print $1 }')
-      # Get columns (width).
-      X=$(stty size | awk '{ print $2 }')
+      echo "Script: $THIS_FILE. Version: $VERSION" >$TEMP_FILE
+      echo >>$TEMP_FILE
+      sed -n 's/^##//'p $THIS_DIR/$THIS_FILE >>$TEMP_FILE
+      # Calculate longest line length in TEMP_FILE to find maximum menu width for Dialog or Whiptail.
+      # The "Word Count" wc command output will not include the TEMP_FILE name
+      # if you redirect "<$TEMP_FILE" into wc.
+      X=$(wc --max-line-length <$TEMP_FILE)
+      let X=X+10
       #
-      $1 --title "Code History (use arrow keys to scroll up/down/side-ways)" --textbox temp.txt $Y $X
+      # Calculate number of lines or Menu Choices to find maximum menu lines for Dialog or Whiptail.
+      Y=$(wc --lines <$TEMP_FILE)
+      let Y=Y+6
       #
-      if [ -r temp.txt ] ; then
-         rm temp.txt
+      $1 --title "Code History (use arrow keys to scroll up/down/side-ways)" --textbox $TEMP_FILE $Y $X
+      #
+      if [ -r $TEMP_FILE ] ; then
+         rm $TEMP_FILE
       fi
 } # End of function f_code_history_gui.
 #
@@ -161,13 +171,8 @@ f_code_history_gui () {
 # +----------------------------------------+
 #
 #  Inputs:  $1=file of menu choice strings.
-#    Uses: XSTR, SERVER_NAME, NEXT_SERVER_NAME, SERVER_NUM, ARRAY_NUM.
-# Outputs: SERVER[$SERVER_NUM]=<Name of server>^<Description of shared directory>.
-#          SRV[$SERVER_NUM]=<1st 2-letters of server name for pattern matching in menu case statement>.
-#          SERVER_SP[SERVER_NUM]=<Server's shared directory to be mounted>.
-#          LOCAL_MP[SERVER_NUM]=<Mount-point of local PC>.
-#          SERVER_DESC[1]=<Description of Shared Directory contents>.
-#
+#    Uses:  ARRAY_NUM, ARRAY_NAME, ARRAY_VALUE, TEMP_FILE, XSTR.
+# Outputs: 
 f_menu_arrays () {
       # Create arrays to handle mount-point names and server source directory names.f_
       #
@@ -205,6 +210,14 @@ f_menu_arrays () {
       # Delete last line which is from the case statement pattern immediately above.
       sed -i /echo*/d $TEMP_FILE # Delete last line in $TEMP_FILE which is actual code not data.
       #
+      # Calculate longest line length in TEMP_FILE to find maximum menu width for Dialog or Whiptail.
+      # The "Word Count" wc command output will not include the TEMP_FILE name
+      # if you redirect "<$TEMP_FILE" into wc.
+      MAX_LENGTH=$(wc --max-line-length <$TEMP_FILE)
+      #
+      # Calculate number of lines or Menu Choices to find maximum menu lines for Dialog or Whiptail.
+      MAX_LINES=$(wc --lines <$TEMP_FILE)
+      #
       while read XSTR
       do
             # Set array CHOICE[n] = <field-1> or "Choice Title" of XSTR.
@@ -219,7 +232,7 @@ f_menu_arrays () {
             ARRAY_VALUE=$(echo $ARRAY_VALUE | tr ' ' '_')
             eval $ARRAY_NAME[$ARRAY_NUM]=$ARRAY_VALUE
             #
-            # Set array $SERVER_NAME_MP[SERVER_NUM]=<field-3> of XSTR.
+            # Set array $FUNC=<field-3> or "Function" of XSTR.
             ARRAY_NAME="FUNC"
             ARRAY_VALUE=$(echo $XSTR | awk -F "#@@" '{ if ( $3 ) { print $4 }}')
             ARRAY_VALUE=$(echo $ARRAY_VALUE | tr ' ' '_')
@@ -227,10 +240,11 @@ f_menu_arrays () {
             #
             let ARRAY_NUM=$ARRAY_NUM+1
       done < $TEMP_FILE
+      #
       if [ -r $TEMP_FILE ] ; then
          rm $TEMP_FILE
       fi
-      unset XSTR SERVER_NUM ARRAY_NUM SERVER_NAME NEXT_SERVER_NAME # Throw out this variable.
+      unset TEMP_FILE XSTR  # Throw out this variable.
 } # End of f_menu_arrays.
 #
 # +----------------------------------------+
@@ -241,6 +255,8 @@ f_menu_arrays () {
 #          $2=GENERATED_FILE.
 #          $3=Menu Title.
 #          $4=Previous menu function.
+#          $5=MAX_LENGTH.
+#          $6=MAX_LINES.
 #    Uses: GENERATED_FILE, ARRAY_NAME, ARRAY_LEN, XNUM, SERVER.
 # Outputs: None.
 #
@@ -249,7 +265,7 @@ f_create_show_menu () {
 
      case $1 in
            "dialog" | "whiptail")
-           f_update_menu_gui $1 $2 $3 $4
+           f_update_menu_gui $1 $2 $3 $4 $5 $6
            ;;
            "text")
            f_update_menu_txt $1 $2 $3
@@ -273,9 +289,6 @@ f_create_show_menu () {
       fi
 } # End of function f_create_show_menu.
 #
-
-
-
 # +----------------------------------------+
 # |        Function f_update_menu_txt      |
 # +----------------------------------------+
@@ -322,6 +335,7 @@ f_update_menu_txt () {
                            MENU_TITLE=$(echo $3 | tr '_' ' ')
       echo "               MENU_TITLE=\"$MENU_TITLE\"" >>$2
       echo "               echo \"               \$MENU_TITLE\"; echo" >>$2
+      #
       # Get display screen or window size to get maximum width.
       # Get the screen resolution or X-window size.
       # Get rows (height).
@@ -331,6 +345,7 @@ f_update_menu_txt () {
       #
       # Read the CHOICE array to get the maximum string length of the choices
       # to be able to right indent justify the summary string for prettiness.
+      #
       ARRAY_NAME="CHOICE"
       ARRAY_LEN=$(eval "echo \$\{#$ARRAY_NAME[@]\}")
       ARRAY_LEN=$(eval echo $ARRAY_LEN)
@@ -371,7 +386,7 @@ f_update_menu_txt () {
              SUMMARY=$(echo $SUMMARY | tr '_' ' ')
              #
              if [ -n "$CHOICE" ] ; then
-                # Read next menu choice string.
+                # Read next menu choice string and get its string length.
                 CHOICE_LENGTH=${#CHOICE}
                 if [ $CHOICE_LENGTH -lt $MAX_LENGTH ] ; then
                    let PAD=$MAX_LENGTH-$CHOICE_LENGTH
@@ -451,6 +466,8 @@ f_update_menu_txt () {
 #          $2=GENERATED_FILE.
 #          $3=Menu Title.
 #          $4=Previous menu function.
+#          $5=MAX_LENGTH
+#          $6=MAX_LINES
 #    Uses: GENERATED_FILE, ARRAY_NAME, ARRAY_LEN, XNUM, SERVER.
 # Outputs: None.
 #
@@ -485,11 +502,29 @@ f_update_menu_gui () {
       echo "      . $ARRAY_FILE   # invoke the necessary files". >>$2
       echo "      #" >>$2
       echo "      CHOICE=\"\"  # Initialize variable." >>$2
+      #
+      # Get the screen resolution or X-window size.
+      # Get rows (height).
+      Y=$(stty size | awk '{ print $1 }')
+      # Get columns (width).
+      X=$(stty size | awk '{ print $2 }')
+      #
       echo "      until [ \"\$CHOICE\" = \"QUIT\" ]" >>$2
       echo "            do    # Start of Menu until loop." >>$2
                            MENU_TITLE=$(echo $3 | tr '_' ' ')
       echo "               MENU_TITLE=\"$MENU_TITLE\"" >>$2
-      echo "               CHOICE=\$(\$GUI --clear --title \"\$MENU_TITLE\" --menu \"\n\nUse (up/down arrow keys) or (letters):\" 20 80 11 \\" >>$2
+      # If screen or window width is greater than MAX_LENGTH_UI (number of characters).
+      # Then shrink menu display to fit number of characters.
+      if [ $X -gt $5 ] ; then
+         X=$5
+      fi
+      #
+      # Pad vertical menu box display for a minimum display area.
+      if [ $Y -gt $6 ] ; then
+         let Y=$6+9
+      fi
+      #      
+      echo "               CHOICE=\$(\$GUI --clear --title \"\$MENU_TITLE\" --menu \"\n\nUse (up/down arrow keys) or (letters):\" $Y $X 11 \\" >>$2
       ARRAY_NAME="CHOICE"
       ARRAY_LEN=$(eval "echo \$\{#$ARRAY_NAME[@]\}")
       ARRAY_LEN=$(eval echo $ARRAY_LEN)
@@ -534,7 +569,7 @@ f_update_menu_gui () {
       echo "            done" >>$2
       echo "       unset VERSION THIS_FILE CHOICE_SERVER MENU_TITLE  # Throw out this variable." >>$2
       echo "       #" >>$2
-      echo "       $4  # Return to previous menu (if any). Needed for GUI: $GUI." >>$2
+      echo "       $4  # Return to previous menu (if any). Use ":" No-Op if this is the Main Menu. Needed for GUI: dialog." >>$2
       echo "       } # End of function f_menu_gui." >>$2
       unset ARRAY_NAME ARRAY_LEN XNUM SERVER
 } # End of function f_update_menu_gui.

@@ -5,7 +5,7 @@
 # Usage: bash menu.sh
 #        (not sh menu.sh)
 #
-VERSION="2018-01-17 17:30"
+VERSION="2018-01-18 01:32"
 THIS_FILE="menu_module_main.lib"
 #
 # +--------------------------------------------------------------------------+
@@ -92,6 +92,6 @@ f_next () {
       f_menu_arrays $ARRAY_FILE
       #
       # Create generated menu script from array data.
-      f_create_show_menu $GUI $GENERATED_FILE $MENU_TITLE f_main_menu
+      f_create_show_menu $GUI $GENERATED_FILE $MENU_TITLE f_main_menu $MAX_LENGTH $MAX_LINES
        }  # End of function f_next.
 

@@ -5,20 +5,24 @@
 # Usage: bash menu.sh
 #        (not sh menu.sh)
 #
-VERSION="2018-01-17 17:30"
+VERSION="2018-01-18 01:32"
 THIS_FILE="menu.sh"
 #
 #@ Brief Description
 #@
-#@ This script will generate a text menu, "Dialog" or "Whiptail GUI menu
-#@ from an array using data in clear text in script menu.lib. 
+#@ This script will generate either a text menu, or "Dialog" or "Whiptail"
+#@ GUI menu from an array using data in clear text in scripts:
+#@ menu_module_main.lib, menu_module_sub1.lib
+#@ or any other menu_modules... you wish to add. 
 #@
 #@ After each edit made, please update Code History and VERSION.
-#@
+#
 ## Code Change History
 ##
-## 2018-01-15 *Initial release.
-#
+## 2018-01-18 *Cosmetic improvements to automatically fit the Dialog or 
+##             Whiptail frame size to the amount of text.
+##
+## 2018-01-17 *Initial release.
 #
 # +----------------------------------------+
 # |      Function f_test_environment       |
@@ -160,7 +164,7 @@ f_main_menu () { # Create and display the Main Menu.
       # Create generated menu script from array data.
       GENERATED_FILE="menu_generated.lib"
       MENU_TITLE="Main_Menu"  # Menu title must substitute underscores for spaces
-      f_create_show_menu $GUI $GENERATED_FILE $MENU_TITLE 
+      f_create_show_menu $GUI $GENERATED_FILE $MENU_TITLE : $MAX_LENGTH $MAX_LINES
 } # End of function f_main_menu.
 #
 # **************************************
