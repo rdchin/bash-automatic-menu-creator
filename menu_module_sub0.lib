@@ -6,7 +6,7 @@
 #        (not sh menu.sh)
 #
 VERSION="2018-01-19 22:50"
-THIS_FILE="menu_module_sub1.lib"
+THIS_FILE="menu_module_sub0.lib"
 #
 # +--------------------------------------------------------------------------+
 # |                                                                          |
@@ -18,17 +18,20 @@ THIS_FILE="menu_module_sub1.lib"
 #
 #@@Exit#@@Return to previous menu.#@@break
 #
-#@@Hello World#@@Print Hello World.#@@f_hello_world
+#@@Hello Moon#@@Print Hello Moon.#@@f_hello_moon
 #
-#@@Goodbye World#@@Print Goodbye World.#@@f_goodbye_world
+#@@Goodbye Moon#@@Print Goodbye Moon.#@@f_goodbye_moon
 #
-#@@Good Morning World#@@Print Good Morning World.#@@f_good_morning_world
+#@@Good Morning Moon#@@Print Good Morning Moon.#@@f_good_morning_moon
 #
-#@@Good Night World#@@Print GoodNight World.#@@f_good_night_world
+#@@Good Night Moon#@@Print GoodNight Moon.#@@f_good_night_moon
 #
-#@@GNight World#@@Print GNight World.#@@f_gn
+#@@GNight Moon#@@Print GNight Moon.#@@f_gnight_moon
+#
+#@@Next Page#@@Next page of choices.#@@f_sub-menu1
+#
 # +----------------------------------------+
-# |          Function f_hello_world        |
+# |          Function f_hello_moon        |
 # +----------------------------------------+
 #
 #  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
@@ -36,30 +39,15 @@ THIS_FILE="menu_module_sub1.lib"
 #    Uses: None.
 # Outputs: temp.txt.
 #
-f_hello_world () {
-      echo "Hello World"
+f_hello_moon () {
+      echo "Hello Moon"
       f_press_enter_key_to_continue
       clear  # Clear screen.
 
-} # End of function f_hello_world.
+} # End of function f_hello_moon.
 #
 # +----------------------------------------+
-# |        Function f_goodbye_world        |
-# +----------------------------------------+
-#
-#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
-#          THIS_DIR, THIS_FILE.
-#    Uses: None.
-# Outputs: temp.txt.
-#
-f_goodbye_world () {
-      echo "Goodbye World"
-      f_press_enter_key_to_continue
-      clear  # Clear screen.
-} # End of function f_goodbye_world.
-#
-# +----------------------------------------+
-# |     Function f_good_morning_world      |
+# |        Function f_goodbye_moon        |
 # +----------------------------------------+
 #
 #  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
@@ -67,14 +55,14 @@ f_goodbye_world () {
 #    Uses: None.
 # Outputs: temp.txt.
 #
-f_good_morning_world () {
-      echo "Good Morning World!"
+f_goodbye_moon () {
+      echo "Goodbye Moon"
       f_press_enter_key_to_continue
       clear  # Clear screen.
-} # End of function f_good_morning_world.
+} # End of function f_goodbye_moon.
 #
 # +----------------------------------------+
-# |      Function f_good_night_world       |
+# |     Function f_good_morning_moon      |
 # +----------------------------------------+
 #
 #  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
@@ -82,14 +70,14 @@ f_good_morning_world () {
 #    Uses: None.
 # Outputs: temp.txt.
 #
-f_good_night_world () {
-      echo "Good Night World!"
+f_good_morning_moon () {
+      echo "Good Morning Moon!"
       f_press_enter_key_to_continue
       clear  # Clear screen.
-} # End of function f_good_night_world.
+} # End of function f_good_morning_moon.
 #
 # +----------------------------------------+
-# |             Function f_gn              |
+# |      Function f_good_night_moon       |
 # +----------------------------------------+
 #
 #  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
@@ -97,9 +85,44 @@ f_good_night_world () {
 #    Uses: None.
 # Outputs: temp.txt.
 #
-f_gn () {
-      echo "G'Night World!"
+f_good_night_moon () {
+      echo "Good Night Moon!"
       f_press_enter_key_to_continue
       clear  # Clear screen.
-} # End of function f_gn.
+} # End of function f_good_night_moon.
+#
+# +----------------------------------------+
+# |          Function f_gnight_moon        |
+# +----------------------------------------+
+#
+#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#          THIS_DIR, THIS_FILE.
+#    Uses: None.
+# Outputs: temp.txt.
+#
+f_gnight_moon () {
+      echo "G'Night Moon!"
+      f_press_enter_key_to_continue
+      clear  # Clear screen.
+} # End of function f_gnight_moon.
+#
+# +----------------------------------------+
+# |           Function f_sub-menu1         |
+# +----------------------------------------+
+#
+#  Inputs: None.
+#    Uses: None.
+# Outputs: None.
+#
+f_sub-menu1 () {
+      GENERATED_FILE="menu_generated.lib"
+      MENU_TITLE="Sub-menu_Two"  # Menu title must substitute underscores for spaces
+      #
+      # Create arrays from data.
+      ARRAY_FILE="menu_module_sub1.lib"
+      f_menu_arrays $ARRAY_FILE
+      #
+      # Create generated menu script from array data.
+      f_create_show_menu $GUI $GENERATED_FILE $MENU_TITLE $MAX_LENGTH $MAX_LINES $MAX_CHOICE_LENGTH
+}  # End of function f_submenu0.
 #

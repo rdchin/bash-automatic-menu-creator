@@ -5,7 +5,7 @@
 # Usage: bash menu.sh
 #        (not sh menu.sh)
 #
-VERSION="2018-01-18 01:32"
+VERSION="2018-01-19 22:50"
 THIS_FILE="menu_module_main.lib"
 #
 # +--------------------------------------------------------------------------+
@@ -16,7 +16,7 @@ THIS_FILE="menu_module_main.lib"
 #
 # Format: <#@@> <Menu Option> <#@@> <Description of Menu Option> <#@@> <Corresponding function or action or cammand>
 #
-#@@Quit#@@Quit to command-line prompt.#@@CHOICE=QUIT
+#@@Quit#@@Quit to command-line prompt.#@@break
 #
 #@@Directory Listing#@@list files in a directory and everything else which directory may be automatically hidden from view.#@@f_dir_listing
 #
@@ -24,7 +24,7 @@ THIS_FILE="menu_module_main.lib"
 #
 #@@Hidden Directory Listing#@@list hidden files in a directory.#@@f_dir_listing_hidden
 #
-#@@Next Page#@@Next page of choices.#@@f_next
+#@@Next Page#@@Next page of choices.#@@f_sub-menu0
 #
 #@@About#@@Version information of this script#@@f_about
 #
@@ -36,7 +36,7 @@ THIS_FILE="menu_module_main.lib"
 #  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
 #          THIS_DIR, THIS_FILE.
 #    Uses: None.
-# Outputs: temp.txt.
+# Outputs: None.
 #
 f_dir_listing () {
       ls -ha
@@ -51,7 +51,7 @@ f_dir_listing () {
 #  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
 #          THIS_DIR, THIS_FILE.
 #    Uses: None.
-# Outputs: temp.txt.
+# Outputs: None.
 #
 f_du_hsc () {
       du -h -s -c
@@ -66,7 +66,7 @@ f_du_hsc () {
 #  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
 #          THIS_DIR, THIS_FILE.
 #    Uses: None.
-# Outputs: temp.txt.
+# Outputs: None.
 #
 f_dir_listing_hidden () {
       ls -lh
@@ -75,23 +75,22 @@ f_dir_listing_hidden () {
 }  # End of function f_dir_listing_hidden.
 #
 # +----------------------------------------+
-# |          Function f_next               |
+# |           Function f_sub-menu0         |
 # +----------------------------------------+
 #
-#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
-#          THIS_DIR, THIS_FILE.
+#  Inputs: None.
 #    Uses: None.
-# Outputs: temp.txt.
+# Outputs: None.
 #
-f_next () {
+f_sub-menu0 () {
       GENERATED_FILE="menu_generated.lib"
       MENU_TITLE="Sub-menu_One"  # Menu title must substitute underscores for spaces
       #
       # Create arrays from data.
-      ARRAY_FILE="menu_module_sub1.lib"
+      ARRAY_FILE="menu_module_sub0.lib"
       f_menu_arrays $ARRAY_FILE
       #
       # Create generated menu script from array data.
-      f_create_show_menu $GUI $GENERATED_FILE $MENU_TITLE f_main_menu $MAX_LENGTH $MAX_LINES
-       }  # End of function f_next.
+      f_create_show_menu $GUI $GENERATED_FILE $MENU_TITLE $MAX_LENGTH $MAX_LINES $MAX_CHOICE_LENGTH
+       }  # End of function f_submenu0.
 
