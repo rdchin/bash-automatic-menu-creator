@@ -5,7 +5,7 @@
 # Usage: bash menu.sh
 #        (not sh menu.sh)
 #
-VERSION="2018-01-19 22:50"
+VERSION="2018-01-23 20:45"
 THIS_FILE="menu.sh"
 #
 #@ Brief Description
@@ -19,6 +19,9 @@ THIS_FILE="menu.sh"
 #
 ## Code Change History
 ##
+## 2019-01-23 *f_update_menu_gui adjusted menu so menu height was maximized.
+##            *f_about_txt added display of Brief Description.
+##
 ## 2019-01-19 *Bug fix in return to previous menu.
 ##            *Clean up code and comments.
 ##
@@ -27,6 +30,7 @@ THIS_FILE="menu.sh"
 ##            *Optimized the generation of menus.
 ##
 ## 2018-01-17 *Initial release.
+##
 #
 # +----------------------------------------+
 # |      Function f_test_environment       |
@@ -186,10 +190,16 @@ f_about_txt () {
       THIS_FILE="menu.sh"
       clear # Blank the screen.
       echo
-      echo "Script $THIS_FILE."
-      echo "Version: $VERSION"
+      TEMP_FILE="menu_temp.txt"
+      echo "Script: $THIS_FILE. Version: $VERSION" >$TEMP_FILE
+      echo >>$TEMP_FILE
+      sed -n 's/^#@//'p $THIS_DIR/$THIS_FILE >> $TEMP_FILE
       echo
+      cat $TEMP_FILE
       f_press_enter_key_to_continue
+      if [ -r $TEMP_FILE ] ; then
+         rm $TEMP_FILE
+      fi
       } # End of f_about_txt.
 #
 # +------------------------------------+
@@ -370,9 +380,9 @@ f_menu_arrays () {
             ARRAY_VALUE=$(echo $ARRAY_VALUE | tr ' ' '_')
             eval $ARRAY_NAME[$ARRAY_NUM]=$ARRAY_VALUE
             #
-            # Calculate length of next menu choice string.
+            # Calculate length of next Menu Option Choice string.
                 CHOICE_LENGTH=${#ARRAY_VALUE}
-                # Save the value of the longest length.
+                # Save the value of the longest length of the Menu Option.
                 if [ $CHOICE_LENGTH -gt $MAX_CHOICE_LENGTH ] ; then
                    # Save new maximum string length.
                    MAX_CHOICE_LENGTH=$CHOICE_LENGTH
@@ -483,7 +493,7 @@ f_update_menu_txt () {
              echo "                    $YNUM | \"${CHOICE_LC:0:1}\" | \"${CHOICE_LC:0:2}\" | \"${CHOICE_LC:0:3}\" | \"${CHOICE_LC:0:4}\" | \"${CHOICE_LC:0:5}\" | \"${CHOICE_LC:0:6}\" | \"${CHOICE_LC:0:7}\" | \"${CHOICE_LC:0:8}\" | \"${CHOICE_LC:0:9}\" | \"${CHOICE_LC:0:10}\" | \"${CHOICE_LC:0:11}\" | \"${CHOICE_LC:0:12}\" | \"${CHOICE_LC:0:13}\" | \"${CHOICE_LC:0:14}\" | \"${CHOICE_LC:0:15}\"*) $FUNC  ;;" >>$TEMP_FILE
              #
              if [ -n "$CHOICE" ] ; then
-                # Read next menu choice string and get its string length.
+                # Read next Menu Option Choice string and get its string length.
                 CHOICE_LENGTH=${#CHOICE}
                 if [ $CHOICE_LENGTH -lt $4 ] ; then
                    let PAD=$4-$CHOICE_LENGTH
@@ -602,7 +612,7 @@ f_update_menu_gui () {
          let Y=$5+9
       fi
       #      
-      echo "               CHOICE=\$(\$GUI --clear --title \"\$MENU_TITLE\" --menu \"\n\nUse (up/down arrow keys) or (letters):\" $Y $X 11 \\" >>$2
+      echo "               CHOICE=\$(\$GUI --clear --title \"\$MENU_TITLE\" --menu \"\n\nUse (up/down arrow keys) or (letters):\" $Y $X $Y \\" >>$2
       TEMP_FILE="menu_temp.txt"
       ARRAY_NAME="CHOICE"
       ARRAY_LEN=$(eval "echo \$\{#$ARRAY_NAME[@]\}")
