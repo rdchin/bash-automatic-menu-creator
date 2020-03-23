@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# ©2018 Copyright 2018 Robert D. Chin
+# ©2020 Copyright 2020 Robert D. Chin
 #
 # Usage: bash menu.sh
 #        (not sh menu.sh)
 #
-VERSION="2018-01-23 20:45"
+VERSION="2020-03-22 20:20"
 THIS_FILE="menu_module_main.lib"
 #
 # +--------------------------------------------------------------------------+
@@ -39,6 +39,7 @@ THIS_FILE="menu_module_main.lib"
 # Outputs: None.
 #
 f_dir_listing () {
+      clear  # Clear screen.
       ls -ha
       f_press_enter_key_to_continue
       clear  # Clear screen.
@@ -54,6 +55,7 @@ f_dir_listing () {
 # Outputs: None.
 #
 f_du_hsc () {
+      clear  # Clear screen.
       du -h -s -c
       f_press_enter_key_to_continue
       clear  # Clear screen.
@@ -69,6 +71,7 @@ f_du_hsc () {
 # Outputs: None.
 #
 f_dir_listing_hidden () {
+      clear  # Clear screen.
       ls -lh
       f_press_enter_key_to_continue
       clear  # Clear screen.
@@ -87,7 +90,7 @@ f_sub-menu0 () {
       MENU_TITLE="Sub-menu_One"  # Menu title must substitute underscores for spaces
       #
       # Create arrays from data.
-      ARRAY_FILE="menu_module_sub0.lib"
+      ARRAY_FILE="$THIS_DIR/menu_module_sub0.lib"
       f_menu_arrays $ARRAY_FILE
       #
       # Create generated menu script from array data.

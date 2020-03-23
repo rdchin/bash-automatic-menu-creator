@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# ©2018 Copyright 2018 Robert D. Chin
+# ©2020 Copyright 2020 Robert D. Chin
 #
 # Usage: bash menu.sh
 #        (not sh menu.sh)
 #
-VERSION="2018-01-23 20:45"
+VERSION="2020-03-22 20:20"
 THIS_FILE="menu_module_sub0.lib"
 #
 # +--------------------------------------------------------------------------+
@@ -40,6 +40,7 @@ THIS_FILE="menu_module_sub0.lib"
 # Outputs: temp.txt.
 #
 f_hello_moon () {
+      clear  # Clear screen.
       echo "Hello Moon"
       f_press_enter_key_to_continue
       clear  # Clear screen.
@@ -56,6 +57,7 @@ f_hello_moon () {
 # Outputs: temp.txt.
 #
 f_goodbye_moon () {
+      clear  # Clear screen.
       echo "Goodbye Moon"
       f_press_enter_key_to_continue
       clear  # Clear screen.
@@ -71,6 +73,7 @@ f_goodbye_moon () {
 # Outputs: temp.txt.
 #
 f_good_morning_moon () {
+      clear  # Clear screen.
       echo "Good Morning Moon!"
       f_press_enter_key_to_continue
       clear  # Clear screen.
@@ -86,6 +89,7 @@ f_good_morning_moon () {
 # Outputs: temp.txt.
 #
 f_good_night_moon () {
+      clear  # Clear screen.
       echo "Good Night Moon!"
       f_press_enter_key_to_continue
       clear  # Clear screen.
@@ -101,6 +105,7 @@ f_good_night_moon () {
 # Outputs: temp.txt.
 #
 f_gnight_moon () {
+      clear  # Clear screen.
       echo "G'Night Moon!"
       f_press_enter_key_to_continue
       clear  # Clear screen.
@@ -119,7 +124,7 @@ f_sub-menu1 () {
       MENU_TITLE="Sub-menu_Two"  # Menu title must substitute underscores for spaces
       #
       # Create arrays from data.
-      ARRAY_FILE="menu_module_sub1.lib"
+      ARRAY_FILE="$THIS_DIR/menu_module_sub1.lib"
       f_menu_arrays $ARRAY_FILE
       #
       # Create generated menu script from array data.
