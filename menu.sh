@@ -5,7 +5,7 @@
 # Usage: bash menu.sh
 #        (not sh menu.sh)
 #
-VERSION="2020-03-25 23:36"
+VERSION="2020-03-26 00:15"
 THIS_FILE="menu.sh"
 #
 #@ Brief Description
@@ -41,6 +41,8 @@ THIS_FILE="menu.sh"
 ## 2020-03-25 *f_arguments added to support double-dash [OPTIONS] after
 ##             invoking the script. i.e. $ bash menu.sh --help
 ##                                       $ bash menu.sh text
+##            *f_code_history, f_help_message, f_about bug fixes.
+##            *menu_module_main.lib added "Help" menu option.
 ##
 ## 2020-03-22 *Main explicitly invoked menu_module_main.lib with full
 ##             pathname (in case there are multiple copies in different
@@ -411,20 +413,20 @@ f_code_history_txt () {
 # Outputs: temp.txt.
 #
 f_code_history_gui () {
-      # Display text (all lines beginning with "#@" but do not print "#@").
-      # sed substitutes null for "#@" at the beginning of each line
-      # so it is not printed.
-      # less -P customizes prompt for
-      # %f <FILENAME> page <num> of <pages> (Spacebar, PgUp/PgDn . . .)
       #
       # The variable $THIS_FILE is set to a library file when
       # menu is generated so it needs to be reset to "menu.sh".
       THIS_FILE="menu.sh"
       TEMP_FILE=$THIS_FILE"_temp.txt"
-      f_script_path
+      #
       echo "Script: $THIS_FILE. Version: $VERSION" >$TEMP_FILE
       echo >>$TEMP_FILE
+      #
+      # Display text (all lines beginning with "#@" but do not print "#@").
+      # sed substitutes null for "#@" at the beginning of each line
+      # so it is not printed.
       sed -n 's/^##//'p $THIS_DIR/$THIS_FILE >>$TEMP_FILE
+      #
       # Calculate longest line length in TEMP_FILE to find maximum menu width for Dialog or Whiptail.
       # The "Word Count" wc command output will not include the TEMP_FILE name
       # if you redirect "<$TEMP_FILE" into wc.
@@ -446,16 +448,16 @@ f_code_history_gui () {
 # |      Function f_help_message       |
 # +------------------------------------+
 #
-#  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
+#  Inputs: $1=GUI (May or may not exist).
 #    Uses: None.
 # Outputs: None.
 #
 f_help_message () {
-      case $1 in
+      case $GUI in
            "dialog" | "whiptail") 
-           f_help_message_gui $1
+           f_help_message_gui $GUI
            ;;
-           "text")
+           *)
            f_help_message_txt
            ;;
       esac
@@ -471,59 +473,65 @@ f_help_message () {
 #
 f_help_message_txt () {
       #
-      # Display text (all lines beginning with "#?" but do not print "#?").
-      # sed substitutes null for "#?" at the beginning of each line
-      # so it is not printed.
-      # less -P customizes prompt for
-      # %f <FILENAME> page <num> of <pages> (Spacebar, PgUp/PgDn . . .)
-      #
       # The variable $THIS_FILE is set to a library file when
       # menu is generated so it needs to be reset to "menu.sh".
       THIS_FILE="menu.sh"
       TEMP_FILE=$THIS_FILE"_temp.txt"
+      #
+      clear # Blank the screen.
+      echo
+      #
       echo "Script: $THIS_FILE. Version: $VERSION" >$TEMP_FILE
       echo >>$TEMP_FILE
+      #
+      # Display text (all lines beginning with "#?" but do not print "#?").
+      # sed reads each line of this file and substitutes null for "#?"
+      # at the beginning of each line so it is not printed.
       sed -n 's/^#?//'p $THIS_DIR/$THIS_FILE >> $TEMP_FILE
-      cat $TEMP_FILE
+      #
+      # less -P customizes prompt for
+      # %f <FILENAME> page <num> of <pages> (Spacebar, PgUp/PgDn . . .)
+      less -P '(Spacebar, PgUp/PgDn, Up/Dn arrows, press q to quit)' $TEMP_FILE
+      #
       if [ -r $TEMP_FILE ] ; then
          rm $TEMP_FILE
       fi
-
 } # End of function f_help_message_txt.
 #
 # +----------------------------------------+
 # |     Function f_help_message_gui        |
 # +----------------------------------------+
 #
-#  Inputs: None.
+#  Inputs: $1=GUI - "dialog" or "whiptail" the preferred user-interface.
 #    Uses: None.
 # Outputs: None.
 #
 f_help_message_gui () {
       #
-      # Display text (all lines beginning with "#?" but do not print "#?").
-      # sed substitutes null for "#?" at the beginning of each line
-      # so it is not printed.
-      # less -P customizes prompt for
-      # %f <FILENAME> page <num> of <pages> (Spacebar, PgUp/PgDn . . .)
-      #
+      # The variable $THIS_FILE is set to a library file when
+      # menu is generated so it needs to be reset to "menu.sh".
+      THIS_FILE="menu.sh"
       TEMP_FILE=$THIS_FILE"_temp.txt"
+      #
       echo "Script: $THIS_FILE. Version: $VERSION" >$TEMP_FILE
       echo >>$TEMP_FILE
-      sed -n 's/^#?//'p $THIS_DIR/$THIS_FILE >> $TEMP_FILE
-      # Calculate longest line length in TEMP_FILE to find maximum menu width
-      # for Dialog or Whiptail.
+      #
+      # Display text (all lines beginning with "#@" but do not print "#@").
+      # sed substitutes null for "#@" at the beginning of each line
+      # so it is not printed.
+      sed -n 's/^#?//'p $THIS_DIR/$THIS_FILE >>$TEMP_FILE
+      #
+      # Calculate longest line length in TEMP_FILE to find maximum menu width for Dialog or Whiptail.
       # The "Word Count" wc command output will not include the TEMP_FILE name
       # if you redirect "<$TEMP_FILE" into wc.
       X=$(wc --max-line-length <$TEMP_FILE)
-      let X=X+6
+      let X=X+10
       #
-      # Calculate number of lines or Menu Choices to find maximum menu lines
-      # for Dialog or Whiptail.
+      # Calculate number of lines or Menu Choices to find maximum menu lines for Dialog or Whiptail.
       Y=$(wc --lines <$TEMP_FILE)
       let Y=Y+6
       #
-      $1 --title "About $THIS_FILE (use arrow keys to scroll up/down/side-ways)" --textbox $TEMP_FILE $Y $X
+      $1 --title "Code History (use arrow keys to scroll up/down/side-ways)" --textbox $TEMP_FILE $Y $X
       #
       if [ -r $TEMP_FILE ] ; then
          rm $TEMP_FILE
