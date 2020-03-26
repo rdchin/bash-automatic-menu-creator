@@ -20,7 +20,7 @@ THIS_FILE="menu.sh"
 #
 #? Usage: bash menu.sh [OPTION]
 #?
-#?        bash menu.sh text       # Optimized for minimum 80x24 character display
+#?        bash menu.sh text       # Optimized for a 80x24 character display
 #?        bash menu.sh dialog     # Use Dialog   user-interface
 #?        bash menu.sh whiptail   # Use Whiptail user-interface
 #?
@@ -531,7 +531,7 @@ f_help_message_gui () {
       Y=$(wc --lines <$TEMP_FILE)
       let Y=Y+6
       #
-      $1 --title "Code History (use arrow keys to scroll up/down/side-ways)" --textbox $TEMP_FILE $Y $X
+      $1 --title "Help Message (use arrow keys to scroll up/down/side-ways)" --textbox $TEMP_FILE $Y $X
       #
       if [ -r $TEMP_FILE ] ; then
          rm $TEMP_FILE
