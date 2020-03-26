@@ -5,7 +5,7 @@
 # Usage: bash menu.sh
 #        (not sh menu.sh)
 #
-VERSION="2020-03-22 20:20"
+VERSION="2020-03-25 23:36"
 THIS_FILE="menu_module_main.lib"
 #
 # +--------------------------------------------------------------------------+
@@ -18,11 +18,9 @@ THIS_FILE="menu_module_main.lib"
 #
 #@@Quit#@@Quit to command-line prompt.#@@break
 #
-#@@Directory Listing#@@list files in a directory and everything else which directory may be automatically hidden from view.#@@f_dir_listing
+#@@Directory Listing#@@list files in a directory.#@@f_dir_listing
 #
 #@@Size of Directory#@@total size MB of a directory.#@@f_du_hsc
-#
-#@@Hidden Directory Listing#@@list hidden files in a directory.#@@f_dir_listing_hidden
 #
 #@@Next Page#@@Next page of choices.#@@f_sub-menu0
 #
@@ -40,7 +38,7 @@ THIS_FILE="menu_module_main.lib"
 #
 f_dir_listing () {
       clear  # Clear screen.
-      ls -ha
+      ls -lh
       f_press_enter_key_to_continue
       clear  # Clear screen.
 }  # End of function f_dir_listing.
@@ -62,22 +60,6 @@ f_du_hsc () {
 }  # End of function f_du_hsc.
 #
 # +----------------------------------------+
-# |     Function f_dir_listing_hidden      |
-# +----------------------------------------+
-#
-#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
-#          THIS_DIR, THIS_FILE.
-#    Uses: None.
-# Outputs: None.
-#
-f_dir_listing_hidden () {
-      clear  # Clear screen.
-      ls -lh
-      f_press_enter_key_to_continue
-      clear  # Clear screen.
-}  # End of function f_dir_listing_hidden.
-#
-# +----------------------------------------+
 # |           Function f_sub-menu0         |
 # +----------------------------------------+
 #
@@ -96,4 +78,3 @@ f_sub-menu0 () {
       # Create generated menu script from array data.
       f_create_show_menu $GUI $GENERATED_FILE $MENU_TITLE $MAX_LENGTH $MAX_LINES $MAX_CHOICE_LENGTH
        }  # End of function f_submenu0.
-

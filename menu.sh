@@ -5,7 +5,7 @@
 # Usage: bash menu.sh
 #        (not sh menu.sh)
 #
-VERSION="2020-03-25 15:52"
+VERSION="2020-03-25 23:36"
 THIS_FILE="menu.sh"
 #
 #@ Brief Description
@@ -16,6 +16,7 @@ THIS_FILE="menu.sh"
 #@ or any other menu_modules... you wish to add. 
 #@
 #@ After each edit made, please update Code History and VERSION.
+#@
 #
 #? Usage: bash menu.sh [OPTION]
 #?
@@ -177,13 +178,13 @@ f_script_path () {
 # +----------------------------------------+
 #
 #  Inputs: $1=Argument
-#             [--help] [ --? ] [ -? ] [ ? ]
+#             [--help] [ -h ] [ -? ]
 #             [--about]
-#             [--version] [ -ver ] [ -v ]
-#             [--history]
-#             [ text ] [ dialog ] [ whiptail ]
+#             [--version] [ -ver ] [ -v ] [--about ]
+#             [--history] [--his ]
+#             [] [ text ] [ dialog ] [ whiptail ]
 #    Uses: None.
-# Outputs: ERROR.
+# Outputs: GUI, ERROR.
 #
 f_arguments () {
       # If there is more than one argument, display help USAGE message, because only one argument is allowed.
@@ -232,7 +233,7 @@ f_arguments () {
                    # process /bin/bash is created using up resources.
            ;;
       esac
-}  # End of function f_arguments.
+} # End of function f_arguments.
 #
 # +----------------------------------------+
 # | Function f_press_enter_key_to_continue |
@@ -249,30 +250,25 @@ f_press_enter_key_to_continue () { # Display message and wait for user input.
       unset X  # Throw out this variable.
 } # End of function f_press_enter_key_to_continue.
 #
-
 # +------------------------------------+
 # |          Function f_about          |
 # +------------------------------------+
 #
-#  Inputs: $1=GUI.
+#  Inputs: $1=GUI (May or may not exist).
 #          THIS_FILE, VERSION.
 #    Uses: None.
 # Outputs: None.
 #
 f_about () {
-case $1 in
-     "dialog" | "whiptail") 
-     f_about_gui $GUI
-     ;;
-     "text")
-     f_about_txt
-     ;;
-     *)
-     f_about_txt
-     ;;
- esac
-
-      } # End of f_about.
+      case $GUI in
+           "dialog" | "whiptail") 
+           f_about_gui $GUI
+           ;;
+           *)
+           f_about_txt
+           ;;
+      esac
+} # End of f_about.
 #
 # +------------------------------------+
 # |        Function f_about_txt        |
@@ -284,19 +280,30 @@ case $1 in
 # Outputs: None.
 #
 f_about_txt () {
+      #
+      # The variable $THIS_FILE is set to a library file when
+      # menu is generated so it needs to be reset to "menu.sh".
+      THIS_FILE="menu.sh"
+      TEMP_FILE=$THIS_FILE"_temp.txt"
+      #
       clear # Blank the screen.
       echo
-      TEMP_FILE=$THIS_FILE"_temp.txt"
       echo "Script: $THIS_FILE. Version: $VERSION" >$TEMP_FILE
       echo >>$TEMP_FILE
+      #
+      # Display text (all lines beginning with "#@" but do not print "#@").
+      # sed reads each line of this file and substitutes null for "#@"
+      # at the beginning of each line so it is not printed.
       sed -n 's/^#@//'p $THIS_DIR/$THIS_FILE >> $TEMP_FILE
-      echo
-      cat $TEMP_FILE
-      f_press_enter_key_to_continue
+      #
+      # less -P customizes prompt for
+      # %f <FILENAME> page <num> of <pages> (Spacebar, PgUp/PgDn . . .)
+      less -P '(Spacebar, PgUp/PgDn, Up/Dn arrows, press q to quit)' $TEMP_FILE
+      #
       if [ -r $TEMP_FILE ] ; then
          rm $TEMP_FILE
       fi
-      } # End of f_about_txt.
+} # End of f_about_txt.
 #
 # +------------------------------------+
 # |        Function f_about_gui        |
@@ -309,16 +316,19 @@ f_about_txt () {
 #
 f_about_gui () {
       #
-      # Display text (all lines beginning with "#@" but do not print "#@").
-      # sed substitutes null for "#@" at the beginning of each line
-      # so it is not printed.
-      # less -P customizes prompt for
-      # %f <FILENAME> page <num> of <pages> (Spacebar, PgUp/PgDn . . .)
-      #
+      # The variable $THIS_FILE is set to a library file when
+      # menu is generated so it needs to be reset to "menu.sh".
+      THIS_FILE="menu.sh"
       TEMP_FILE=$THIS_FILE"_temp.txt"
+      #
       echo "Script: $THIS_FILE. Version: $VERSION" >$TEMP_FILE
       echo >>$TEMP_FILE
+      #
+      # Display text (all lines beginning with "#@" but do not print "#@").
+      # sed reads each line of this file and substitutes null for "#@"
+      # at the beginning of each line so it is not printed.
       sed -n 's/^#@//'p $THIS_DIR/$THIS_FILE >> $TEMP_FILE
+      #
       # Calculate longest line length in TEMP_FILE to find maximum menu width for Dialog or Whiptail.
       # The "Word Count" wc command output will not include the TEMP_FILE name
       # if you redirect "<$TEMP_FILE" into wc.
@@ -334,28 +344,27 @@ f_about_gui () {
       if [ -r $TEMP_FILE ] ; then
          rm $TEMP_FILE
       fi
-      } # End of f_about_gui.
+} # End of f_about_gui.
 #
 # +------------------------------------+
 # |      Function f_code_history       |
 # +------------------------------------+
 #
-#  Inputs: $1=GUI.
+#  Inputs: $1=GUI (May or may not exist).
 #          THIS_FILE, VERSION.
 #    Uses: None.
 # Outputs: None.
 #
 f_code_history () {
-case $1 in
-     "dialog" | "whiptail") 
-     f_code_history_gui $GUI
-     ;;
-     "text")
-     f_code_history_txt
-     ;;
- esac
-
-      } # End of f_code_history.
+      case $GUI in
+           "dialog" | "whiptail") 
+           f_code_history_gui $GUI
+           ;;
+           *)
+           f_code_history_txt
+           ;;
+       esac
+} # End of f_code_history.
 #
 # +----------------------------------------+
 # |       Function f_code_history_txt      |
@@ -366,14 +375,31 @@ case $1 in
 # Outputs: None.
 #
 f_code_history_txt () {
+      #
+      # The variable $THIS_FILE is set to a library file when
+      # menu is generated so it needs to be reset to "menu.sh".
+      THIS_FILE="menu.sh"
+      TEMP_FILE=$THIS_FILE"_temp.txt"
+      #
       clear # Blank the screen.
-      # Display Help (all lines beginning with "#@" but do not print "#@").
-      # sed substitutes null for "#@" at the beginning of each line
-      # so it is not printed.
+      echo
+      #
+      echo "Script: $THIS_FILE. Version: $VERSION" >$TEMP_FILE
+      echo >>$TEMP_FILE
+      #
+      # Display text (all lines beginning with "##" but do not print "##").
+      # sed reads each line of this file and substitutes null for "##"
+      # at the beginning of each line so it is not printed.
+      sed -n 's/^##//'p $THIS_DIR/$THIS_FILE >> $TEMP_FILE
+      #
       # less -P customizes prompt for
       # %f <FILENAME> page <num> of <pages> (Spacebar, PgUp/PgDn . . .)
-      sed -n 's/^##//'p $THIS_DIR/$THIS_FILE | less -P '(Spacebar, PgUp/PgDn, Up/Dn arrows, press q to quit)'
-}  # End of function f_code_history_txt.
+      less -P '(Spacebar, PgUp/PgDn, Up/Dn arrows, press q to quit)' $TEMP_FILE
+      #
+      if [ -r $TEMP_FILE ] ; then
+         rm $TEMP_FILE
+      fi
+} # End of function f_code_history_txt.
 #
 # +----------------------------------------+
 # |       Function f_code_history_gui      |
@@ -391,6 +417,9 @@ f_code_history_gui () {
       # less -P customizes prompt for
       # %f <FILENAME> page <num> of <pages> (Spacebar, PgUp/PgDn . . .)
       #
+      # The variable $THIS_FILE is set to a library file when
+      # menu is generated so it needs to be reset to "menu.sh".
+      THIS_FILE="menu.sh"
       TEMP_FILE=$THIS_FILE"_temp.txt"
       f_script_path
       echo "Script: $THIS_FILE. Version: $VERSION" >$TEMP_FILE
@@ -422,15 +451,14 @@ f_code_history_gui () {
 # Outputs: None.
 #
 f_help_message () {
-case $1 in
-     "dialog" | "whiptail") 
-     f_help_message_gui $1
-     ;;
-     "text")
-     f_help_message_txt
-     ;;
-esac
-
+      case $1 in
+           "dialog" | "whiptail") 
+           f_help_message_gui $1
+           ;;
+           "text")
+           f_help_message_txt
+           ;;
+      esac
 } # End of f_code_history.
 #
 # +----------------------------------------+
@@ -449,6 +477,9 @@ f_help_message_txt () {
       # less -P customizes prompt for
       # %f <FILENAME> page <num> of <pages> (Spacebar, PgUp/PgDn . . .)
       #
+      # The variable $THIS_FILE is set to a library file when
+      # menu is generated so it needs to be reset to "menu.sh".
+      THIS_FILE="menu.sh"
       TEMP_FILE=$THIS_FILE"_temp.txt"
       echo "Script: $THIS_FILE. Version: $VERSION" >$TEMP_FILE
       echo >>$TEMP_FILE
@@ -458,7 +489,7 @@ f_help_message_txt () {
          rm $TEMP_FILE
       fi
 
-}  # End of function f_help_message_txt.
+} # End of function f_help_message_txt.
 #
 # +----------------------------------------+
 # |     Function f_help_message_gui        |
@@ -867,9 +898,7 @@ f_main_menu () { # Create and display the Main Menu.
 # Outputs: None.
 #
 f_create_show_menu () {
-
-
-     case $1 in
+      case $1 in
            "dialog" | "whiptail")
            f_update_menu_gui $1 $2 $3 $4 $5
            ;;
@@ -885,7 +914,6 @@ f_create_show_menu () {
            "dialog" | "whiptail") 
            f_menu_gui $1 $3
            clear  # Clear screen.
-
            ;;
            "text")
            f_menu_txt
