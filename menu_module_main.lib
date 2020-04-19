@@ -5,7 +5,7 @@
 # Usage: bash menu.sh
 #        (not sh menu.sh)
 #
-VERSION="2020-03-26 00:15"
+VERSION="2020-04-19 01:11"
 THIS_FILE="menu_module_main.lib"
 #
 # +--------------------------------------------------------------------------+
@@ -24,11 +24,11 @@ THIS_FILE="menu_module_main.lib"
 #
 #@@Next Page#@@Next page of choices.#@@f_sub-menu0
 #
-#@@About#@@Version information of this script#@@f_about
+#@@About#@@Version information of this script#@@f_about^$GUI
 #
-#@@Code History#@@Display code change history of this script.#@@f_code_history
+#@@Code History#@@Display code change history of this script.#@@f_code_history^$GUI
 #
-#@@Help#@@Display help message.#@@f_help_message
+#@@Help#@@Display help message.#@@f_help_message^$GUI
 #
 # +----------------------------------------+
 # |          Function f_dir_listing        |
