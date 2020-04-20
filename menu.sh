@@ -9,7 +9,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2020-04-19 01:11"
+VERSION="2020-04-20 15:30"
 THIS_FILE="menu.sh"
 TEMP_FILE="$THIS_FILE_temp.txt"
 GENERATED_FILE="$THIS_FILE_menu_generated.lib"
@@ -59,6 +59,8 @@ GENERATED_FILE="$THIS_FILE_menu_generated.lib"
 #
 ## Code Change History
 ##
+## (After each edit made, please update Code History and VERSION.)
+##
 ## 2020-04-19 *Found bug in VERSION setting in f_about, f_code_history,
 ##             f_help_message. Need to set $VERSION using correct $THIS_FILE.
 ##
@@ -95,11 +97,13 @@ GENERATED_FILE="$THIS_FILE_menu_generated.lib"
 # |         Function f_script_path         |
 # +----------------------------------------+
 #
+#     Rev: 2020-04-20
 #  Inputs: $BASH_SOURCE (System variable).
 #    Uses: None.
 # Outputs: SCRIPT_PATH, THIS_DIR.
 #
 f_script_path () {
+      #
       # BASH_SOURCE[0] gives the filename of the script.
       # dirname "{$BASH_SOURCE[0]}" gives the directory of the script
       # Execute commands: cd <script directory> and then pwd
@@ -109,13 +113,13 @@ f_script_path () {
       # !!!Non-BASH environments will give error message about line below!!!
       SCRIPT_PATH=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
       THIS_DIR=$SCRIPT_PATH  # Set $THIS_DIR to location of this script.
-
 } # End of function f_script_path.
 #
 # +----------------------------------------+
 # |         Function f_arguments           |
 # +----------------------------------------+
 #
+#     Rev: 2020-04-20
 #  Inputs: $1=Argument
 #             [--help] [ -h ] [ -? ]
 #             [--about]
@@ -179,6 +183,7 @@ f_arguments () {
 # |          Function f_detect_ui          |
 # +----------------------------------------+
 #
+#     Rev: 2020-04-20
 #  Inputs: None.
 #    Uses: ERROR.
 # Outputs: GUI (dialog, whiptail, text).
@@ -261,11 +266,13 @@ f_test_dash () {
 # | Function f_press_enter_key_to_continue |
 # +----------------------------------------+
 #
+#     Rev: 2020-04-20
 #  Inputs: None.
 #    Uses: X.
 # Outputs: None.
 #
 f_press_enter_key_to_continue () { # Display message and wait for user input.
+      #
       echo
       echo -n "Press '"Enter"' key to continue."
       read X
@@ -276,13 +283,14 @@ f_press_enter_key_to_continue () { # Display message and wait for user input.
 # |         Function f_exit_script         |
 # +----------------------------------------+
 #
+#     Rev: 2020-04-20
 #  Inputs: None.
 #    Uses: None.
 # Outputs: None.
 #
 f_exit_script() {
       #
-      f_message $1 "NOK" "Exiting script" " \nAn error occurred, cannot continue. Exiting script."
+      f_message $1 "NOK" "End of script" " \nExiting script."
       #
       # Blank the screen. Nicer ending especially if you chose custom colors for this script.
       clear 
@@ -294,36 +302,25 @@ f_exit_script() {
 # |              Function f_abort          |
 # +----------------------------------------+
 #
+#     Rev: 2020-04-20
 #  Inputs: $1=GUI.
 #    Uses: None.
 # Outputs: None.
 #
 f_abort () {
       #
-      case $1 in
-           dialog | whiptail)
-              # Temporary file has \Z commands embedded for red bold font.
-              #
-              # \Z commands are used by Dialog to change font attributes 
-              # such as color, bold/normal.
-              #
-              # A single string is used with echo -e \Z1\Zb\Zn commands
-              # and output as a single line of string wit \Zn commands embedded.
-              #
-              # Single string is neccessary because \Z commands will not be
-              # recognized in a temp file containing <CR><LF> multiple lines also.
-              #
-              #f_message $1 "NOK" "Exiting script" " \n\Z1\ZbFATAL ERROR\n \n \nAn error occurred, cannot continue.\n Exiting script.\Zn"
-              f_message $1 "NOK" "Exiting script" " \n\Z1\ZbAn error occurred, cannot continue. Exiting script.\Zn"
-           ;;
-           *)
-              # The only reason to have a separate message for GUI=text, is for red color fonts.
-              echo $(tput setaf 1)    # Set font to color red.
-              echo -n $(tput bold)
-              f_message $1 "NOK" "Exiting Script" ">>>FATAL ERROR<<<\n \nAn error occurred, cannot continue.\n Exiting script."
-              echo -n $(tput sgr0)    # Set font to normal color.
-           ;;
-      esac
+      # Temporary file has \Z commands embedded for red bold font.
+      #
+      # \Z commands are used by Dialog to change font attributes 
+      # such as color, bold/normal.
+      #
+      # A single string is used with echo -e \Z1\Zb\Zn commands
+      # and output as a single line of string wit \Zn commands embedded.
+      #
+      # Single string is neccessary because \Z commands will not be
+      # recognized in a temp file containing <CR><LF> multiple lines also.
+      #
+      f_message $1 "NOK" "Exiting script" " \n\Z1\ZbAn error occurred, cannot continue. Exiting script.\Zn"
       exit 1
 } # End of function f_abort.
 #
@@ -331,6 +328,7 @@ f_abort () {
 # |          Function f_about          |
 # +------------------------------------+
 #
+#     Rev: 2020-04-20
 #  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
 #          THIS_DIR, THIS_FILE, VERSION.
 #    Uses: None.
@@ -364,6 +362,7 @@ f_about () {
 # |      Function f_code_history       |
 # +------------------------------------+
 #
+#     Rev: 2020-04-20
 #  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
 #          THIS_DIR, THIS_FILE, VERSION.
 #    Uses: None.
@@ -397,6 +396,7 @@ f_code_history () {
 # |      Function f_help_message       |
 # +------------------------------------+
 #
+#     Rev: 2020-04-20
 #  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
 #          THIS_DIR, THIS_FILE, VERSION.
 #    Uses: None.
@@ -442,6 +442,7 @@ f_help_message () {
 # and Whiptail, handling the answer, or about calculating the box size for
 # each text message.
 #
+#     Rev: 2020-04-20
 #  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
 #          $2 - "Y" or "N" - the default answer.         
 #          $3 - Title string (may be null).
@@ -633,6 +634,7 @@ f_yn_question () {
 # You do not have to worry about the differences in syntax between Dialog
 # and Whiptail or about calculating the box size for each text message.
 #
+#     Rev: 2020-04-20
 #  Inputs: $1 - "text", "dialog" or "whiptail" The CLI GUI application in use.
 #          $2 - "OK"  [OK] button at end of text.
 #               "NOK" No [OK] button or "Press Enter key to continue"
@@ -991,6 +993,7 @@ f_message () {
 # |        Function f_menu_arrays          |
 # +----------------------------------------+
 #
+#     Rev: 2020-04-20
 #  Inputs: $1=file of menu choice strings.
 #    Uses: ARRAY_NUM, ARRAY_NAME, ARRAY_VALUE, TEMP_FILE, XSTR.
 # Outputs: MAX_CHOICE_LENGTH. arrays CHOICE(n), SUMMARY(n), FUNC(n). 
@@ -1082,6 +1085,7 @@ f_menu_arrays () {
 # |        Function f_update_menu_txt      |
 # +----------------------------------------+
 #
+#     Rev: 2020-04-20
 #  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
 #          $2=GENERATED_FILE.
 #          $3=Menu Title.
@@ -1230,6 +1234,7 @@ f_update_menu_txt () {
 # |        Function f_update_menu_gui      |
 # +----------------------------------------+
 #
+#     Rev: 2020-04-20
 #  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
 #          $2=GENERATED_FILE.
 #          $3=Menu Title.
@@ -1363,6 +1368,7 @@ f_update_menu_gui () {
 # |          Function f_main_menu          |
 # +----------------------------------------+
 #
+#     Rev: 2020-04-20
 #  Inputs: None.
 #    Uses: ARRAY_FILE, GENERATED_FILE, MENU_TITLE.
 # Outputs: None.
@@ -1376,6 +1382,7 @@ f_main_menu () { # Create and display the Main Menu.
       # Create generated menu script from array data.
       GENERATED_FILE="$THIS_DIR/$THIS_FILE_menu_generated.lib"
       MENU_TITLE="Main_Menu"  # Menu title must substitute underscores for spaces
+      #
       f_create_show_menu $GUI $GENERATED_FILE $MENU_TITLE $MAX_LENGTH $MAX_LINES $MAX_CHOICE_LENGTH
 } # End of function f_main_menu.
 #
@@ -1383,6 +1390,7 @@ f_main_menu () { # Create and display the Main Menu.
 # |       Function f_create_show_menu      |
 # +----------------------------------------+
 #
+#     Rev: 2020-04-20
 #  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
 #          $2=GENERATED_FILE.
 #          $3=Menu Title.
@@ -1436,8 +1444,12 @@ echo "***  Running script $THIS_FILE  ***"
 echo "***   Rev. $VERSION     ***"
 echo "***********************************"
 echo
-sleep 1  # pause for 3 seconds automatically.
+sleep 1  # pause for 1 second automatically.
+#
 # If an error occurs, the f_abort() function will be called.
+# f_abort depends on f_message which must be in this script.
+# (especially if library file *.lib is missing).
+#
 # trap 'f_abort' 0
 # set -e
 #
@@ -1453,12 +1465,14 @@ else
    echo "Cannot continue, exiting program script."
    echo
    # f_abort depends on f_message which must be in this script.
+   # (especially if library file *.lib is missing).
    f_abort text
 fi
 #
 # Test for Optional Arguments.
 f_arguments $1  # Also sets variable GUI.
 #
+# Uncomment the following lines if a test is needed.
 # Test for X-Windows environment. Cannot run in CLI for LibreOffice.
 #if [ x$DISPLAY = x ] ; then
 #   echo -n $(tput setaf 1) # Set font to color red.
@@ -1467,7 +1481,7 @@ f_arguments $1  # Also sets variable GUI.
 #   echo -n $(tput sgr0) # Set font to normal color.
 #   echo
 #   echo
-#   f_abort text
+#   f_abort
 #fi
 #
 # If command already specifies GUI, then do not detect GUI i.e. "bash dropfsd.sh dialog" or "bash dropfsd.sh text".
@@ -1483,7 +1497,9 @@ fi
 # Test for BASH environment.
 f_test_environment
 #
-f_main_menu
+f_main_menu $GUI
+#
+clear # Blank the screen. Nicer ending especially if you chose custom colors for this script.
 #
 exit 0  # This cleanly closes the process generated by #!bin/bash. 
         # Otherwise every time this script is run, another instance of
