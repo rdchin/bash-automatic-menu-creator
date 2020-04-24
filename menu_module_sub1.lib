@@ -5,7 +5,7 @@
 # Usage: bash menu.sh
 #        (not sh menu.sh)
 #
-VERSION="2020-03-22 20:20"
+VERSION="2020-04-23 00:48"
 THIS_FILE="menu_module_sub1.lib"
 #
 # +--------------------------------------------------------------------------+
@@ -37,11 +37,12 @@ THIS_FILE="menu_module_sub1.lib"
 # Outputs: temp.txt.
 #
 f_hello_world () {
+      #
       clear  # Clear screen.
       echo "Hello World"
       f_press_enter_key_to_continue
       clear  # Clear screen.
-
+      #
 } # End of function f_hello_world.
 #
 # +----------------------------------------+
@@ -54,10 +55,12 @@ f_hello_world () {
 # Outputs: temp.txt.
 #
 f_goodbye_world () {
+      #
       clear  # Clear screen.
       echo "Goodbye World"
       f_press_enter_key_to_continue
       clear  # Clear screen.
+      #
 } # End of function f_goodbye_world.
 #
 # +----------------------------------------+
@@ -70,10 +73,12 @@ f_goodbye_world () {
 # Outputs: temp.txt.
 #
 f_good_morning_world () {
+      #
       clear  # Clear screen.
       echo "Good Morning World!"
       f_press_enter_key_to_continue
       clear  # Clear screen.
+      #
 } # End of function f_good_morning_world.
 #
 # +----------------------------------------+
@@ -86,10 +91,12 @@ f_good_morning_world () {
 # Outputs: temp.txt.
 #
 f_good_night_world () {
+      #
       clear  # Clear screen.
       echo "Good Night World!"
       f_press_enter_key_to_continue
       clear  # Clear screen.
+      #
 } # End of function f_good_night_world.
 #
 # +----------------------------------------+
@@ -102,9 +109,10 @@ f_good_night_world () {
 # Outputs: temp.txt.
 #
 f_gn () {
+      #
       clear  # Clear screen.
       echo "G'Night World!"
       f_press_enter_key_to_continue
       clear  # Clear screen.
+      #
 } # End of function f_gn.
-#
