@@ -5,7 +5,7 @@
 # Usage: bash menu.sh
 #        (not sh menu.sh)
 #
-VERSION="2020-04-28 23:50"
+VERSION="2020-05-15 22:47"
 THIS_FILE="menu_module_main.lib"
 #
 # +--------------------------------------------------------------------------+
@@ -22,7 +22,7 @@ THIS_FILE="menu_module_main.lib"
 #
 #@@Size of Directory#@@total size MB of a directory.#@@f_du_hsc
 #
-#@@Next Page#@@Next page of choices.#@@f_sub-menu0
+#@@Next Page#@@Next page of choices.#@@f_sub-menu0^$GUI
 #
 #@@About#@@Version information of this script#@@f_about^$GUI
 #
@@ -70,7 +70,7 @@ f_du_hsc () {
 # |           Function f_sub-menu0         |
 # +----------------------------------------+
 #
-#  Inputs: None.
+#  Inputs: $1=GUI.
 #    Uses: None.
 # Outputs: None.
 #
@@ -84,7 +84,7 @@ f_sub-menu0 () {
       f_menu_arrays $ARRAY_FILE
       #
       # Create generated menu script from array data.
-      f_create_show_menu $GUI $GENERATED_FILE $MENU_TITLE $MAX_LENGTH $MAX_LINES $MAX_CHOICE_LENGTH
+      f_create_show_menu $1 $GENERATED_FILE $MENU_TITLE $MAX_LENGTH $MAX_LINES $MAX_CHOICE_LENGTH
       #
 }  # End of function f_submenu0.
 
