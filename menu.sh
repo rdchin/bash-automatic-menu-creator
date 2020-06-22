@@ -9,7 +9,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2020-06-22 14:43"
+VERSION="2020-06-22 16:54"
 THIS_FILE="menu.sh"
 TEMP_FILE="$THIS_FILE_temp.txt"
 GENERATED_FILE="$THIS_FILE_menu_generated.lib"
@@ -1759,7 +1759,7 @@ f_update_menu_gui () {
       echo "# or library file which contains data for the menu." >>$2
       echo "#***********************************CAUTION***********************************" >>$2
       echo "#" >>$2
-      echo "# *** Function f_menu_txt$EXT ***" >>$2
+      echo "# *** Function f_menu_gui$EXT ***" >>$2
       echo "#" >>$2
       echo "#  Inputs: \$1=GUI." >>$2
       echo "#          \$2=MENU_TITLE" >>$2
@@ -1817,7 +1817,6 @@ f_update_menu_gui () {
            ;;
       esac
       #
-      #TEMP_FILE=$THIS_DIR/$THIS_FILE"_temp.txt"
       TEMP_FILE=$6
       ARRAY_NAME="CHOICE"
       ARRAY_LEN=$(eval "echo \$\{#$ARRAY_NAME[@]\}")
@@ -2035,7 +2034,7 @@ fi
 # Test for BASH environment.
 f_test_environment
 #
-f_main_menu
+f_menu_main
 #
 clear # Blank the screen. Nicer ending especially if you chose custom colors for this script.
 #
