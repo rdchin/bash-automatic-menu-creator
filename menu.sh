@@ -9,7 +9,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2020-06-22 16:54"
+VERSION="2020-06-22 21:43"
 THIS_FILE="menu.sh"
 TEMP_FILE="$THIS_FILE_temp.txt"
 GENERATED_FILE="$THIS_FILE_menu_generated.lib"
@@ -18,18 +18,18 @@ GENERATED_FILE="$THIS_FILE_menu_generated.lib"
 # |            Brief Description           |
 # +----------------------------------------+
 #
-#@ Brief Description
-#@
-#@ This script will generate either a text menu, or "Dialog" or "Whiptail"
-#@ GUI menu from an array using data in clear text in scripts:
-#@ menu_module_main.lib, menu_module_sub1.lib
-#@ or any other menu_modules... you wish to add. 
-#@
-#@ Required scripts: menu.sh, menu_module_main.lib,
-#@                   menu_module_sub0.lib, menu_module_sub1.lib
-#@
-#@ Usage: bash menu.sh
-#@        (not sh menu.sh)
+#& Brief Description
+#&
+#& This script will generate either a CLI text menu, or "Dialog" or "Whiptail"
+#& UI menu from an array using data in clear text in scripts:
+#& menu_module_main.lib, menu_module_sub1.lib
+#& or any other menu_modules... you wish to add. 
+#&
+#& Required scripts: menu.sh, menu_module_main.lib,
+#&                   menu_module_sub0.lib, menu_module_sub1.lib
+#&
+#& Usage: bash menu.sh
+#&        (not sh menu.sh)
 #
 # +----------------------------------------+
 # |             Help and Usage             |
