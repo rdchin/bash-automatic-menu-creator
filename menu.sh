@@ -9,7 +9,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2020-08-07 00:26"
+VERSION="2020-08-07 14:09"
 THIS_FILE="menu.sh"
 TEMP_FILE="$THIS_FILE_temp.txt"
 GENERATED_FILE="$THIS_FILE_menu_generated.lib"
@@ -27,6 +27,7 @@ GENERATED_FILE="$THIS_FILE_menu_generated.lib"
 #&
 #& Required scripts: menu.sh, menu_module_main.lib,
 #&                   menu_module_sub0.lib, menu_module_sub1.lib
+#&                   common_bash_function.lib
 #&
 #& Usage: bash menu.sh
 #&        (not sh menu.sh)
@@ -35,23 +36,28 @@ GENERATED_FILE="$THIS_FILE_menu_generated.lib"
 # |             Help and Usage             |
 # +----------------------------------------+
 #
-#?    Usage: bash menu.sh [OPTION]
+#?    Usage: bash menu.sh [OPTION(S)]
 #? Examples:
 #?
-#?bash menu.sh text       # Use Cmd-line user-interface (80x24 min.)
-#?             dialog     # Use Dialog   user-interface.
-#?             whiptail   # Use Whiptail user-interface.
+#?bash menu.sh text      # Use Cmd-line user-interface (80x24 min.)
+#?             dialog    # Use Dialog   user-interface.
+#?             whiptail  # Use Whiptail user-interface.
 #?
-#?bash menu.sh --help     # Displays this help message.
+#?bash menu.sh --help    # Displays this help message.
 #?             -?
 #?
-#?bash menu.sh --about    # Displays script version.
+#?bash menu.sh --about   # Displays script version.
 #?             --version
 #?             --ver
 #?             -v
 #?
-#?bash menu.sh --history  # Displays script code history.
+#?bash menu.sh --history # Displays script code history.
 #?             --hist
+#?
+#? Examples using 2 arguments:
+#?
+#?bash menu.sh --hist text
+#?             --ver dialog
 #
 # +----------------------------------------+
 # |           Code Change History          |
@@ -60,6 +66,12 @@ GENERATED_FILE="$THIS_FILE_menu_generated.lib"
 ## Code Change History
 ##
 ## (After each edit made, please update Code History and VERSION.)
+##
+## 2020-08-07 *f_about, f_help_message, f_code_history deleted since
+##             these functions are maintained in common_bash_function.lib.
+##            *f_display_common updated to add option to display
+##             without an "OK" button in Dialog.
+##             However, Whiptail only displays with an "OK" button.
 ##
 ## 2020-08-07 *Updated to latest standards.
 ##
@@ -123,81 +135,14 @@ GENERATED_FILE="$THIS_FILE_menu_generated.lib"
 ## 2018-01-17 *Initial release.
 #
 # +------------------------------------+
-# |          Function f_about          |
-# +------------------------------------+
-#
-#     Rev: 2020-06-27
-#  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
-#          THIS_DIR, THIS_FILE, VERSION.
-#    Uses: DELIM.
-# Outputs: None.
-#
-#    NOTE: This function needs to be in the same library or file as
-#          the function f_display_common.
-#
-f_about () {
-      #
-      # Display text (all lines beginning ("^") with "#& " but do not print "#& ").
-      # sed substitutes null for "#& " at the beginning of each line
-      # so it is not printed.
-      DELIM="^#&"
-      f_display_common $1 $DELIM
-      #
-} # End of f_about.
-#
-# +------------------------------------+
-# |      Function f_code_history       |
-# +------------------------------------+
-#
-#     Rev: 2020-06-27
-#  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
-#          THIS_DIR, THIS_FILE, VERSION.
-#    Uses: DELIM.
-# Outputs: None.
-#
-#    NOTE: This function needs to be in the same library or file as
-#          the function f_display_common.
-#
-f_code_history () {
-      #
-      # Display text (all lines beginning ("^") with "##" but do not print "##").
-      # sed substitutes null for "##" at the beginning of each line
-      # so it is not printed.
-      DELIM="^##"
-      f_display_common $1 $DELIM
-      #
-} # End of function f_code_history.
-#
-# +------------------------------------+
-# |      Function f_help_message       |
-# +------------------------------------+
-#
-#     Rev: 2020-06-27
-#  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
-#          THIS_DIR, THIS_FILE, VERSION.
-#    Uses: DELIM.
-# Outputs: None.
-#
-#    NOTE: This function needs to be in the same library or file as
-#          the function f_display_common.
-#
-f_help_message () {
-      #
-      # Display text (all lines beginning ("^") with "#?" but do not print "#?").
-      # sed substitutes null for "#?" at the beginning of each line
-      # so it is not printed.
-      DELIM="^#?"
-      f_display_common $1 $DELIM
-      #
-} # End of f_help_message.
-#
-# +------------------------------------+
 # |     Function f_display_common      |
 # +------------------------------------+
 #
-#     Rev: 2020-06-27
+#     Rev: 2020-08-07
 #  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
 #          $2=Delimiter of text to be displayed.
+#          $3="NOK", "OK", or null [OPTIONAL] to control display of "OK" button.
+#          $4=Pause $4 seconds [OPTIONAL]. If "NOK" then pause to allow text to be read.
 #          THIS_DIR, THIS_FILE, VERSION.
 #    Uses: X.
 # Outputs: None.
@@ -237,7 +182,14 @@ f_display_common () {
       # so it is not printed.
       sed -n "s/$2//"p $THIS_DIR/$THIS_FILE >> $TEMP_FILE
       #
-      f_message $1 "OK" "(use arrow keys to scroll up/down/side-ways)" $TEMP_FILE
+      case $3 in
+           "NOK" | "nok")
+              f_message $1 "NOK" "Message" $TEMP_FILE $4
+           ;;
+           *)
+              f_message $1 "OK" "(use arrow keys to scroll up/down/side-ways)" $TEMP_FILE
+           ;;
+      esac
       #
 } # End of function f_display_common.
 #
@@ -420,6 +372,9 @@ if [ -z $GUI ] ; then
    # Test for GUI (Whiptail or Dialog) or pure text environment.
    f_detect_ui
 fi
+#
+# Show About this script message.
+f_about $GUI "NOK" 3
 #
 #GUI="whiptail"  # Diagnostic line.
 #GUI="dialog"    # Diagnostic line.
