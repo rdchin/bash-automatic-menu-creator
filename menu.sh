@@ -9,7 +9,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2020-06-23 01:19"
+VERSION="2020-08-07 00:26"
 THIS_FILE="menu.sh"
 TEMP_FILE="$THIS_FILE_temp.txt"
 GENERATED_FILE="$THIS_FILE_menu_generated.lib"
@@ -23,7 +23,7 @@ GENERATED_FILE="$THIS_FILE_menu_generated.lib"
 #& This script will generate either a CLI text menu, or "Dialog" or "Whiptail"
 #& UI menu from an array using data in clear text in scripts:
 #& menu_module_main.lib, menu_module_sub1.lib
-#& or any other menu_modules... you wish to add. 
+#& or any other menu_modules... you wish to add.
 #&
 #& Required scripts: menu.sh, menu_module_main.lib,
 #&                   menu_module_sub0.lib, menu_module_sub1.lib
@@ -38,7 +38,7 @@ GENERATED_FILE="$THIS_FILE_menu_generated.lib"
 #?    Usage: bash menu.sh [OPTION]
 #? Examples:
 #?
-#?bash menu.sh text       # Use Cmd-line user-interface (80x24 min.).
+#?bash menu.sh text       # Use Cmd-line user-interface (80x24 min.)
 #?             dialog     # Use Dialog   user-interface.
 #?             whiptail   # Use Whiptail user-interface.
 #?
@@ -60,6 +60,8 @@ GENERATED_FILE="$THIS_FILE_menu_generated.lib"
 ## Code Change History
 ##
 ## (After each edit made, please update Code History and VERSION.)
+##
+## 2020-08-07 *Updated to latest standards.
 ##
 ## 2020-06-23 *Deleted all code functions which are included in the
 ##             BASH function library, "common_bash_function.lib".
@@ -124,34 +126,22 @@ GENERATED_FILE="$THIS_FILE_menu_generated.lib"
 # |          Function f_about          |
 # +------------------------------------+
 #
-#     Rev: 2020-05-28
+#     Rev: 2020-06-27
 #  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
 #          THIS_DIR, THIS_FILE, VERSION.
-#    Uses: X.
+#    Uses: DELIM.
 # Outputs: None.
 #
+#    NOTE: This function needs to be in the same library or file as
+#          the function f_display_common.
+#
 f_about () {
-      #
-      # Specify $THIS_FILE name of any file containing the text to be displayed.
-      THIS_FILE="menu.sh"
-      TEMP_FILE=$THIS_DIR/$THIS_FILE"_temp.txt"
-      #
-      # Set $VERSION according as it is set in the beginning of $THIS_FILE.
-      X=$(grep --max-count=1 "VERSION" $THIS_FILE)
-      # X="VERSION=YYYY-MM-DD HH:MM"
-      # Use command "eval" to set $VERSION.
-      eval $X
-      #
-      echo "Script: $THIS_FILE. Version: $VERSION" >$TEMP_FILE
-      echo >>$TEMP_FILE
       #
       # Display text (all lines beginning ("^") with "#& " but do not print "#& ").
       # sed substitutes null for "#& " at the beginning of each line
       # so it is not printed.
       DELIM="^#&"
-      sed -n "s/$DELIM//"p $THIS_DIR/$THIS_FILE >> $TEMP_FILE
-      #
-      f_message $1 "OK" "About (use arrow keys to scroll up/down/side-ways)" $TEMP_FILE
+      f_display_common $1 $DELIM
       #
 } # End of f_about.
 #
@@ -159,34 +149,22 @@ f_about () {
 # |      Function f_code_history       |
 # +------------------------------------+
 #
-#     Rev: 2020-05-24
+#     Rev: 2020-06-27
 #  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
 #          THIS_DIR, THIS_FILE, VERSION.
-#    Uses: X.
+#    Uses: DELIM.
 # Outputs: None.
 #
+#    NOTE: This function needs to be in the same library or file as
+#          the function f_display_common.
+#
 f_code_history () {
-      #
-      # Specify $THIS_FILE name of any file containing the text to be displayed.
-      THIS_FILE="menu.sh"
-      TEMP_FILE=$THIS_DIR/$THIS_FILE"_temp.txt"
-      #
-      # Set $VERSION according as it is set in the beginning of $THIS_FILE.
-      X=$(grep --max-count=1 "VERSION" $THIS_FILE)
-      # X="VERSION=YYYY-MM-DD HH:MM"
-      # Use command "eval" to set $VERSION.
-      eval $X
-      #
-      echo "Script: $THIS_FILE. Version: $VERSION" >$TEMP_FILE
-      echo >>$TEMP_FILE
       #
       # Display text (all lines beginning ("^") with "##" but do not print "##").
       # sed substitutes null for "##" at the beginning of each line
       # so it is not printed.
       DELIM="^##"
-      sed -n "s/$DELIM//"p $THIS_DIR/$THIS_FILE >> $TEMP_FILE
-      #
-      f_message $1 "OK" "Code History (use arrow keys to scroll up/down/side-ways)" $TEMP_FILE
+      f_display_common $1 $DELIM
       #
 } # End of function f_code_history.
 #
@@ -194,16 +172,55 @@ f_code_history () {
 # |      Function f_help_message       |
 # +------------------------------------+
 #
-#     Rev: 2020-05-24
+#     Rev: 2020-06-27
 #  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
+#          THIS_DIR, THIS_FILE, VERSION.
+#    Uses: DELIM.
+# Outputs: None.
+#
+#    NOTE: This function needs to be in the same library or file as
+#          the function f_display_common.
+#
+f_help_message () {
+      #
+      # Display text (all lines beginning ("^") with "#?" but do not print "#?").
+      # sed substitutes null for "#?" at the beginning of each line
+      # so it is not printed.
+      DELIM="^#?"
+      f_display_common $1 $DELIM
+      #
+} # End of f_help_message.
+#
+# +------------------------------------+
+# |     Function f_display_common      |
+# +------------------------------------+
+#
+#     Rev: 2020-06-27
+#  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
+#          $2=Delimiter of text to be displayed.
 #          THIS_DIR, THIS_FILE, VERSION.
 #    Uses: X.
 # Outputs: None.
 #
-f_help_message () {
+# PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
+#              THIS FUNCTION INTO ANY SCRIPT WHICH DEPENDS ON THE
+#              LIBRARY FILE "common_bash_function.lib".#
+f_display_common () {
       #
-      # Specify $THIS_FILE name of any file containing the text to be displayed.
-      THIS_FILE="menu.sh"
+      # Specify $THIS_FILE name of the file containing the text to be displayed.
+      # $THIS_FILE may be re-defined inadvertently when a library file defines it
+      # so when the command, source [ LIBRARY_FILE.lib ] is used, $THIS_FILE is
+      # redefined to the name of the library file, LIBRARY_FILE.lib.
+      # For that reason, all library files now have the line
+      # THIS_FILE="[LIBRARY_FILE.lib]" deleted.
+      #
+      #================================================================================
+      # EDIT THE LINE BELOW TO DEFINE $THIS_FILE AS THE ACTUAL FILE NAME WHERE THE 
+      # ABOUT, CODE HISTORY, AND HELP MESSAGE TEXT IS LOCATED.
+      #================================================================================
+                                           #
+      THIS_FILE="menu.sh"  # <<<--- INSERT ACTUAL FILE NAME HERE.
+                                           #
       TEMP_FILE=$THIS_DIR/$THIS_FILE"_temp.txt"
       #
       # Set $VERSION according as it is set in the beginning of $THIS_FILE.
@@ -212,18 +229,17 @@ f_help_message () {
       # Use command "eval" to set $VERSION.
       eval $X
       #
-      echo "Script: $THIS_FILE. Version: $VERSION" >$TEMP_FILE
+      echo "Script: $THIS_FILE. Version: $VERSION" > $TEMP_FILE
       echo >>$TEMP_FILE
       #
-      # Display text (all lines beginning ("^") with "#?" but do not print "#?").
-      # sed substitutes null for "#?" at the beginning of each line
+      # Display text (all lines beginning ("^") with $2 but do not print $2).
+      # sed substitutes null for $2 at the beginning of each line
       # so it is not printed.
-      DELIM="^#?"
-      sed -n "s/$DELIM//"p $THIS_DIR/$THIS_FILE >> $TEMP_FILE
+      sed -n "s/$2//"p $THIS_DIR/$THIS_FILE >> $TEMP_FILE
       #
-      f_message $1 "OK" "Usage (use arrow keys to scroll up/down/side-ways)" $TEMP_FILE
+      f_message $1 "OK" "(use arrow keys to scroll up/down/side-ways)" $TEMP_FILE
       #
-} # End of f_help_message.
+} # End of function f_display_common.
 #
 # +----------------------------------------+
 # |          Function f_menu_main          |
@@ -317,28 +333,20 @@ f_download () { # Create and display the Main Menu.
 # ***     Start of Main Program      ***
 # **************************************
 #
+#     Rev: 2020-07-01
+#
 if [ -e $TEMP_FILE ] ; then
    rm $TEMP_FILE
 fi
 #
-clear  # Clear screen.
+clear  # Blank the screen.
 #
-echo "***********************************"
-echo "***  Running script $THIS_FILE  ***"
-echo "***   Rev. $VERSION     ***"
-echo "***********************************"
+echo "Running script $THIS_FILE"
+echo "***   Rev. $VERSION   ***"
 echo
 sleep 1  # pause for 1 second automatically.
 #
-clear  # Blank the screen.
-#
-#
-# If an error occurs, the f_abort() function will be called.
-# f_abort depends on f_message which must be in this script.
-# (especially if library file *.lib is missing).
-#
-# trap 'f_abort' 0
-# set -e
+clear # Blank the screen.
 #
 # Invoke common BASH function library.
 FILE_DEPENDENCY="common_bash_function.lib"
@@ -354,9 +362,9 @@ else
    echo
    echo "Do you want to download the file: $FILE_DEPENDENCY"
    echo -n "from GitHub.com? (Y/n): " ; read ANS
-   case $2 in
-        "" | [Yy] | [Yy][Ee][Ss])
-           f_download "https://raw.githubusercontent.com/rdchin/BASH_function_library/master/" "common_bash_function.lib"
+   case $ANS in
+        "" | [Yy] | [Yy][Ee] | [Yy][Ee][Ss] )
+           f_download_library "https://raw.githubusercontent.com/rdchin/BASH_function_library/master/" "common_bash_function.lib"
            ;;
         *)
            echo
@@ -370,33 +378,42 @@ else
    #
 fi
 #
-# Invoke files required for this script.
-for FILE_DEPENDENCY in common_bash_function.lib menu_module_main.lib menu_module_sub0.lib menu_module_sub0.lib
-    do
-       if [ ! -x "$FILE_DEPENDENCY" ] ; then
-          f_message "text" "OK" "File Error"  "Error with required file:\n\"$FILE_DEPENDENCY\"\n\n\Z1\ZbFile is missing or file is not executable.\n\n\ZnCannot continue, exiting program script." 3
-          echo
-          f_abort text
-       fi
-    done
+# Invoke libraries required for this script.
+# for FILE_DEPENDENCY in LIBRARY1.lib LIBRARY2.lib LIBRARY3.lib
+#     do
+#        if [ ! -x "$FILE_DEPENDENCY" ] ; then
+#           f_message "text" "OK" "File Error"  "Error with required file:\n\"$FILE_DEPENDENCY\"\n\n\Z1\ZbFile is missing or file is not executable.\n\n\ZnCannot continue, exiting program script." 3
+#           echo
+#           f_abort text
+#        else
+#           source "$FILE_DEPENDENCY"
+#        fi
+#    done
+# # Test for files required for this script.
+# for FILE_DEPENDENCY in FILE1 FILE2 FILE3
+#     do
+#        if [ ! -x "$FILE_DEPENDENCY" ] ; then
+#           f_message "text" "OK" "File Error"  "Error with required file:\n\"$FILE_DEPENDENCY\"\n\n\Z1\ZbFile is missing or file is not executable.\n\n\ZnCannot continue, exiting program script." 3
+#           echo
+#           f_abort text
+#        fi
+#     done
+#
+# If an error occurs, the f_abort() function will be called.
+# trap 'f_abort' 0
+# set -e
 #
 # Set THIS_DIR, SCRIPT_PATH to directory path of script.
 f_script_path
 #
-# Test for Optional Arguments.
-f_arguments $1  # Also sets variable GUI.
+# Set Temporary file using $THIS_DIR from f_script_path.
+TEMP_FILE=$THIS_DIR/$THIS_FILE"_temp.txt"
 #
-# Uncomment the following lines if a test is needed.
-# Test for X-Windows environment. Cannot run in CLI for LibreOffice.
-#if [ x$DISPLAY = x ] ; then
-#   echo -n $(tput setaf 1) # Set font to color red.
-#   echo -n $(tput bold)
-#   f_message text "OK" "Cannot run <GUI Application Name> without an X-Windows environment."
-#   echo -n $(tput sgr0) # Set font to normal color.
-#   echo
-#   echo
-#   f_abort
-#fi
+# Set default TARGET DIRECTORY.
+TARGET_DIR=$THIS_DIR
+#
+# Test for Optional Arguments.
+f_arguments $1 $2 # Also sets variable GUI.
 #
 # If command already specifies GUI, then do not detect GUI i.e. "bash dropfsd.sh dialog" or "bash dropfsd.sh text".
 if [ -z $GUI ] ; then
@@ -411,11 +428,13 @@ fi
 # Test for BASH environment.
 f_test_environment
 #
+#
 f_menu_main
 #
-#clear # Blank the screen. Nicer ending especially if you chose custom colors for this script.
+clear # Blank the screen. Nicer ending especially if you chose custom colors for this script.
 #
 exit 0  # This cleanly closes the process generated by #!bin/bash. 
         # Otherwise every time this script is run, another instance of
         # process /bin/bash is created using up resources.
-# all dun dun noodles.
+        #
+# All dun dun noodles.
