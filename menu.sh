@@ -9,7 +9,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2020-08-07 14:09"
+VERSION="2020-09-19 18:41"
 THIS_FILE="menu.sh"
 TEMP_FILE="$THIS_FILE_temp.txt"
 GENERATED_FILE="$THIS_FILE_menu_generated.lib"
@@ -66,6 +66,15 @@ GENERATED_FILE="$THIS_FILE_menu_generated.lib"
 ## Code Change History
 ##
 ## (After each edit made, please update Code History and VERSION.)
+##
+## 2020-09-19 *f_menu_main, f_check_version updated to latest standards.
+##            *f_sub_menu_1 added comments.
+##
+## 2020-09-17 *f_check_version added to compare and update version of this
+##             script if necessary.
+##             *Main Menu added new entry "Version Update". Title change.
+##
+## 2020-09-09 *Updated to latest standards.
 ##
 ## 2020-08-07 *f_about, f_help_message, f_code_history deleted since
 ##             these functions are maintained in common_bash_function.lib.
@@ -197,14 +206,17 @@ f_display_common () {
 # |          Function f_menu_main          |
 # +----------------------------------------+
 #
-#     Rev: 2020-06-04
+#     Rev: 2020-09-18
 #  Inputs: None.
 #    Uses: ARRAY_FILE, GENERATED_FILE, MENU_TITLE.
 # Outputs: None.
 #
+# PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
+#              THIS FUNCTION INTO THE MAIN SCRIPT WHICH WILL CALL IT.
+#
 f_menu_main () { # Create and display the Main Menu.
       #
-      #THIS_FILE="menu.sh"
+      #THIS_FILE="example.sh"
       GENERATED_FILE=$THIS_DIR/$THIS_FILE"_menu_main_generated.lib"
       #
       # Does this file have menu items in the comment lines starting with "#@@"?
@@ -219,11 +231,17 @@ f_menu_main () { # Create and display the Main Menu.
          # going into an infinite loop.
          grep ^\#@@ $THIS_DIR/$THIS_FILE >$GENERATED_FILE
          #
-         # Specify file name with data.
+         # Specify file name with menu item data.
          ARRAY_FILE="$GENERATED_FILE"
       else
-         # Specify file name with data.
-         ARRAY_FILE="menu_module_main.lib"
+         #
+         #================================================================================
+         # EDIT THE LINE BELOW TO DEFINE $ARRAY_FILE AS THE ACTUAL FILE NAME (LIBRARY)
+         # WHERE THE MENU ITEM DATA IS LOCATED. THE LINES OF DATA ARE PREFIXED BY "#@@".
+         #================================================================================
+         #
+         # Specify library file name with menu item data.
+         ARRAY_FILE="menu_mod_main.lib"
       fi
       #
       # Create arrays from data.
@@ -234,13 +252,22 @@ f_menu_main () { # Create and display the Main Menu.
       let MAX_LENGTH=$MAX_CHOICE_LENGTH+$MAX_SUMMARY_LENGTH
       #
       # Create generated menu script from array data.
-      MENU_TITLE="Main_Menu"  # Menu title must substitute underscores for spaces
+      #
+      # Note: ***If Menu title contains spaces,
+      #       ***the size of the menu window will be too narrow.
+      #
+      # Menu title MUST use underscores instead of spaces.
+      MENU_TITLE="Sample_Main_Menu"  # Menu title must substitute underscores for spaces
       TEMP_FILE=$THIS_DIR/$THIS_FILE"_menu_main_temp.txt"
       #
       f_create_show_menu $GUI $GENERATED_FILE $MENU_TITLE $MAX_LENGTH $MAX_LINES $MAX_CHOICE_LENGTH $TEMP_FILE
       #
       if [ -r $GENERATED_FILE ] ; then
          rm $GENERATED_FILE
+      fi
+      #
+      if [ -r $TEMP_FILE ] ; then
+         rm $TEMP_FILE
       fi
       #
 } # End of function f_menu_main.
@@ -373,8 +400,8 @@ if [ -z $GUI ] ; then
    f_detect_ui
 fi
 #
-# Show About this script message.
-f_about $GUI "NOK" 3
+# Show Brief Description message.
+f_about $GUI "NOK" 1
 #
 #GUI="whiptail"  # Diagnostic line.
 #GUI="dialog"    # Diagnostic line.

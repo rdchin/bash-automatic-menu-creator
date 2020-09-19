@@ -5,7 +5,7 @@
 # Usage: bash menu.sh
 #        (not sh menu.sh)
 #
-VERSION="2020-08-07 14:09"
+VERSION="2020-09-19 18:41"
 THIS_FILE="menu_module_sub0.lib"
 #
 # +--------------------------------------------------------------------------+
@@ -130,6 +130,16 @@ f_gnight_moon () {
 f_sub_menu1 () {
       #
       GENERATED_FILE="menu_generated.lib"
+      #
+      # Create generated menu script from array data.
+      #
+      #
+      # Create generated menu script from array data.
+      #
+      # Note: ***If Menu title contains spaces,
+      #       ***the size of the menu window will be too narrow.
+      #
+      # Menu title MUST use underscores instead of spaces.
       MENU_TITLE="Sub-menu_One"  # Menu title must substitute underscores for spaces
       TEMP_FILE=$THIS_DIR/$THIS_FILE"_sub_menu1_temp.txt"
       #

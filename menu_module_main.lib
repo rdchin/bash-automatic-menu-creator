@@ -25,13 +25,15 @@
 #
 #@@Code History#@@Display code change history of this script.#@@f_code_history^$GUI
 #
+#@@Version Update#@@Check for updates to this script and download.#@@f_check_version^$GUI
+#
 #@@Help#@@Display help message.#@@f_help_message^$GUI
 #
 # +----------------------------------------+
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2020-08-07 14:09"
+VERSION="2020-09-19 18:41"
 #
 # +----------------------------------------+
 # |          Function f_dir_listing        |
@@ -67,6 +69,74 @@ f_df () {
 }  # End of function f_df.
 #
 # +----------------------------------------+
+# |        Function f_check_version        |
+# +----------------------------------------+
+#
+#     Rev: 2020-09-19
+#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#    Uses: SERVER_DIR, MP_DIR, TARGET_DIR, TARGET_FILE, VERSION, TEMP_FILE, ERROR.
+# Outputs: $1=GUI.
+#          $2=Samba File server Directory
+#          $3=Local Mount Point (Directory)
+#          $4=File server Target Directory.
+#          $5=File server File Name to compare.
+#          $6=Version of file to compare. String$
+#          $7=Temporary file name with list of files to be upgraded.
+#          ERROR
+#
+# PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
+#              THIS FUNCTION INTO ANY SCRIPT WHICH DEPENDS ON THE
+#              LIBRARY FILE "common_bash_function.lib".
+#
+f_check_version () {
+      #
+      #=================================================================
+      # EDIT THE LINES BELOW TO DEFINE THE LAN FILE SERVER DIRECTORY AND
+      # SHARED MOUNTPOINT DIRECTORY, LOCAL TARGET DIRECTORY AND FILE. 
+      #=================================================================
+      #
+      # LAN File Server shared directory.
+      SERVER_DIR="[ FILE SERVER DIRECTORY NAME GOES HERE ]"
+      #
+      # Local PC mount-point directory.
+      MP_DIR="[ LOCAL MOUNT-POINT DIRECTORY NAME GOES HERE ]"
+      #
+      # Local PC target directory, sub-directory below mount-point directory.
+      TARGET_DIR="[ LOCAL MOUNT-POINT DIRECTORY/REPOSITORY SUB-DIRECTORY PATH GOES HERE ]"
+      #
+      # Local PC file name to compare.
+      FILE_TO_COMPARE="[ LOCAL FILE NAME ]"
+      #
+      # Each file script contains the string "VERSION=[ YYYY-MM-DD HH:MM ]"
+      # i.e. VERSION="2020-12-31 23:59"
+      #
+      # Version of TARGET_FILE.
+      VERSION=$(grep --max-count=1 "VERSION" $FILE_TO_COMPARE)
+      #
+      FILE_LIST=$THIS_DIR/$THIS_FILE"_file_temp.txt"
+      ERROR=0
+      #
+      #=================================================================
+      # EDIT THE LINES BELOW TO SPECIFY THE FILE NAMES TO UPDATE.
+      # FILE NAMES INCLUDE ALL DEPENDENT SCRIPTS LIBRARIES.
+      #=================================================================
+      #
+      # Create list of files to update and write to temporary file, FILE_LIST.
+      #
+      echo "menu.sh"  > $FILE_LIST               # <<<--- INSERT ACTUAL FILE NAME HERE.
+      echo "menu_module_main.lib" >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      echo "menu_module_sub0.lib" >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      echo "menu_module_sub1.lib" >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      #
+      f_version_compare $1 $SERVER_DIR $MP_DIR $TARGET_DIR $FILE_TO_COMPARE "$VERSION" $FILE_LIST
+      #
+      if [ -r  $FILE_LIST ] ; then
+         rm  $FILE_LIST
+      fi
+      #
+}  # End of function f_check_version.
+#
+# +----------------------------------------+
 # |           Function f_sub-menu0         |
 # +----------------------------------------+
 #
@@ -77,6 +147,16 @@ f_df () {
 f_sub-menu0 () {
       #
       GENERATED_FILE="menu_generated.lib"
+      #
+      # Create generated menu script from array data.
+      #
+      #
+      # Create generated menu script from array data.
+      #
+      # Note: ***If Menu title contains spaces,
+      #       ***the size of the menu window will be too narrow.
+      #
+      # Menu title MUST use underscores instead of spaces.
       MENU_TITLE="Sub-menu_Zero"  # Menu title must substitute underscores for spaces
       TEMP_FILE=$THIS_DIR/$THIS_FILE"_sub_menu0_temp.txt"
       #
