@@ -33,7 +33,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2021-02-21 20:55"
+VERSION="2021-02-21 21:53"
 #
 # +----------------------------------------+
 # |          Function f_dir_listing        |
@@ -96,14 +96,15 @@ f_check_version () {
       # SHARED MOUNTPOINT DIRECTORY, LOCAL TARGET DIRECTORY AND FILE. 
       #=================================================================
       #
+      # Local File Server Directory.
       # LAN File Server shared directory.
-      SERVER_DIR="//scotty/files"
+      SERVER_DIR="[ FILE SERVER DIRECTORY NAME GOES HERE ]"
       #
-      # Local PC mount-point directory.
-      MP_DIR="/mnt/scotty/files"
+      # Local Client PC Mount-Point Directory.
+      MP_DIR="[ LOCAL MOUNT-POINT DIRECTORY NAME GOES HERE ]"
       #
       # Local PC target directory, sub-directory below mount-point directory.
-      TARGET_DIR="/mnt/scotty/files/LIBRARY/PC-stuff/PC-software/BASH_Scripting_Projects/Repository"
+      TARGET_DIR="[ LOCAL MOUNT-POINT DIRECTORY/REPOSITORY SUB-DIRECTORY PATH GOES HERE ]"
       #
       # Local PC file name to compare.
       FILE_TO_COMPARE="menu.sh"

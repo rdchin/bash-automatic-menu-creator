@@ -9,7 +9,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2021-02-21 20:55"
+VERSION="2021-02-21 21:53"
 THIS_FILE="menu.sh"
 TEMP_FILE="$THIS_FILE_temp.txt"
 GENERATED_FILE="$THIS_FILE_menu_generated.lib"
@@ -23,10 +23,9 @@ GENERATED_FILE="$THIS_FILE_menu_generated.lib"
 #
 # Ping Local File Server Repository
 PING_LAN_TARGET="[FILE SERVER NAME]"
-PING_LAN_TARGET="scotty"
 #
 # Ping Web File Server Repository
-PING_WAN_TARGET="[WEB FILE REPOSITORY]"
+# PING_WAN_TARGET="[WEB FILE REPOSITORY]"
 PING_WAN_TARGET="raw.githubusercontent.com"
 #
 # Set variables to mount the Local Repository to a mount-point.
@@ -34,15 +33,12 @@ PING_WAN_TARGET="raw.githubusercontent.com"
 # Local File Server Directory.
 # LAN File Server shared directory.
 SERVER_DIR="[ FILE SERVER DIRECTORY NAME GOES HERE ]"
-SERVER_DIR="//scotty/files"
 #
 # Local Client PC Mount-Point Directory.
 MP_DIR="[ LOCAL MOUNT-POINT DIRECTORY NAME GOES HERE ]"
-MP_DIR="/mnt/scotty/files"
 #
 # Local PC target directory, sub-directory below mount-point directory.
 TARGET_DIR="[ LOCAL MOUNT-POINT DIRECTORY/REPOSITORY SUB-DIRECTORY PATH GOES HERE ]"
-TARGET_DIR="/mnt/scotty/files/LIBRARY/PC-stuff/PC-software/BASH_Scripting_Projects/Repository"
 #
 # Local PC file name to compare.
 # FILE_TO_COMPARE="[ LOCAL FILE NAME ]"
@@ -58,11 +54,11 @@ VERSION_TO_COMPARE=$(echo $VERSION | tr ' ' '_')
 FILE_LIST=$THIS_FILE"_file_temp.txt"
 #
 # Format: [File Name]^[Local/Web]^[Local repository directory]^[web repository directory]
-echo "$THIS_FILE^Local^/mnt/scotty/files/LIBRARY/PC-stuff/PC-software/BASH_Scripting_Projects/Repository^https://raw.githubusercontent.com/rdchin/bash-automatic-menu-creator/master/"          > $FILE_LIST
-echo "menu_module_main.lib^Web^/mnt/scotty/files/LIBRARY/PC-stuff/PC-software/BASH_Scripting_Projects/Repository^https://raw.githubusercontent.com/rdchin/bash-automatic-menu-creator/master/" >> $FILE_LIST
-echo "menu_module_sub0.lib^Web^/mnt/scotty/files/LIBRARY/PC-stuff/PC-software/BASH_Scripting_Projects/Repository^https://raw.githubusercontent.com/rdchin/bash-automatic-menu-creator/master/" >> $FILE_LIST
-echo "menu_module_sub1.lib^Web^/mnt/scotty/files/LIBRARY/PC-stuff/PC-software/BASH_Scripting_Projects/Repository^https://raw.githubusercontent.com/rdchin/bash-automatic-menu-creator/master/" >> $FILE_LIST
-echo "common_bash_function.lib^Web^/mnt/scotty/files/LIBRARY/PC-stuff/PC-software/BASH_Scripting_Projects/Repository^https://raw.githubusercontent.com/rdchin/BASH_function_library/master/"   >> $FILE_LIST
+echo "$THIS_FILE^Local^$TARGET^https://raw.githubusercontent.com/rdchin/bash-automatic-menu-creator/master/"          > $FILE_LIST
+echo "menu_module_main.lib^Web^$TARGET^https://raw.githubusercontent.com/rdchin/bash-automatic-menu-creator/master/" >> $FILE_LIST
+echo "menu_module_sub0.lib^Web^$TARGET^https://raw.githubusercontent.com/rdchin/bash-automatic-menu-creator/master/" >> $FILE_LIST
+echo "menu_module_sub1.lib^Web^$TARGET^https://raw.githubusercontent.com/rdchin/bash-automatic-menu-creator/master/" >> $FILE_LIST
+echo "common_bash_function.lib^Web^$TARGET^https://raw.githubusercontent.com/rdchin/BASH_function_library/master/"   >> $FILE_LIST
 #
 ERROR=0
 #
@@ -884,7 +880,7 @@ fi
 echo "Running script $THIS_FILE"
 echo "***   Rev. $VERSION   ***"
 echo
-sleep 5  # pause for 1 second automatically.
+sleep 1  # pause for 1 second automatically.
 #
 clear # Blank the screen.
 #
