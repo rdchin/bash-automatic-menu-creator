@@ -13,7 +13,7 @@
 #
 # Format: <#@@> <Menu Option> <#@@> <Description of Menu Option> <#@@> <Corresponding function or action or cammand>
 #
-#@@Quit#@@Quit to command-line prompt.#@@break
+#@@Exit#@@Exit this menu.#@@break
 #
 #@@Directory Listing#@@list files in a directory.#@@f_dir_listing^$GUI
 #
@@ -33,7 +33,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2020-09-19 18:41"
+VERSION="2021-02-21 20:55"
 #
 # +----------------------------------------+
 # |          Function f_dir_listing        |
@@ -72,7 +72,7 @@ f_df () {
 # |        Function f_check_version        |
 # +----------------------------------------+
 #
-#     Rev: 2020-09-19
+#     Rev: 2021-02-08
 #  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
 #    Uses: SERVER_DIR, MP_DIR, TARGET_DIR, TARGET_FILE, VERSION, TEMP_FILE, ERROR.
 # Outputs: $1=GUI.
@@ -84,11 +84,12 @@ f_df () {
 #          $7=Temporary file name with list of files to be upgraded.
 #          ERROR
 #
-# PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
-#              THIS FUNCTION INTO ANY SCRIPT WHICH DEPENDS ON THE
-#              LIBRARY FILE "common_bash_function.lib".
+# Synopsis: Check version $6 of $5 local file with version of repository file.
+#           If the repository file has latest version, then copy all 
+#           dependent files and libraries from the repository to local PC. 
 #
 f_check_version () {
+      #
       #
       #=================================================================
       # EDIT THE LINES BELOW TO DEFINE THE LAN FILE SERVER DIRECTORY AND
@@ -96,16 +97,16 @@ f_check_version () {
       #=================================================================
       #
       # LAN File Server shared directory.
-      SERVER_DIR="[ FILE SERVER DIRECTORY NAME GOES HERE ]"
+      SERVER_DIR="//scotty/files"
       #
       # Local PC mount-point directory.
-      MP_DIR="[ LOCAL MOUNT-POINT DIRECTORY NAME GOES HERE ]"
+      MP_DIR="/mnt/scotty/files"
       #
       # Local PC target directory, sub-directory below mount-point directory.
-      TARGET_DIR="[ LOCAL MOUNT-POINT DIRECTORY/REPOSITORY SUB-DIRECTORY PATH GOES HERE ]"
+      TARGET_DIR="/mnt/scotty/files/LIBRARY/PC-stuff/PC-software/BASH_Scripting_Projects/Repository"
       #
       # Local PC file name to compare.
-      FILE_TO_COMPARE="[ LOCAL FILE NAME ]"
+      FILE_TO_COMPARE="menu.sh"
       #
       # Each file script contains the string "VERSION=[ YYYY-MM-DD HH:MM ]"
       # i.e. VERSION="2020-12-31 23:59"
@@ -116,17 +117,20 @@ f_check_version () {
       FILE_LIST=$THIS_DIR/$THIS_FILE"_file_temp.txt"
       ERROR=0
       #
+      #
       #=================================================================
-      # EDIT THE LINES BELOW TO SPECIFY THE FILE NAMES TO UPDATE.
-      # FILE NAMES INCLUDE ALL DEPENDENT SCRIPTS LIBRARIES.
+      # UNCOMMENT AND EDIT THE LINES BELOW TO SPECIFY THE FILE NAMES.
+      # FILE NAMES TO UPDATE INCLUDE ALL DEPENDENT LIBRARIES.
       #=================================================================
+      #
       #
       # Create list of files to update and write to temporary file, FILE_LIST.
       #
-      echo "menu.sh"  > $FILE_LIST               # <<<--- INSERT ACTUAL FILE NAME HERE.
-      echo "menu_module_main.lib" >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
-      echo "menu_module_sub0.lib" >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
-      echo "menu_module_sub1.lib" >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      echo "menu.sh"                   > $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      echo "menu_module_main.lib"     >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      echo "menu_module_sub0.lib"     >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      echo "menu_module_sub1.lib"     >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      echo "common_bash_function.lib" >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
       #
       f_version_compare $1 $SERVER_DIR $MP_DIR $TARGET_DIR $FILE_TO_COMPARE "$VERSION" $FILE_LIST
       #
@@ -134,7 +138,7 @@ f_check_version () {
          rm  $FILE_LIST
       fi
       #
-}  # End of function f_check_version.
+}  # End of function f_check_version_TEMPLATE.
 #
 # +----------------------------------------+
 # |           Function f_sub-menu0         |

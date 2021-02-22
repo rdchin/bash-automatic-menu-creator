@@ -1,8 +1,23 @@
 #!/bin/bash
 #
-# ©2020 Copyright 2020 Robert D. Chin
+# ©2021 Copyright 2021 Robert D. Chin
+# Email: RDevChin@Gmail.com
 #
 # Usage: source common_bash_function.lib
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 # +--------------------------------------------------------------------------+
 # |                                                                          |
@@ -10,9 +25,10 @@
 # |                                                                          |
 # +--------------------------------------------------------------------------+
 #
-# Format: <#@@> <Menu Option> <#@@> <Description of Menu Option> <#@@> <Corresponding function or action or cammand>
+#  Format: <#@@> <Menu Option> <#@@> <Description of Menu Option> <#@@> <Corresponding function or action or cammand>
+# WARNING: Text strings cannot include apostrophes (').
 #
-#@@Exit#@@Exit to command-line prompt.#@@break
+#@@Exit#@@Exit this menu.#@@break
 #
 #@@About#@@Version information of this script.#@@f_about^$GUI
 #
@@ -24,7 +40,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2020-06-23 01:06"
+VERSION="2021-02-16 13:30"
 #
 # +----------------------------------------+
 # |            Brief Description           |
@@ -32,35 +48,24 @@ VERSION="2020-06-23 01:06"
 #
 #& Brief Description
 #&
-#& Description goes here.
-#& 
-#& Required scripts: first.sh, second.sh, third.sh,
-#&                   example_module_main.lib
+#& Library of BASH functions, common_bash_function.lib is a child dependency
+#& used by assorted scripts.
 #&
-#& Usage: bash example.sh
-#&        (not sh example.sh)
-#
-# +----------------------------------------+
-# |             Help and Usage             |
-# +----------------------------------------+
-#
-#?    Usage: bash example.sh [OPTION]
-#? Examples:
-#?
-#? bash example.sh text       # Use Cmd-line user-interface (80x24 min.).
-#?                 dialog     # Use Dialog   user-interface.
-#?                 whiptail   # Use Whiptail user-interface.
-#?
-#? bash example.sh --help     # Displays this help message.
-#?                 -?
-#?
-#? bash example.sh --about    # Displays script version.
-#?                 --version
-#?                 --ver
-#?                 -v
-#?
-#? bash example.sh --history  # Displays script code history.
-#?                 --hist
+#& Usage: source common_bash_function.lib
+#&
+#&    This program is free software: you can redistribute it and/or modify
+#&    it under the terms of the GNU General Public License as published by
+#&    the Free Software Foundation, either version 3 of the License, or
+#&    (at your option) any later version.
+#&
+#&
+#&    This program is distributed in the hope that it will be useful,
+#&    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#&    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#&    GNU General Public License for more details.
+#&
+#&    You should have received a copy of the GNU General Public License
+#&    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 # +----------------------------------------+
 # |           Code Change History          |
@@ -70,8 +75,105 @@ VERSION="2020-06-23 01:06"
 ##
 ## (After each edit made, please update Code History and VERSION.)
 ##
+## 2021-02-16 *f_menu_main_TEMPLATE, f_menu_sub_TEMPLATE added Summary.
+##
+## 2021-02-14 *f_message fixed bug where temporary file was not deleted.
+##            *f_msg_ui_str_box_size added warning comment to aid debugging.
+##
+## 2021-02-13 *Updated to latest standards.
+##            *f_update_menu_txt changed menu item text.
+##
+## 2021-02-09 *Updated to latest standards.
+##
+## 2021-02-08 *Updated to latest standards. f_check_version_TEMPLATE,
+##             f_display_common_TEMPLATE, f_menu_main_TEMPLATE,
+##             f_menu_sub_TEMPLATE.
+##
+## 2021-01-29 *f_source_TEMPLATE added.
+##
+## 2021-01-27 *f_message, f_msg_ui_str_ok, f_msg_ui_file_ok added feature
+##             to substitute labels for the "OK" and "Exit" buttons.
+##
+## 2021-01-17 *f_version_compare improve messages to user.
+##
+## 2021-01-14 *"Brief Description" added General Public License 3 notice.
+##            *Added General Public License 3 notice at head of script.
+##
+## 2020-12-18 *"Help and Usage" message improved.
+##            *f_arguments updated comments.
+##
+## 2020-12-11 *f_version_compare allowed logging of file copy errors.
+##            *f_download_from_local_repository allowed logging of file copy errors.
+##
+## 2020-11-25 *f_version_compare improved display messages.
+##
+## 2020-10-27 *Updated to latest standards.
+##
+## 2020-10-25 *f_username improved messages.
+##
+## 2020-10-23 *f_check_version_TEMPLATE improved comments.
+##
+## 2020-10-22 *f_arguments, "Help and Usage" added option --update -u.
+##
+## 2020-09-30 *Sample Main Program code was deleted and included in the
+##             script example.sh.
+##
+## 2020-09-22 *f_version_compare added a message on successful update.
+##
+## 2020-09-19 *f_menu_main_TEMPLATE added comments.
+##            *f_menu_sub_TEMPLATED added.
+##            *f_check_version_TEMPLATE added comments.
+##
+## 2020-09-14 *f_version_compare added an error message if repository directory is missing.
+##
+## 2020-09-13 *f_check_version_TEMPLATE, f_version_compare added to compare file versions
+##             of file in LAN Repository and local file.
+##            *f_version deleted, incorporated into f_version_compare.
+##            *f_mount added.
+##
+## 2020-09-11 *f_username fixed bug where dialog/whiptail did not work.
+##
+## 2020-09-09 *Main (example) display Brief Discription for only 1 second.
+##
+## 2020-09-07 *f_version added to get version of script from a local repository.
+##            *f_download_local_TEMPLATE, f_check_file_TEMPLATE added.
+##
+## 2020-08-10 *f_yn_defaults bug fixed for text UI when displaying question.
+##
+## 2020-08-07 *f_msg_ui_file_nok bug fix for Dialog to exclude "OK" button.
+##            *f_display_common, f_about, f_code_history, f_help_message
+##             updated to add option to display without an "OK" button in Dialog.
+##             However, Whiptail only displays with an "OK" button.
+##
+## 2020-08-06 *f_display_common_TEMPLATE, f_download_library_TEMPLATE,
+##            *f_menu_main_TEMPLATE, f_test_connect_TEMPLATE changed comments
+##             to standize format of template functions.
+##
+## 2020-07-31 *Main bug fix pattern matching code to download Common BASH Library. 
+##
+## 2020-07-16 *f_update_menu_txt bug fixed due to ommitting comment mark.
+##            *f_test connection added a pause to vary the seconds the message is displayed.
+##            *f_yn_question, f_yn_defaults, f_message, f_msg_ui_file_box_size f_msg_ui_str_box_size,
+##             simplified code inputs needed.
+##            *f_create_show_menu changed from "." to "source".
+##            *f_update_menu_txt fixed bug where lack of comment marker "#" caused bug.
+##
+## 2020-07-01 *f_about, f_display_common_TEMPLATE fixed comments.
+##
+## 2020-06-27 *f_display_common, f_about, f_code_history, f_help_message
+##             rewritten to simplify code.
+##
+## 2020-06-25 *f_arguments corrected comments to show option for 2 arguments.
+##            *f_update_menu_gui/txt corrected comments and specified directory of library.
+##
 ## 2020-06-23 *Do not declare variables THIS_FILE and TEMP_FILE so when this
 ##             library is invoked, these variables are not overwritten.
+##            *f_test_connect_template added, f_test_connect deleted.
+##            *f_about_template added, f_about deleted.
+##            *f_code_history_template, f_code_history deleted.
+##            *f_help_message_template added, f_help_message deleted.
+##            *f_download_library_template added, f_download deleted.
+##            *f_menu_main_template added, f_menu deleted.
 ##
 ## 2020-06-22 *f_arguments enhanced to allow 1st argument as a directory
 ##             and 2nd argument as UI.
@@ -169,16 +271,197 @@ f_script_path () {
 } # End of function f_script_path.
 #
 # +----------------------------------------+
+# |        Function f_check_version_TEMPLATE        |
+# +----------------------------------------+
+#
+#     Rev: 2021-02-08
+#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#    Uses: SERVER_DIR, MP_DIR, TARGET_DIR, TARGET_FILE, VERSION, TEMP_FILE, ERROR.
+# Outputs: $1=GUI.
+#          $2=Samba File server Directory
+#          $3=Local Mount Point (Directory)
+#          $4=File server Target Directory.
+#          $5=File server File Name to compare.
+#          $6=Version of file to compare. String$
+#          $7=Temporary file name with list of files to be upgraded.
+#          ERROR
+#
+# PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
+#              THIS FUNCTION INTO ANY SCRIPT WHICH DEPENDS ON THE
+#              LIBRARY FILE "common_bash_function.lib".
+#
+# Synopsis: Check version $6 of $5 local file with version of repository file.
+#           If the repository file has latest version, then copy all 
+#           dependent files and libraries from the repository to local PC. 
+#
+f_check_version_TEMPLATE () {
+      #
+      #
+      #=================================================================
+      # EDIT THE LINES BELOW TO DEFINE THE LAN FILE SERVER DIRECTORY AND
+      # SHARED MOUNTPOINT DIRECTORY, LOCAL TARGET DIRECTORY AND FILE. 
+      #=================================================================
+      #
+      #
+      # LAN File Server shared directory.
+      SERVER_DIR="[ FILE SERVER DIRECTORY NAME GOES HERE ]"
+      #
+      # Local PC mount-point directory.
+      MP_DIR="[ LOCAL MOUNT-POINT DIRECTORY NAME GOES HERE ]"
+      #
+      # Local PC target directory, sub-directory below mount-point directory.
+      TARGET_DIR="[ LOCAL MOUNT-POINT DIRECTORY/REPOSITORY SUB-DIRECTORY PATH GOES HERE ]"
+      #
+      # Local PC file name to compare.
+      FILE_TO_COMPARE="[ LOCAL FILE NAME ]"
+      #
+      # Each file script contains the string "VERSION=[ YYYY-MM-DD HH:MM ]"
+      # i.e. VERSION="2020-12-31 23:59"
+      #
+      # Version of TARGET_FILE.
+      VERSION=$(grep --max-count=1 "VERSION" $FILE_TO_COMPARE)
+      #
+      FILE_LIST=$THIS_DIR/$THIS_FILE"_file_temp.txt"
+      ERROR=0
+      #
+      #
+      #=================================================================
+      # UNCOMMENT AND EDIT THE LINES BELOW TO SPECIFY THE FILE NAMES.
+      # FILE NAMES TO UPDATE INCLUDE ALL DEPENDENT LIBRARIES.
+      #=================================================================
+      #
+      #
+      # Create list of files to update and write to temporary file, FILE_LIST.
+      #
+      #echo "[ FILE NAME1 GOES HERE ]"  > $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      #echo "[ FILE NAME2 GOES HERE ]" >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      #echo "[ FILE NAME3 GOES HERE ]" >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      #echo "[ FILE NAME4 GOES HERE ]" >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      #
+      f_version_compare $1 $SERVER_DIR $MP_DIR $TARGET_DIR $FILE_TO_COMPARE "$VERSION" $FILE_LIST
+      #
+      if [ -r  $FILE_LIST ] ; then
+         rm  $FILE_LIST
+      fi
+      #
+}  # End of function f_check_version_TEMPLATE.
+#
+# +----------------------------------------+
+# |       Function f_version_compare       |
+# +----------------------------------------+
+#
+#     Rev: 2021-01-17
+#  Inputs: $1=UI.
+#          $2=Samba File server Directory
+#          $3=Local Mount Point (Directory)
+#          $4=File server Target Directory.
+#          $5=File server Target File name.
+#          $6=Version of Local file. String.
+#          $7=Temporary file name with list of files to be upgraded.
+#    Uses: LINE, VER.
+# Outputs: ERROR, ANS.
+#
+f_version_compare () {
+      #
+      # Change string $VER from: VERSION="2020-12-31 23:59"
+      #                      to: 2020-12-31 23:59           (without quotes within string).
+      VER=$(echo $6 | sed 's/VERSION=//' | sed 's/\"//g' | sed 's/ /_/g')
+      #
+      if [ ! -e $3 ] ; then
+         f_message $1 "NOK" "Error missing directory" "Missing local mountpoint directory\n$3." 2
+      else
+         f_mount $1 $2 $3
+         #
+         if [ $ERROR -eq 0 ] ; then
+            # Directory is mounted.
+            # Get the version number of the target software script.
+            if [ -e $4/$5 ] ; then
+               #
+               # Each file script contains the string "VERSION=[ YYYY-MM-DD HH:MM ]"
+               # i.e. VERSION="2020-12-31 23:59"
+               VERSION_RELEASE=$(grep --max-count=1 "VERSION" $4/$5)
+               # Version of TARGET_FILE.
+               # Format: YYYY-MM-DD_HH:MM string.
+               # Change string $VERSION_RELEASE from: VERSION="2020-12-31 23:59"
+               #                                  to: 2020-12-31 23:59           (without quotes within string).
+               VERSION_RELEASE=$(echo $VERSION_RELEASE | sed 's/VERSION=//' | sed 's/\"//g' | sed 's/ /_/g')
+            else
+               f_message $1 "OK" "Error Missing Local Repository Directory" "Failed to access Local Repository Directory. Cannot compare script versions."
+            fi
+            #
+            #f_message $1 "OK" "Version Information" "From Local Repository\n$4\nFile $5 $VERSION_RELEASE\n\nFrom this PC\nFile $5 $VER"
+            VER_MSG=$7"_MSG.txt"
+            echo "From Local Repository" > $VER_MSG
+            echo "$4" >> $VER_MSG
+            echo "File $5 $VERSION_RELEASE" >> $VER_MSG
+            echo >> $VER_MSG
+            echo "From this PC" >> $VER_MSG
+            echo "File $5 $VER" >> $VER_MSG
+            echo >> $VER_MSG
+            echo "                        >>> CAUTION <<<" >> $VER_MSG
+            echo >> $VER_MSG
+            echo -e "If you answer \"Yes\" to the next question \"Copy from Repository?\"" >> $VER_MSG
+            echo    "        ALL the files listed below WILL be OVER-WRITTEN." >> $VER_MSG 
+            echo >> $VER_MSG
+            cat $7 >> $VER_MSG
+            f_message $1 "OK" "List of Files to be Copied" $VER_MSG
+            #
+            rm $VER_MSG
+            #
+         else
+            f_message $1 "OK" "Error Mounting Local Repository Directory" "Failed to mount Local Repository Directory. Cannot compare script versions."
+         fi
+         #
+         if [ $ERROR -eq 0 ] ; then
+            f_yn_question $1 "N" "Copy from Repository?" "COPY from Repository\n$5 $VERSION_RELEASE\n\nand OVERWRITE\n\n$5 $VER\nalong with those files previously listed (on this PC?)"
+            #
+            if [ $ANS -eq 0 ] ; then
+               # Yes, copy from repository.
+               # Update files required for this script.
+               #
+               while read LINE
+                     do
+                        eval cp -p $4/$LINE . 2>$TEMP_FILE # Write any error messages to file $TEMP_FILE.
+                        # f_message $1 "OK" "Copy $LINE" "Copying $4/$LINE" 1  # Diagnostic line.
+                        f_message $1 "NOK" "Copy $LINE" "Copying $4/$LINE" 2 2>$TEMP_FILE # Write any error messages to file $TEMP_FILE.
+                        #
+                        # Make file executable (useable).
+                        chmod +x $LINE
+                        #
+                        if [ ! -x "$LINE" ] ; then
+                           f_message $1 "OK" "File Error"  "Error with required file:\n\"$LINE\"\n\n\Z1\ZbFile is missing or file is not executable.\n\n\ZnCannot continue, exiting program script." 3
+                           ERROR=1
+                        fi
+                       done < $7
+               unset LINE
+               #
+               if [ $ERROR -ne 0 ] ; then
+                  f_message $1 "NOK" "Error occurred" "Error Retrieving Version Information." 2
+               else
+                  f_message $1 "OK" "Successful Update" "Latest version was successfully copied for use.\nScript must be re-started to use the latest version."
+               fi
+            fi
+         fi
+      fi
+      #
+      unset LINE VER
+      #
+} # End of function f_version_compare.
+#
+# +----------------------------------------+
 # |         Function f_arguments           |
 # +----------------------------------------+
 #
-#     Rev: 2020-06-21
+#     Rev: 2020-12-18
 #  Inputs: $1=Argument
-#             [--help] [ -h ] [ -? ]
-#             [--about]
-#             [--version] [ -ver ] [ -v ] [--about ]
-#             [--history] [--hist ]
+#             [ --help ] [ -? ]
+#             [ --about ]
+#             [ --version ] [ --ver ] [ -v ] [--about ]
+#             [ --update ] [ -u ]
+#             [ --history ] [ --hist ]
 #             [] [ text ] [ dialog ] [ whiptail ]
+#          $2=Argument
+#             [] [ text ] [ dialog ] [ whiptail ] 
 #    Uses: None.
 # Outputs: GUI, ERROR.
 #
@@ -218,9 +501,9 @@ f_arguments () {
            ;;
            --about | --version | --ver | -v)
               if [ -z $GUI ] ; then
-                 f_about text
+                 f_about text "OK"
               else
-                 f_about $GUI
+                 f_about $GUI "OK"
               fi
               #
               clear # Blank the screen.
@@ -241,6 +524,20 @@ f_arguments () {
               exit 0  # This cleanly closes the process generated by #!bin/bash. 
                       # Otherwise every time this script is run, another instance of
                       # process /bin/bash is created using up resources.
+           ;;
+           --update | -u)
+              if [ -z $GUI ] ; then
+                 f_check_version text $SERVER_DIR $MP_DIR $TARGET_DIR $FILE_TO_COMPARE $VERSION_TO_COMPARE $FILE_LIST
+              else
+                 f_check_version $GUI $SERVER_DIR $MP_DIR $TARGET_DIR $FILE_TO_COMPARE $VERSION_TO_COMPARE $FILE_LIST
+              fi
+              #
+              clear # Blank the screen.
+              #
+              exit 0  # This cleanly closes the process generated by #!bin/bash. 
+                      # Otherwise every time this script is run, another instance of
+                      # process /bin/bash is created using up resources.
+           
            ;;
            -*)
               # If the one argument is "-<unrecognized>" display help USAGE message.
@@ -377,31 +674,40 @@ f_test_dash () {
 } # End of function f_test_dash
 #
 # +----------------------------------------+
-# |         Function f_test_connect        |
+# |         Function f_test_connect_TEMPLATE        |
 # +----------------------------------------+
 #
-#     Rev: 2020-04-28
+#     Rev: 2020-08-07
 #  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
 #    Uses: None.
 # Outputs: None.
 #
-f_test_connect () {
+# PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
+#              THIS FUNCTION INTO ANY SCRIPT WHICH DEPENDS ON THE
+#              LIBRARY FILE "common_bash_function.lib".
+#
+f_test_connect_TEMPLATE () {
       #
-      # Use ping 8.8.8.8 to test connection.
-      # f_test_connection $1 8.8.8.8
+      # Test network connection to IP address or web site.
       #
-      # Use ping www.dropbox.com to test connection.
-      f_test_connection $1 www.dropbox.com
+      # Use ping <IP Address> or <URL> <pause secs. to read message>.
+      # Examples:
+      #f_test_connection 192.168.1.1
+      #f_test_connection $1 8.8.8.8 2 (2-second pause to read messages).
+      #f_test_connection $1 www.dropbox.com 1 (1-second pause to read messages).
       #
-} # End of function f_test_connect.
+      f_test_connection $1 8.8.8.8 1
+      #
+} # End of function f_test_connect
 #
 # +----------------------------------------+
 # |        Function f_test_connection      |
 # +----------------------------------------+
 #
-#     Rev: 2020-06-03
+#     Rev: 2020-07-16
 #  Inputs: $1 - "text", "dialog" or "whiptail" The CLI GUI application in use.
-#          $2 Network name of server. 
+#          $2 - Network name of server, ip address, or web site address (URL). 
+#          $3 - Pause n seconds to read message (Optional).
 #    Uses: None.
 # Outputs: ERROR. 
 #
@@ -411,9 +717,9 @@ f_test_connection () {
       ping -c 1 -q $2 >/dev/null # Ping server address.
       ERROR=$?
       if [ $ERROR -ne 0 ] ; then
-         f_message $1 "NOK" "Ping Test Network Connection" " \n\Z1\Zb  No network connection to $2.\Zn"
+         f_message $1 "NOK" "Ping Test Network Connection" " \n\Z1\Zb  No network connection to $2.\Zn" $3
       else
-         f_message $1 "NOK" "Ping Test Network Connection" "Network connnection to $2 is good."
+         f_message $1 "NOK" "Ping Test Network Connection" "Network connnection to $2 is good." $3
       fi
       #
       clear # Blank the screen.
@@ -424,7 +730,7 @@ f_test_connection () {
 # |           Function f_username          |
 # +----------------------------------------+
 #
-#     Rev: 2020-04-20
+#     Rev: 2020-10-25
 #  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
 #          $2=USERNAME (default).
 #          $3=MP - Mount-point to display on --usernamebox.
@@ -440,12 +746,18 @@ f_username() {
            dialog | whiptail)
               $1 --title "User name for $3" --inputbox "Enter SMB mount-point user name:" 10 50 $2 2>$TEMP_FILE
               ERROR=$?
-              SMBUSER=$(cat $TEMP_FILE)
+              ANS=$(cat $TEMP_FILE)
            ;;
            text)
+              echo "           --User name for $3--"
               echo
-              read -p "Enter user name or n=none ($2): " ANS
-              echo
+              if [ $2 = "n" ] ; then
+                 read -p "Enter user name or n=none (n): " ANS
+                 echo
+              else
+                 read -p "Enter user name or n=none ($2): " ANS
+                 echo
+              fi
            ;;
       esac
       case $ANS in
@@ -503,6 +815,7 @@ f_password() {
               echo
            ;;
       esac
+      #
       case $ERROR in
            1) PASSWORD="" ;;   # <Cancel> button pressed.
            255) PASSWORD="" ;; # <ESC> key pressed.
@@ -604,89 +917,116 @@ f_abort () {
 } # End of function f_abort.
 #
 # +------------------------------------+
-# |          Function f_about_template          |
+# |          Function f_about          |
 # +------------------------------------+
 #
-#     Rev: 2020-05-28
+#     Rev: 2020-08-07
 #  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
+#          $2="NOK", "OK", or null [OPTIONAL] to control display of "OK" button.
+#          $3=Pause $3 seconds [OPTIONAL]. If "NOK" then pause to allow text to be read.
 #          THIS_DIR, THIS_FILE, VERSION.
-#    Uses: X.
+#    Uses: DELIM.
 # Outputs: None.
 #
-f_about_template () {
-      #
-      # Specify $THIS_FILE name of any file containing the text to be displayed.
-      #THIS_FILE="example_library.lib"
-      TEMP_FILE=$THIS_DIR/$THIS_FILE"_temp.txt"
-      #
-      # Set $VERSION according as it is set in the beginning of $THIS_FILE.
-      X=$(grep --max-count=1 "VERSION" $THIS_FILE)
-      # X="VERSION=YYYY-MM-DD HH:MM"
-      # Use command "eval" to set $VERSION.
-      eval $X
-      #
-      echo "Script: $THIS_FILE. Version: $VERSION" >$TEMP_FILE
-      echo >>$TEMP_FILE
+#    NOTE: This function needs to be in the same library or file as
+#          the function f_display_common.
+#
+f_about () {
       #
       # Display text (all lines beginning ("^") with "#& " but do not print "#& ").
-      # sed substitutes null for "#&" at the beginning of each line
+      # sed substitutes null for "#& " at the beginning of each line
       # so it is not printed.
       DELIM="^#&"
-      sed -n "s/$DELIM//"p $THIS_DIR/$THIS_FILE >> $TEMP_FILE
-      #
-      f_message $1 "OK" "About (use arrow keys to scroll up/down/side-ways)" $TEMP_FILE
+      f_display_common $1 $DELIM $2 $3
       #
 } # End of f_about.
 #
 # +------------------------------------+
-# |      Function f_code_history_template       |
+# |      Function f_code_history       |
 # +------------------------------------+
 #
-#     Rev: 2020-05-24
+#     Rev: 2020-08-07
 #  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
+#          $2="NOK", "OK", or null [OPTIONAL] to control display of "OK" button.
+#          $3=Pause $3 seconds [OPTIONAL]. If "NOK" then pause to allow text to be read.
 #          THIS_DIR, THIS_FILE, VERSION.
-#    Uses: X.
+#    Uses: DELIM.
 # Outputs: None.
 #
-f_code_history_template () {
-      #
-      # Specify $THIS_FILE name of any file containing the text to be displayed.
-      #THIS_FILE="example_library.lib"
-      TEMP_FILE=$THIS_DIR/$THIS_FILE"_temp.txt"
-      #
-      # Set $VERSION according as it is set in the beginning of $THIS_FILE.
-      X=$(grep --max-count=1 "VERSION" $THIS_FILE)
-      # X="VERSION=YYYY-MM-DD HH:MM"
-      # Use command "eval" to set $VERSION.
-      eval $X
-      #
-      echo "Script: $THIS_FILE. Version: $VERSION" >$TEMP_FILE
-      echo >>$TEMP_FILE
+#    NOTE: This function needs to be in the same library or file as
+#          the function f_display_common.
+#
+f_code_history () {
       #
       # Display text (all lines beginning ("^") with "##" but do not print "##").
       # sed substitutes null for "##" at the beginning of each line
       # so it is not printed.
       DELIM="^##"
-      sed -n "s/$DELIM//"p $THIS_DIR/$THIS_FILE >> $TEMP_FILE
-      #
-      f_message $1 "OK" "Code History (use arrow keys to scroll up/down/side-ways)" $TEMP_FILE
+      f_display_common $1 $DELIM $2 $3
       #
 } # End of function f_code_history.
 #
 # +------------------------------------+
-# |      Function f_help_message_template       |
+# |      Function f_help_message       |
 # +------------------------------------+
 #
-#     Rev: 2020-05-24
+#     Rev: 2020-08-07
 #  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
+#          $2="NOK", "OK", or null [OPTIONAL] to control display of "OK" button.
+#          $3=Pause $3 seconds [OPTIONAL]. If "NOK" then pause to allow text to be read.
+#          THIS_DIR, THIS_FILE, VERSION.
+#    Uses: DELIM.
+# Outputs: None.
+#
+#    NOTE: This function needs to be in the same library or file as
+#          the function f_display_common.
+#
+f_help_message () {
+      #
+      # Display text (all lines beginning ("^") with "#?" but do not print "#?").
+      # sed substitutes null for "#?" at the beginning of each line
+      # so it is not printed.
+      DELIM="^#?"
+      f_display_common $1 $DELIM $2 $3
+      #
+} # End of f_help_message.
+#
+# +------------------------------------+
+# |     Function f_display_common_TEMPLATE      |
+# +------------------------------------+
+#
+#     Rev: 2021-02-08
+#  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
+#          $2=Delimiter of text to be displayed.
+#          $3="NOK", "OK", or null [OPTIONAL] to control display of "OK" button.
+#          $4=Pause $4 seconds [OPTIONAL]. If "NOK" then pause to allow text to be read.
 #          THIS_DIR, THIS_FILE, VERSION.
 #    Uses: X.
 # Outputs: None.
 #
-f_help_message_template () {
+# PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
+#              THIS FUNCTION INTO ANY SCRIPT WHICH DEPENDS ON THE
+#              LIBRARY FILE "common_bash_function.lib".
+#
+f_display_common_TEMPLATE () {
       #
-      # Specify $THIS_FILE name of any file containing the text to be displayed.
-      #THIS_FILE="example_library.lib"
+      # Specify $THIS_FILE name of the file containing the text to be displayed.
+      # $THIS_FILE may be re-defined inadvertently when a library file defines it
+      # so when the command, source [ LIBRARY_FILE.lib ] is used, $THIS_FILE is
+      # redefined to the name of the library file, LIBRARY_FILE.lib.
+      # For that reason, all library files now have the line
+      # THIS_FILE="[LIBRARY_FILE.lib]" deleted.
+      #
+      #
+      #================================================================================
+      # EDIT THE LINE BELOW TO DEFINE $THIS_FILE AS THE ACTUAL FILE NAME WHERE THE 
+      # ABOUT, CODE HISTORY, AND HELP MESSAGE TEXT IS LOCATED.
+      #================================================================================
+      #
+      #
+                                           #
+      THIS_FILE="[ THIS FILE GOES HERE ]"  # <<<--- INSERT ACTUAL FILE NAME HERE.
+                                           #
       TEMP_FILE=$THIS_DIR/$THIS_FILE"_temp.txt"
       #
       # Set $VERSION according as it is set in the beginning of $THIS_FILE.
@@ -695,24 +1035,30 @@ f_help_message_template () {
       # Use command "eval" to set $VERSION.
       eval $X
       #
-      echo "Script: $THIS_FILE. Version: $VERSION" >$TEMP_FILE
+      echo "Script: $THIS_FILE. Version: $VERSION" > $TEMP_FILE
       echo >>$TEMP_FILE
       #
-      # Display text (all lines beginning ("^") with "#?" but do not print "#?").
-      # sed substitutes null for "#?" at the beginning of each line
+      # Display text (all lines beginning ("^") with $2 but do not print $2).
+      # sed substitutes null for $2 at the beginning of each line
       # so it is not printed.
-      DELIM="^#?"
-      sed -n "s/$DELIM//"p $THIS_DIR/$THIS_FILE >> $TEMP_FILE
+      sed -n "s/$2//"p $THIS_DIR/$THIS_FILE >> $TEMP_FILE
       #
-      f_message $1 "OK" "Usage (use arrow keys to scroll up/down/side-ways)" $TEMP_FILE
+      case $3 in
+           "NOK" | "nok")
+              f_message $1 "NOK" "Message" $TEMP_FILE $4
+           ;;
+           *)
+              f_message $1 "OK" "(use arrow keys to scroll up/down/side-ways)" $TEMP_FILE
+           ;;
+      esac
       #
-} # End of f_help_message.
+} # End of function f_display_common.
 #
 # +----------------------------------------+
 # |          Function f_yn_question        |
 # +----------------------------------------+
 #
-#     Rev: 2020-05-24
+#     Rev: 2020-08-10
 #  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
 #          $2 - "Y" or "N" - the default answer.
 #          $3 - Title string (may be null).
@@ -753,7 +1099,7 @@ f_yn_question () {
       case $1 in
            dialog | whiptail)
            # Calculate dialog/whiptail box dimensions $YBOX, $XBOX.
-           f_msg_ui_str_box_size $1 $2 "$3" "$4"
+           f_msg_ui_str_box_size "$4"
       esac
       #
       case $1 in
@@ -802,7 +1148,6 @@ f_yn_question () {
               f_yn_defaults $1 $2 "$3" "$4" $Y $X
            ;;
            text)
-              #
               clear  # Blank screen.
               #
               # Does $4 contain "\n"?  Does the string $4 contain multiple sentences?
@@ -813,37 +1158,18 @@ f_yn_question () {
                       # Use command "sed" with "-e" to filter out multiple "\Z" commands.
                       # Filter out "\Z[0-7]", "\Zb", \ZB", "\Zr", "\ZR", "\Zu", "\ZU", "\Zn".
                       ZNO=$(echo $4 | sed -e 's|\\Z0||g' -e 's|\\Z1||g' -e 's|\\Z2||g' -e 's|\\Z3||g' -e 's|\\Z4||g' -e 's|\\Z5||g' -e 's|\\Z6||g' -e 's|\\Z7||g' -e 's|\\Zb||g' -e 's|\\ZB||g' -e 's|\\Zr||g' -e 's|\\ZR||g' -e 's|\\Zu||g' -e 's|\\ZU||g' -e 's|\\Zn||g')
+                      XSTR="$ZNO"
                       #
-                      # Create a text file from the string.
-                      echo -e $ZNO > $TEMP_FILE
                    ;;
                    *)
                       # No, string $4 contains a single sentence. 
                       #
                       # Create a text file from the string.
-                      echo $4 > $TEMP_FILE
+                      XSTR="$4"
                    ;;
               esac
               #
-              # Calculate number of lines or Menu Choices to find maximum menu lines for Dialog or Whiptail.
-              Y=$(wc --lines < $TEMP_FILE)
-              #
-              # Display Title and Question.
-              echo $3
-              echo
-              NSEN=1
-              while read XSTR
-                    do
-                       if [ $NSEN -lt $Y ] ; then
-                          echo $XSTR
-                       fi
-                       let NSEN=NSEN+1
-                    done < $TEMP_FILE
-                    #
-              XSTR=$(tail -n 1 $TEMP_FILE)
-              #
-              # Default answer.
-              f_yn_defaults $1 $2 "$3" "$4"
+              f_yn_defaults $1 $2 "$3" "$XSTR"
            ;;
       esac
       #
@@ -853,7 +1179,7 @@ f_yn_question () {
 # |    Function f_yn_defaults    |
 # +------------------------------+
 #
-#     Rev: 2020-05-14
+#     Rev: 2020-08-10
 #  Inputs: $1 - "text", "dialog" or "whiptail" The CLI GUI application in use.
 #          $2 - "OK"  [OK] button at end of text.
 #               "NOK" No [OK] button or "Press Enter key to continue"
@@ -882,17 +1208,20 @@ f_yn_question () {
 #
 f_yn_defaults () {
       #
+      TITLE_STR=$(echo $3 | tr '_' ' ')
+      TEXT_STR=$(echo $4 | tr '_' ' ')
+      #
       case $1 in
            dialog | whiptail)
               case $2 in
                    [Yy] | [Yy][Ee][Ss])
                       # "Yes" is the default answer.
-                      $1 --title "$3" --yesno "$4" $5 $6
+                      $1 --title "$TITLE_STR" --yesno "$TEXT_STR" $5 $6
                       ANS=$?
                    ;;
                    [Nn] | [Nn][Oo])
                       # "No" is the default answer.
-                      $1 --title "$3" --defaultno --yesno "$4" $5 $6
+                      $1 --title "$TITLE_STR" --defaultno --yesno "$TEXT_STR" $5 $6
                       ANS=$?
                    ;;
               esac
@@ -902,7 +1231,7 @@ f_yn_defaults () {
               case $2 in
                    [Yy] | [Yy][Ee][Ss])
                       # "Yes" is the default answer.
-                      echo -n "$XSTR (Y/n) "; read ANS
+                      echo -e -n "$TEXT_STR (Y/n) "; read ANS
                       #
                       case $ANS in
                            [Nn] | [Nn][Oo])
@@ -915,7 +1244,7 @@ f_yn_defaults () {
                    ;;
                    [Nn] | [Nn][Oo])
                       # "No" is the default answer.
-                      echo -n "$XSTR (y/N) "; read ANS
+                      echo -e -n "$TEXT_STR (y/N) "; read ANS
                       case $ANS in
                            [Yy] | [Yy][Ee] | [Yy][Ee][Ss])
                               ANS=0  # Yes.
@@ -935,7 +1264,7 @@ f_yn_defaults () {
 # |       Function f_message     |
 # +------------------------------+
 #
-#     Rev: 2020-06-03
+#     Rev: 2021-02-14
 #  Inputs: $1 - "text", "dialog" or "whiptail" The CLI GUI application in use.
 #          $2 - "OK"  [OK] button at end of text.
 #               "NOK" No [OK] button or "Press Enter key to continue"
@@ -944,9 +1273,11 @@ f_yn_defaults () {
 #          $3 - Title.
 #          $4 - Text string or text file. 
 #          $5 - (Optional for functions f_msg_ui/txt_str_nok) Pause for $5 seconds to allow text to be read.
+#          $6 - (Optional) Text string to substitute for the "OK" label on the "OK" button.
+#          $7 - (Optional) Text string to substitute for the "Cancel" label on the "Cancel" button.
 #    Uses: None.
 # Outputs: ERROR.
-#   Usage: 1. f_message $GUI "OK" "Test of String in quotes" "This is a test of \Z6cyan software BASH script.\Zn\nI hope it works!"
+#   Usage: 1. f_message $GUI "OK" "Test of String in quotes" "This is a test of \Z6cyan software BASH script.\n\ZnI hope it works!"
 #
 #          2. In this example, the quotation marks around the "$STRING" variable name are required.
 #             STRING=$(echo "\"Roses are \Z1\ZbRED\Zn, Violets are \Z4BLUE\Zn, what say you?\"")
@@ -991,26 +1322,29 @@ f_message () {
                  # If $4 is a text file, then calculate number of lines and length
                  # of sentences to calculate height and width of Dialog box.
                  # Calculate dialog/whiptail box dimensions $YBOX, $XBOX.
-                 f_msg_ui_file_box_size $1 $2 "$3" "$4"
+                 f_msg_ui_file_box_size "$4"
                  #
                  if [ "$2" = "OK" ] ; then
                     # Display contents of text file with an [OK] button.
-                    f_msg_ui_file_ok $1 $2 "$3" "$4" $YBOX $XBOX
+                    f_msg_ui_file_ok $1 $2 "$3" "$4" $YBOX $XBOX "$6" "$7"
                  else
                     # Display contents of text file with a pause for n seconds.
-                    f_msg_ui_file_nok $1 $2 "$3" "$4" $YBOX $XBOX
+                    f_msg_ui_file_nok $1 $2 "$3" "$4" $YBOX $XBOX "$5"
                  fi
+                 #
+                 # Remove temporary text file.
+                 rm $4
                  #
               else
                  # If $4 is a text string, then does it contain just one
                  # sentence or multiple sentences delimited by "\n"?
                  # Calculate the length of the longest of sentence.
                  # Calculate dialog/whiptail box dimensions $YBOX, $XBOX.
-                 f_msg_ui_str_box_size $1 $2 "$3" "$4"
+                 f_msg_ui_str_box_size "$4"
                  #
                  if [ "$2" = "OK" ] ; then
                     # Display contents of text string with an [OK] button.
-                    f_msg_ui_str_ok $1 $2 "$3" "$4" $YBOX $XBOX
+                    f_msg_ui_str_ok $1 $2 "$3" "$4" $YBOX $XBOX "$6" "$7"
                  else
                     # Display contents of text string with a pause for n seconds.
                     f_msg_ui_str_nok $1 $2 "$3" "$4" $YBOX $XBOX "$5"
@@ -1057,10 +1391,6 @@ f_message () {
            ;;
       esac
       #
-      if [ -r $TEMP_FILE ] ; then
-         rm $TEMP_FILE
-      fi
-      #
 } # End of function f_message.
 #
 # +-------------------------------+
@@ -1084,14 +1414,14 @@ f_msg_color () {
       # man dialog --colors
       # Interpret embedded "\Z" sequences in the Dialog text by the following
       # character, which tells Dialog to set colors or video attributes:
-      # •   0 through 7 are the ANSI color numbers used in curses: black, red, green,
-      #     yellow, blue, magenta, cyan and white respectively.
-      # •   Bold is set by 'b', reset by 'B'.
-      # •   Reverse is set by 'r', reset by 'R'.
-      # •   Underline is set by 'u', reset by 'U'.
-      # •   The settings are cumulative, e.g., "\Zb\Z1" makes the following text bold
-      #     (perhaps bright) red.
-      # •   Restore normal settings with "\Zn".
+      # *0 through 7 are the ANSI color numbers used in curses: black, red, green,
+      #  yellow, blue, magenta, cyan and white respectively.
+      # *Bold is set by 'b', reset by 'B'.
+      # *Reverse is set by 'r', reset by 'R'.
+      # *Underline is set by 'u', reset by 'U'.
+      # *The settings are cumulative, e.g., "\Zb\Z1" makes the following text bold
+      #  (perhaps bright) red.
+      # *Restore normal settings with "\Zn".
       #
       # BASH commands to change the color of characters in a terminal.
       # bold    "$(tput bold)"
@@ -1151,21 +1481,15 @@ f_msg_color () {
 # |Function f_msg_ui_file_box_size|
 # +-------------------------------+
 #
-#     Rev: 2020-05-14
-#  Inputs: $1 - "text", "dialog" or "whiptail" The CLI GUI application in use.
-#          $2 - "OK"  [OK] button at end of text.
-#               "NOK" No [OK] button or "Press Enter key to continue"
-#               at end of text but pause n seconds
-#               to allow reader to read text by using sleep n command.
-#          $3 - Title.
-#          $4 - Text string or text file. 
+#     Rev: 2020-07-16
+#  Inputs: $1 - Text string or text file. 
 #    Uses: None.
 # Outputs: XBOX, YBOX.
 #
 f_msg_ui_file_box_size () {
       #
-      # If $4 is a text file.
-      # Calculate dialog/whiptail box dimensions $X, $Y.
+      # If $1 is a text file.
+      # Calculate dialog/whiptail box dimensions $XBOX, $YBOX.
       #
       # If text file, calculate number of lines and length of sentences.
       # to calculate height and width of Dialog box.
@@ -1173,10 +1497,10 @@ f_msg_ui_file_box_size () {
       # Calculate longest line length in TEMP_FILE to find maximum menu width for Dialog or Whiptail.
       # The "Word Count" wc command output will not include the TEMP_FILE name
       # if you redirect "<$TEMP_FILE" into wc.
-      XBOX=$(wc --max-line-length <$4)
+      XBOX=$(wc --max-line-length <$1)
       #
       # Calculate number of lines or Menu Choices to find maximum menu lines for Dialog or Whiptail.
-      YBOX=$(wc --lines <$4)
+      YBOX=$(wc --lines <$1)
       #
 } # End of function f_msg_ui_file_box_size.
 #
@@ -1184,7 +1508,7 @@ f_msg_ui_file_box_size () {
 # |   Function f_msg_ui_file_ok  |
 # +------------------------------+
 #
-#     Rev: 2020-05-14
+#     Rev: 2021-01-27
 #  Inputs: $1 - "text", "dialog" or "whiptail" The CLI GUI application in use.
 #          $2 - "OK"  [OK] button at end of text.
 #               "NOK" No [OK] button or "Press Enter key to continue"
@@ -1194,6 +1518,9 @@ f_msg_ui_file_box_size () {
 #          $4 - Text string or text file. 
 #          $5 - Box Height in characters.
 #          $6 - Box Width  in characters.
+#          $7 - (Optional) Text string to substitute for the "OK" label on the "OK" button.
+#          $8 - (Optional) Text string to substitute for the "Cancel" label on the "Cancel" button.
+#
 #    Uses: None.
 # Outputs: ERROR. 
 #
@@ -1201,6 +1528,13 @@ f_msg_ui_file_ok () {
       #
       # $4 is a text file.
       # If $2 is "OK" then use a Dialog/Whiptail textbox.
+      #
+      # Is there a label substitute for the "Exit" label?
+      if [ -n "$7" ] ; then
+         OK_LABEL="$7"
+      else
+         OK_LABEL="OK"
+      fi
       #
       case $1 in
            dialog)
@@ -1220,7 +1554,7 @@ f_msg_ui_file_ok () {
               #
               # Dialog box "--textbox" and Whiptail cannot use "\Z" commands.
               # No --colors option for Dialog --textbox.
-              dialog --title "$3" --textbox "$4" $Y $X
+              dialog --exit-label "$OK_LABEL" --title "$3" --textbox "$4" $Y $X
            ;;
            whiptail)
               # Whiptail needs about 7 more lines for the header and [OK] button.
@@ -1237,7 +1571,7 @@ f_msg_ui_file_ok () {
                  X=$XSCREEN
               fi
               #
-              whiptail --scrolltext --title "$3" --textbox "$4" $Y $X
+              whiptail --scrolltext --ok-button "$OK_LABEL" --title "$3" --textbox "$4" $Y $X
            ;;
       esac
       #
@@ -1247,7 +1581,7 @@ f_msg_ui_file_ok () {
 # |  Function f_msg_ui_file_nok  |
 # +------------------------------+
 #
-#     Rev: 2020-06-03
+#     Rev: 2020-08-07
 #  Inputs: $1 - "text", "dialog" or "whiptail" The CLI GUI application in use.
 #          $2 - "OK"  [OK] button at end of text.
 #               "NOK" No [OK] button or "Press Enter key to continue"
@@ -1257,6 +1591,7 @@ f_msg_ui_file_ok () {
 #          $4 - Text string or text file.
 #          $5 - Box Height in characters.
 #          $6 - Box Width  in characters.
+#          $7 - Pause for $7 seconds to allow text to be read.
 #    Uses: None.
 # Outputs: ERROR. 
 #
@@ -1281,10 +1616,21 @@ f_msg_ui_file_nok () {
               fi
               #
               # Dialog boxes "--msgbox" "--infobox" can use option --colors with "\Z" commands for font color bold/normal.
-              dialog --colors --title "$3" --textbox "$4" $Y $X
+              # Use --infobox to display text without an "OK" button.
+              # Convert text file to a string with "\n" (line feeds)
+              # because Dialog or Whiptail infobox needs a string for input.
+              STRING=$(sed 's/$/\\n/g' $4)
+              STRING=$(echo $STRING | sed 's/\\n /\\n/g')
+              dialog --colors --title "$3" --infobox "$STRING" $Y $X
+              #
+              if [ -z $7 ] ; then
+                 sleep 3
+              else
+                 sleep "$7"
+              fi
            ;;
            whiptail)
-              # Whiptail only has options --textbox or --msgbox (not --infobox).
+              # Whiptail only has options --textbox or--msgbox (not --infobox in earlier versions).
               # Whiptail does not have option "--colors" with "\Z" commands for font color bold/normal.
               #
               # Whiptail needs about 7 more lines for the header and [OK] button.
@@ -1300,7 +1646,25 @@ f_msg_ui_file_nok () {
               if [ $X -ge $XSCREEN ] ; then
                  X=$XSCREEN
               fi
+              # Whiptail only has options --textbox or--msgbox (not --infobox in earlier versions).
+              # Therefore for earlier versions cannot use Whiptail --infobox for no "OK" button but must use --textbox instead.
+              # Uncomment line below for older versions of Whiptail lacking --infobox option.
               whiptail --title "$3" --textbox "$4" $Y $X
+              #
+              # Later versions of Whiptail have --infobox option.
+              #
+              # Use --infobox to display text without an "OK" button.
+              # Convert text file to a string with "\n" (line feeds)
+              # because Dialog or Whiptail infobox needs a string for input.
+              #STRING=$(sed 's/$/\\n/g' $4)
+              #STRING=$(echo $STRING | sed 's/\\n /\\n/g')
+              #whiptail --title "$3" --infobox "$STRING" $Y $X
+              #
+              #if [ -z $7 ] ; then
+              #   sleep 3
+              #else
+              #   sleep "$7"
+              #fi
            ;;
       esac
       #
@@ -1310,14 +1674,8 @@ f_msg_ui_file_nok () {
 # |Function f_msg_ui_str_box_size|
 # +------------------------------+
 #
-#     Rev: 2020-05-23
-#  Inputs: $1 - "text", "dialog" or "whiptail" The CLI GUI application in use.
-#          $2 - "OK"  [OK] button at end of text.
-#               "NOK" No [OK] button or "Press Enter key to continue"
-#               at end of text but pause n seconds
-#               to allow reader to read text by using sleep n command.
-#          $3 - Title.
-#          $4 - Text string or text file. 
+#     Rev: 2020-07-16
+#  Inputs: $1 - Text string or text file. 
 #    Uses: None.
 # Outputs: XBOX, YBOX, ZNO (string stripped of Dialog "\Z" commands).
 #
@@ -1325,25 +1683,30 @@ f_msg_ui_str_box_size () {
       #
       # Calculate dialog/whiptail box dimensions $X, $Y.
       #
-      # Does $4 string contain "\n"?  Does the string $4 contain multiple sentences?
+      # Does $1 string contain "\n"?  Does the string $4 contain multiple sentences?
       #
       # Debug hint: If the box has the minimum size regardless of length or width of text,
       #             the variable $TEMP_FILE may have been unset (i.e. unset TEMP_FILE).
-      #             If the $TEMP_FILE is undefined, you will have a minimum box size.
       #
-      case $4 in
+      #             >>> If the $TEMP_FILE is undefined,   <<<
+      #             >>> you will have a minimum box size. <<<
+      #
+      #             >>> TEMP_FILE must be defined even if $1 is a string. <<<
+      #
+      case $1 in
            *\n*)
-              # Yes, string $4 contains multiple sentences.
+              # Yes, string $1 contains multiple sentences.
               #
               # Use command "sed" with "-e" to filter out multiple "\Z" commands.
               # Filter out "\Z[0-7]", "\Zb", \ZB", "\Zr", "\ZR", "\Zu", "\ZU", "\Zn".
-              ZNO=$(echo $4 | sed -e 's|\\Z0||g' -e 's|\\Z1||g' -e 's|\\Z2||g' -e 's|\\Z3||g' -e 's|\\Z4||g' -e 's|\\Z5||g' -e 's|\\Z6||g' -e 's|\\Z7||g' -e 's|\\Zb||g' -e 's|\\ZB||g' -e 's|\\Zr||g' -e 's|\\ZR||g' -e 's|\\Zu||g' -e 's|\\ZU||g' -e 's|\\Zn||g')
+              ZNO=$(echo $1 | sed -e 's|\\Z0||g' -e 's|\\Z1||g' -e 's|\\Z2||g' -e 's|\\Z3||g' -e 's|\\Z4||g' -e 's|\\Z5||g' -e 's|\\Z6||g' -e 's|\\Z7||g' -e 's|\\Zb||g' -e 's|\\ZB||g' -e 's|\\Zr||g' -e 's|\\ZR||g' -e 's|\\Zu||g' -e 's|\\ZU||g' -e 's|\\Zn||g')
               #
               # Calculate the length of the longest sentence with the $4 string.
               # How many sentences?
               # Replace "\n" with "%" and then use awk to count how many sentences.
               # Save number of sentences.
-              YBOX=$(echo $ZNO | sed 's|\\n|%|g'| awk -F '%' '{print NF}')
+              # Use wc --lines on TEMP_FILE instead of sed-awk below.
+              #YBOX=$(echo $ZNO | sed 's|\\n|%|g'| awk -F '%' '{print NF}')
               #
               # Output string without Dialog "\Z" commands into file $TEMP_FILE for wc processing.
               # The echo -e option replaces "\n" with actual <CR><LF> for wc to calculate actual longest line length.
@@ -1362,14 +1725,16 @@ f_msg_ui_str_box_size () {
               # The "Word Count" wc command output will not include
               # the TEMP_FILE name if you redirect "<$TEMP_FILE" into wc.
               XBOX=$(wc --max-line-length < $TEMP_FILE)
+              YBOX=$(wc --lines < $TEMP_FILE)
            ;;
            *)
               # Use command "sed" with "-e" to filter out multiple "\Z" commands.
               # Filter out "\Z[0-7]", "\Zb", \ZB", "\Zr", "\ZR", "\Zu", "\ZU", "\Zn".
-              ZNO=$(echo $4 | sed -e 's|\\Z0||g' -e 's|\\Z1||g' -e 's|\\Z2||g' -e 's|\\Z3||g' -e 's|\\Z4||g' -e 's|\\Z5||g' -e 's|\\Z6||g' -e 's|\\Z7||g' -e 's|\\Zb||g' -e 's|\\ZB||g' -e 's|\\Zr||g' -e 's|\\ZR||g' -e 's|\\Zu||g' -e 's|\\ZU||g' -e 's|\\Zn||g')
+              ZNO=$(echo $1 | sed -e 's|\\Z0||g' -e 's|\\Z1||g' -e 's|\\Z2||g' -e 's|\\Z3||g' -e 's|\\Z4||g' -e 's|\\Z5||g' -e 's|\\Z6||g' -e 's|\\Z7||g' -e 's|\\Zb||g' -e 's|\\ZB||g' -e 's|\\Zr||g' -e 's|\\ZR||g' -e 's|\\Zu||g' -e 's|\\ZU||g' -e 's|\\Zn||g')
               #
               # No, line length is $4 string length. 
               XBOX=$(echo -n "$ZNO" | wc -c)
+              # Only one sentence and one line in the $1 string.
               YBOX=1
            ;;
       esac
@@ -1380,7 +1745,7 @@ f_msg_ui_str_box_size () {
 # |   Function f_msg_ui_str_ok   |
 # +------------------------------+
 #
-#     Rev: 2020-05-14
+#     Rev: 2021-01-27
 #  Inputs: $1 - "text", "dialog" or "whiptail" The CLI GUI application in use.
 #          $2 - "OK"  [OK] button at end of text.
 #               "NOK" No [OK] button or "Press Enter key to continue"
@@ -1390,6 +1755,8 @@ f_msg_ui_str_box_size () {
 #          $4 - Text string or text file. 
 #          $5 - Box Height in characters.
 #          $6 - Box Width  in characters.
+#          $7 - (Optional) Text string to substitute for the "OK" label on the "OK" button.
+#          $8 - (Optional) Text string to substitute for the "Cancel" label on the "Cancel" button.
 #    Uses: None.
 # Outputs: ERROR. 
 #
@@ -1400,6 +1767,13 @@ f_msg_ui_str_ok () {
       #
       # Calculate line length of $4 if it contains "\n" <new line> markers.
       # Find length of all sentences delimited by "\n"
+      #
+      # Is there a label substitute for the "OK" label?
+      if [ -n "$7" ] ; then
+         OK_LABEL="$7"
+      else
+         OK_LABEL="OK"
+      fi
       #
       case $1 in
            dialog)
@@ -1418,10 +1792,10 @@ f_msg_ui_str_ok () {
               fi
               #
               # Dialog boxes "--msgbox" "--infobox" can use option --colors with "\Z" commands for font color bold/normal.
-              dialog --colors --title "$3" --msgbox "$4" $Y $X
+              dialog --colors --title "$3" --ok-label "$OK_LABEL" --msgbox "$4" $Y $X
            ;;
            whiptail)
-              # Whiptail only has options --textbox or--msgbox (not --infobox).
+              # Whiptail only has options --textbox or--msgbox (not --infobox in earlier versions).
               # Whiptail does not have option "--colors" with "\Z" commands for font color bold/normal.
               #
               # Whiptail needs about 6 more lines for the header and [OK] button.
@@ -1438,9 +1812,23 @@ f_msg_ui_str_ok () {
                  X=$XSCREEN
               fi
               #
+              # Is there a label substitute for the "OK" label?
+              if [ -n "$7" ] ; then
+                 OK_LABEL="$7"
+              else
+                 OK_LABEL="OK"
+              fi
+              #
+              # Is there a label substitute for the "CANCEL" label?
+              if [ -n "$8" ] ; then
+                 CANCEL_LABEL="$8"
+              else
+                 CANCEL_LABEL="Cancel"
+              fi
+              #
               # Whiptail only has options --textbox or--msgbox (not --infobox in earlier versions).
               # f_msg_ui_str_box_size creates $ZNO which is the text string $4 but stripped of any Dialog "\Z" commands.
-              whiptail --title "$3" --msgbox "$ZNO" $Y $X
+              whiptail --title "$3" --ok-button "$OK_LABEL" --msgbox "$ZNO" $Y $X
            ;;
       esac
       #
@@ -1495,7 +1883,7 @@ f_msg_ui_str_nok () {
               fi
            ;;
            whiptail)
-              # Whiptail only has options --textbox or--msgbox (not --infobox).
+              # Whiptail only has options --textbox or--msgbox (not --infobox in earlier versions).
               # Whiptail does not have option "--colors" with "\Z" commands for font color bold/normal.
               #
               # Whiptail needs about 6 more lines for the header and [OK] button.
@@ -1768,7 +2156,7 @@ f_menu_arrays () {
 # |        Function f_update_menu_txt      |
 # +----------------------------------------+
 #
-#     Rev: 2020-06-03
+#     Rev: 2021-02-13
 #  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
 #          $2=GENERATED_FILE.
 #          $3=Menu Title.
@@ -1794,7 +2182,7 @@ f_update_menu_txt () {
       echo "#***********************************CAUTION***********************************" >>$2
       echo "# Any edits made to this code will be lost since this code is" >>$2
       echo "# automatically generated and updated by running the script," >>$2
-      echo "or library file which contains data for the menu." >>$2
+      echo "# or library file which contains data for the menu." >>$2
       echo "#***********************************CAUTION***********************************" >>$2
       echo "#" >>$2
       echo "# *** Function f_menu_txt$EXT ***" >>$2
@@ -1804,7 +2192,12 @@ f_update_menu_txt () {
       echo "# Outputs: None." >>$2
       echo "#" >>$2
       echo "f_menu_txt$EXT () {" >>$2
-      echo "      . $ARRAY_FILE   # invoke the necessary files." >>$2
+      echo "      #" >>$2
+      echo "      # Invoke the shared BASH Library." >>$2
+      echo "      source $THIS_DIR/common_bash_function.lib" >>$2
+      echo "      #" >>$2
+      echo "      # Invoke script library." >>$2
+      echo "      source $ARRAY_FILE" >>$2
       echo "      #" >>$2
       echo "      CHOICE=\"\"  # Initialize variable." >>$2
       echo "      until [ \"\$CHOICE\" = \"QUIT\" ]" >>$2
@@ -1876,7 +2269,7 @@ f_update_menu_txt () {
                 # if longer than maximum window or screen width.
                 #
                 # Example: "$YNUM $CHOICE - $SUMMARY"
-                # CHOICE="0 Quit - Quit to command-line prompt." where array CHOICE[1]="Quit"
+                # CHOICE="0 Quit - Exit this menu." where array CHOICE[1]="Quit"
                 CHOICE="$YNUM $CHOICE - $SUMMARY"
                 CHOICE_LENGTH=${#CHOICE}
                 # Is the length of string CHOICE plus SUMMARY > Maximum window width?
@@ -1954,7 +2347,12 @@ f_update_menu_gui () {
       echo "# Outputs: None." >>$2
       echo "#" >>$2
       echo "f_menu_gui$EXT () {" >>$2
-      echo "      . $ARRAY_FILE   # invoke the necessary files." >>$2
+      echo "      #" >>$2
+      echo "      # Invoke the shared BASH Library." >>$2
+      echo "      source $THIS_DIR/common_bash_function.lib" >>$2
+      echo "      #" >>$2
+      echo "      # Invoke script library." >>$2
+      echo "      source $ARRAY_FILE" >>$2
       echo "      #" >>$2
       echo "      # CHOICE=\"\"  # Initialize variable." >>$2
       #
@@ -2052,15 +2450,23 @@ f_update_menu_gui () {
 } # End of function f_update_menu_gui.
 #
 # +----------------------------------------+
-# |          Function f_menu_main_template          |
+# |          Function f_menu_main_TEMPLATE          |
 # +----------------------------------------+
 #
-#     Rev: 2020-06-04
-#  Inputs: None.
+#     Rev: 2021-02-16
+#  Inputs: $1=GUI.
 #    Uses: ARRAY_FILE, GENERATED_FILE, MENU_TITLE.
 # Outputs: None.
 #
-f_menu_main_template () { # Create and display the Main Menu.
+# Summary: Template for Main-Menu 
+#          This Main Menu function checks its script for the Main Menu
+#          options delimited by "#@@" and if it does not find any, then
+#          it it defaults to the specified library script.
+#
+# PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
+#              THIS FUNCTION INTO THE MAIN SCRIPT WHICH WILL CALL IT.
+#
+f_menu_main_TEMPLATE () { # Create and display the Main Menu.
       #
       #THIS_FILE="example.sh"
       GENERATED_FILE=$THIS_DIR/$THIS_FILE"_menu_main_generated.lib"
@@ -2077,10 +2483,18 @@ f_menu_main_template () { # Create and display the Main Menu.
          # going into an infinite loop.
          grep ^\#@@ $THIS_DIR/$THIS_FILE >$GENERATED_FILE
          #
-         # Specify file name with data.
+         # Specify file name with menu item data.
          ARRAY_FILE="$GENERATED_FILE"
       else
-         # Specify file name with data.
+         #
+         #
+         #================================================================================
+         # EDIT THE LINE BELOW TO DEFINE $ARRAY_FILE AS THE ACTUAL FILE NAME (LIBRARY)
+         # WHERE THE MENU ITEM DATA IS LOCATED. THE LINES OF DATA ARE PREFIXED BY "#@@".
+         #================================================================================
+         #
+         #
+         # Specify library file name with menu item data.
          ARRAY_FILE="[FILENAME_GOES_HERE]"
       fi
       #
@@ -2092,22 +2506,89 @@ f_menu_main_template () { # Create and display the Main Menu.
       let MAX_LENGTH=$MAX_CHOICE_LENGTH+$MAX_SUMMARY_LENGTH
       #
       # Create generated menu script from array data.
-      MENU_TITLE="Main_Menu"  # Menu title must substitute underscores for spaces
+      #
+      # Note: ***If Menu title contains spaces,
+      #       ***the size of the menu window will be too narrow.
+      #
+      # Menu title MUST use underscores instead of spaces.
+      MENU_TITLE="Main_Menu"
       TEMP_FILE=$THIS_DIR/$THIS_FILE"_menu_main_temp.txt"
       #
-      f_create_show_menu $GUI $GENERATED_FILE $MENU_TITLE $MAX_LENGTH $MAX_LINES $MAX_CHOICE_LENGTH $TEMP_FILE
+      f_create_show_menu $1 $GENERATED_FILE $MENU_TITLE $MAX_LENGTH $MAX_LINES $MAX_CHOICE_LENGTH $TEMP_FILE
       #
       if [ -r $GENERATED_FILE ] ; then
          rm $GENERATED_FILE
       fi
       #
+      if [ -r $TEMP_FILE ] ; then
+         rm $TEMP_FILE
+      fi
+      #
 } # End of function f_menu_main.
+#
+# +----------------------------------------+
+# |          Function f_menu_SUB-MENU_TEMPLATE  |
+# +----------------------------------------+
+#
+#     Rev: 2020-02-16
+#  Inputs: $1=GUI.
+#    Uses: ARRAY_FILE, GENERATED_FILE, MENU_TITLE.
+# Outputs: None.
+#
+# Summary: Template for Sub-Menus 
+#          Simpler implementation than the Main Menu function.
+#          It assumes that this function is in a separate script library
+#          file which contains the Sub-Menu options delimited by "#@@".
+#
+#          Whereas the Main Menu function checks its script for the
+#          Main Menu options delimited by "#@@" and if it does not
+#          find any then it defaults to the specified library script.
+#
+f_menu_sub_TEMPLATE () {
+      #
+      GENERATED_FILE=$THIS_DIR/$THIS_FILE"_menu_sub-01_generated.lib"
+      #
+      # Create generated menu script from array data.
+      #
+      # Note: ***If Sub-Menu title contains spaces,
+      #       ***the size of the menu window will be too narrow.
+      #
+      # Sub-Menu title MUST use underscores instead of spaces.
+      MENU_TITLE="Sub-menu_Menu"  # Menu title must substitute underscores for spaces
+      TEMP_FILE=$THIS_DIR/$THIS_FILE"_menu_sub-01_temp.txt"
+      #
+      #
+      #================================================================================
+      # EDIT THE LINE BELOW TO DEFINE $ARRAY_FILE AS THE ACTUAL FILE NAME (LIBRARY)
+      # WHERE THE MENU ITEM DATA IS LOCATED. THE LINES OF DATA ARE PREFIXED BY "#@@".
+      #================================================================================
+      #
+      #
+      # Specify library file name with menu item data.
+      ARRAY_FILE="[FILENAME_GOES_HERE]"
+      #
+      # Create arrays from data.
+      f_menu_arrays $ARRAY_FILE
+      #
+      # Create generated menu script from array data.
+      f_create_show_menu $1 $GENERATED_FILE $MENU_TITLE $MAX_LENGTH $MAX_LINES $MAX_CHOICE_LENGTH $TEMP_FILE
+      #
+      #
+      if [ -r $GENERATED_FILE ] ; then
+         rm $GENERATED_FILE
+      fi
+      #
+      if [ -r $TEMP_FILE ] ; then
+         rm $TEMP_FILE
+      fi
+      #
+}  # End of function f_menu_sub.
 #
 # +----------------------------------------+
 # |       Function f_create_show_menu      |
 # +----------------------------------------+
 #
-#     Rev: 2020-05-15
+#     Rev: 2020-07-16
 #  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
 #          $2=GENERATED_FILE.
 #          $3=Menu Title.
@@ -2129,7 +2610,7 @@ f_create_show_menu () {
            ;;
       esac
       #
-      . $2  # Invoke Generated File.
+      source $2  # Invoke Generated File.
       #
       # Use generated menu script to display menu.
       # Create a unique function name extension used in the Generated File.
@@ -2151,82 +2632,263 @@ f_create_show_menu () {
       #
 } # End of function f_create_show_menu.
 #
-# PLEASE NOTE: THIS IS A SAMPLE OF A STANDARD MAIN PROGRAM.
+# +----------------------------------------+
+# |             Function f_mount           |
+# +----------------------------------------+
 #
-# **************************************
-# ***     Start of Main Program      ***
-# **************************************
+#     Rev: 2020-09-13
+#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#          $2=File server Directory
+#          $3=Mount Point (Directory)
+#    Uses: None
+# Outputs: ERROR, TEMP_FILE.
 #
-#     Rev: 2020-06-04
+f_mount () {
+      #
+      mountpoint $3 >/dev/null 2>$TEMP_FILE # Write any error messages to file $TEMP_FILE. Get status of mountpoint, mounted?.
+      ERROR=$?
+      if [ $ERROR -ne 0 ] ; then
+         # Mount directory.
+         f_username $1 "$USER" $3
+         if [ $ERROR -eq 0 ] ; then
+            f_password $1 $3
+            if [ $ERROR -eq 0 ] ; then
+               sudo mount -t cifs -o username="$SMBUSER" -o password="$PASSWORD" $2 $3
+               mountpoint $3 >/dev/null 2>$TEMP_FILE # Write any error messages to file $TEMP_FILE. Get status of mountpoint, mounted?.
+               ERROR=$?
+            fi
+         fi
+      fi
+      #
+}  # End of function f_mount.
 #
-#if [ -e $TEMP_FILE ] ; then
-#   rm $TEMP_FILE
-#fi
+# +----------------------------------------+
+# |          f_check_file_TEMPLATE           |
+# +----------------------------------------+
 #
-#clear  # Blank the screen.
+#     Rev: 2020-09-07
+#  Inputs: $1=Library repository directory.
+#          $2=Library file name to download.
+#    Uses: ARRAY_FILE, GENERATED_FILE, MENU_TITLE.
+# Outputs: None.
 #
-#echo "Running script $THIS_FILE"
-#echo "***   Rev. $VERSION   ***"
-#echo
-#sleep 1  # pause for 1 second automatically.
+# PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
+#              THIS FUNCTION INTO ANY SCRIPT WHICH DEPENDS ON THE
+#              LIBRARY FILE "common_bash_function.lib".
 #
-#clear # Blank the screen.
+f_check_file_TEMPLATE () { # Create and display the Main Menu.
+      #
+      if [ -x $2 ] ; then
+         source $2
+      else
+         if [ -e $2 ] ; then
+            chmod +x $2
+            source $2
+         else
+            echo "File Error"
+            echo
+            echo "Error with required file:"
+            echo "\"$2\""
+            echo
+            echo "File is missing or file is not executable."
+            echo
+            #
+            # Determine if repository is on the LAN or on the Internet.
+            case $2 in
+                 http*)
+                    echo "Do you want to download the file: $2"
+                    echo -n "from GitHub.com? (Y/n): " ; read ANS
+                    case $2 in
+                         "" | [Yy] | [Yy][Ee][Ss])
+                            f_download_library $1 $2
+                         ;;
+                         *)
+                            echo
+                            echo "Cannot continue, exiting program script."
+                            echo "Error with required file:"
+                            echo "      \"$2\""
+                            sleep 3
+                            exit 1  # Exit with error.
+                         ;;
+                    esac
+                 ;;
+                 *)
+                    echo "Do you want to download the file: $2"
+                    echo -n "from the local repository? (Y/n): " ; read ANS
+                    case $2 in
+                         "" | [Yy] | [Yy][Ee][Ss])
+                            f_download_local $1 $2
+                         ;;
+                         *)
+                            echo
+                            echo "Cannot continue, exiting program script."
+                            echo "Error with required file:"
+                            echo "      \"$2\""
+                            sleep 3
+                            exit 1  # Exit with error.
+                         ;;
+                    esac
+                 ;;
+            esac
+            chmod +x $2
+            source $2
+         fi
+         #
+      fi
+      #
+} # End of function f_check_file.
 #
-# If an error occurs, the f_abort() function will be called.
-# f_abort depends on f_message which must be in this script.
-# (especially if library file *.lib is missing).
+# +----------------------------------------+
+# |          f_download_from_web_site      |
+# +----------------------------------------+
 #
-# trap 'f_abort' 0
-# set -e
+#     Rev: 2020-10-03
+#  Inputs: $1=UI.
+#          $2=Internet URL of repository.
+#          $3=Temporary file name with list of files to be upgraded.
+#    Uses: LINE.
+# Outputs: ERROR.
 #
-# Set THIS_DIR, SCRIPT_PATH to directory path of script.
-#f_script_path
+f_download_from_web_site () {
+      #
+      while read LINE
+            do
+               # Copy file from web site.
+               wget --show-progress $2$LINE
+               ERROR=$?
+               if [ $ERROR -eq 0 ] ; then
+                  # Make file executable (useable).
+                  chmod +x $LINE
+               else
+                  f_message $1 "OK" "Error" "!!! wget download failed !!!\n    for file: $LINE."
+               fi
+               #
+               if [ ! -x "$LINE" ] ; then
+                  f_message $1 "OK" "File Error"  "Error with required file:\n\"$5\"\n\n\Z1\ZbFile is missing or file is not executable.\n\n\ZnCannot continue, exiting program script." 3
+                  ERROR=1
+               fi
+            done < $3
+      unset LINE
+      #
+      if [ $ERROR -ne 0 ] ; then
+         f_message $1 "OK" "Copy Error" "!!! Copy failed !!!\nfrom $2 for file: $3\n\nCannot continue, exiting program script."
+      else
+         f_message $1 "OK" "Successful Update" "Latest version was successfully copied for use.\nScript must be re-started to use the latest version."
+      fi
+      #
+} # End of function f_download_from_web_site.
 #
-# Set Temporary file using $THIS_DIR from f_script_path.
-#TEMP_FILE=$THIS_DIR/$THIS_FILE"_temp.txt"
+# +----------------------------------------+
+# |    f_download_from_local_repository    |
+# +----------------------------------------+
 #
-# Set default TARGET DIRECTORY.
-#TARGET_DIR=$THIS_DIR
+#     Rev: 2020-12-11
 #
-# Does library file exist and is readable in the same directory as this script?
-#if [ -r /$THIS_DIR/example_library.lib ] ; then
-   # Invoke library file "example_library.lib".
-#   . /$THIS_DIR/example_library.lib
-#else
-#   echo "Required module file \"example_library.lib\" is missing."
-#   echo "Missing file: $THIS_DIR/example_library.lib"
-#   echo
-#   echo "Cannot continue, exiting program script."
-#   echo
-#   sleep 2
-#   exit 1
-#fi
+#  Inputs: $1=UI.
+#          $2=Samba File server Directory
+#          $3=Local Mount Point (Directory)
+#          $4=File server Target Directory.
+#          $5=Temporary file name with list of files to be upgraded.
+#          TEMP_FILE.
+#    Uses: LINE.
+# Outputs: None.
 #
-# Test for Optional Arguments.
-#f_arguments $1  # Also sets variable GUI.
+f_download_from_local_repository () {
+      #
+      # Is file server directory already mounted on mount-point directory?
+      #    Yes - Download file from LAN file server.
+      #    No  - Does mount-point exist?
+      #        No  - Exit.
+      #        Yes - Mount file server share on mount-point.
+      #            Is the mount-point mounted OK?
+      #               No  - Exit.
+      #               Yes - Copy (Download) file from local repository on LAN file server.
+      #                   Was the copy successful?
+      #                      No  - Message fail and Exit.
+      #                      Yes - Message success and Exit.
+      #
+      # Is file server directory already mounted on mount-point directory?
+      mountpoint $3 >/dev/null 2>$TEMP_FILE # Write any error messages to file $TEMP_FILE. Get status of mountpoint, mounted?.
+      #
+      if [ $ERROR -eq 0 ] ; then
+         # File server directory is already mounted at the mount-point.
+         # Download (copy) file from local repository to PC.
+         while read LINE
+               do
+                  eval cp -p $4/$LINE . 2>$TEMP_FILE # Write any error messages to file $TEMP_FILE.
+                  #
+                  # Make file executable (useable).
+                  chmod +x $LINE
+                  #
+                  if [ ! -x "$LINE" ] ; then
+                     f_message $1 "OK" "File Error"  "Error with required file:\n\"$LINE\"\n\n\Z1\ZbFile is missing or file is not executable.\n\n\ZnCannot continue, exiting program script." 3
+                     ERROR=1
+                  fi
+               done < $5
+         unset LINE
+         #
+      else
+         # File server directory is not mounted at the mount-point.
+         # Does mount-point directory exist?
+         if [ ! -e $3 ] ; then
+            f_message $1 "NOK" "Error missing directory" "Missing local mountpoint directory\n$3.\n\nCannot continue to download." 2
+         else
+            # Yes, mount-point directory exists.
+            # Mount file server directory at the mount-point.
+            f_mount $1 $2 $3
+            #
+            if [ $ERROR -eq 0 ] ; then
+               # Directory is mounted.
+               # Download (copy) files from local repository to PC.
+               while read LINE
+                     do
+                        eval cp -p $4/$LINE . 2>$TEMP_FILE # Write any error messages to file $TEMP_FILE.
+                        if [ ! -e $4/$LINE ] ; then
+                           f_message $1 "OK" "Copy Error" "Error copying file:\n\"$LINE\"\n\n\Z1\ZbFile not copied.\n\n\ZnCannot continue, exiting program script." 3
+                        fi
+                        #
+                        # Make file executable (useable).
+                        chmod +x $LINE
+                        #
+                        if [ ! -x "$LINE" ] ; then
+                          f_message $1 "OK" "File Error"  "Error with required file:\n\"$LINE\"\n\n\Z1\ZbFile is missing or file is not executable.\n\n\ZnCannot continue, exiting program script." 3
+                          ERROR=1
+                        fi
+                     done < $5
+               unset LINE
+            else
+               f_message $1 "OK" "Mount Error" "Error mounting directory $2 to $3.\n\n\ZnCannot continue, exiting program script." 3
+            fi
+            #
+         fi
+      fi
+      #
+} # End of function f_download_from_local_repository.
 #
-# If command already specifies GUI, then do not detect GUI i.e. "bash dropfsd.sh dialog" or "bash dropfsd.sh text".
-#if [ -z $GUI ] ; then
-   # Test for GUI (Whiptail or Dialog) or pure text environment.
-#   f_detect_ui
-#fi
+# +----------------------------------------+
+# |             Function f_source_TEMPLATE          |
+# +----------------------------------------+
 #
-#GUI="whiptail"  # Diagnostic line.
-#GUI="dialog"    # Diagnostic line.
-#GUI="text"      # Diagnostic line.
+#     Rev: 2020-10-22
+#  Inputs: $1=File name to source.
+# Outputs: ANS.
 #
-# Test for BASH environment.
-#f_test_environment
+# PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
+#              THIS FUNCTION INTO ANY SCRIPT WHICH DEPENDS ON THE
+#              LIBRARY FILE "common_bash_function.lib".
 #
+f_source_TEMPLATE () {
+      if [ -x "$1" ] ; then
+         # If $1 is a library, then source it.
+         case $1 in
+              common_bash_function.lib)
+                 source $1
+              ;;
+              *.lib)
+                 source $1
+              ;;
+         esac
+      fi
+      #
+} # End of function f_source.
 #
-#f_main_menu
-#
-#f_do_stuff
-#
-#clear # Blank the screen. Nicer ending especially if you chose custom colors for this script.
-#
-#exit 0  # This cleanly closes the process generated by #!bin/bash. 
-        # Otherwise every time this script is run, another instance of
-        # process /bin/bash is created using up resources.
-        #
-# All dun dun noodles.
