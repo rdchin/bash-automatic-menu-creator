@@ -1,9 +1,23 @@
 #!/bin/bash
 #
-# ©2020 Copyright 2020 Robert D. Chin
+# ©2021 Copyright 2021 Robert D. Chin
+# Email: RDevChin@Gmail.com
 #
-# Usage: bash menu.sh
-#        (not sh menu.sh)
+# Usage: source menu_module_main.lib
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program. If not, see <https://www.gnu.org/licenses/>.
 #
 # +--------------------------------------------------------------------------+
 # |                                                                          |
@@ -13,7 +27,7 @@
 #
 # Format: <#@@> <Menu Option> <#@@> <Description of Menu Option> <#@@> <Corresponding function or action or cammand>
 #
-#@@Exit#@@Exit this menu.#@@break
+#@@Quit#@@Quit to command-line prompt.#@@break
 #
 #@@Directory Listing#@@list files in a directory.#@@f_dir_listing^$GUI
 #
@@ -33,7 +47,122 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2021-02-21 21:53"
+VERSION="2021-02-26 01:04"
+#
+# Commented out THIS_FILE since it will conflict other scripts which
+# use this library.
+#THIS_FILE="$0"
+#
+# +----------------------------------------+
+# |            Brief Description           |
+# +----------------------------------------+
+#
+#& Brief Description
+#&
+#& This Library of functions for the Demonstration Menu is a
+#& child dependency used by the following scripts.
+#&
+#& Parent script: menu.sh.
+#&
+#& See script menu.sh for Edit History.
+#&
+#& Usage: source menu_module_main.lib
+#&
+#&    This program is free software: you can redistribute it and/or modify
+#&    it under the terms of the GNU General Public License as published by
+#&    the Free Software Foundation, either version 3 of the License, or
+#&    (at your option) any later version.
+#&
+#&
+#&    This program is distributed in the hope that it will be useful,
+#&    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#&    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#&    GNU General Public License for more details.
+#&
+#&    You should have received a copy of the GNU General Public License
+#&    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+# +----------------------------------------+
+# |           Code Change History          |
+# +----------------------------------------+
+#
+## Code Change History
+##
+## (Please see script "menu.sh" for Code History information.)
+#
+# +----------------------------------------+
+# |        Function f_check_version        |
+# +----------------------------------------+
+#
+#     Rev: 2021-02-08
+#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#    Uses: SERVER_DIR, MP_DIR, TARGET_DIR, TARGET_FILE, VERSION, TEMP_FILE, ERROR.
+# Outputs: $1=GUI.
+#          $2=Samba File server Directory
+#          $3=Local Mount Point (Directory)
+#          $4=File server Target Directory.
+#          $5=File server File Name to compare.
+#          $6=Version of file to compare. String$
+#          $7=Temporary file name with list of files to be upgraded.
+#          ERROR
+#
+# PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
+#              THIS FUNCTION INTO ANY SCRIPT WHICH DEPENDS ON THE
+#              LIBRARY FILE "common_bash_function.lib".
+#
+# Synopsis: Check version $6 of $5 local file with version of repository file.
+#           If the repository file has latest version, then copy all 
+#           dependent files and libraries from the repository to local PC. 
+#
+f_check_version () {
+      #
+      #
+      #=================================================================
+      # EDIT THE LINES BELOW TO DEFINE THE LAN FILE SERVER DIRECTORY AND
+      # SHARED MOUNTPOINT DIRECTORY, LOCAL TARGET DIRECTORY AND FILE. 
+      #=================================================================
+      #
+      #
+      # LAN File Server shared directory.
+      SERVER_DIR="[FILE_SERVER_DIRECTORY_NAME_GOES_HERE]"
+      #
+      # Local PC mount-point directory.
+      MP_DIR="[LOCAL_MOUNT-POINT_DIRECTORY_NAME_GOES_HERE]"
+      #
+      # Local PC mount-point with LAN File Server Local Repository full directory path.
+      LOCAL_REPO_DIR="$MP_DIR/LIBRARY/PC-stuff/PC-software/BASH_Scripting_Projects/Repository"
+      #
+      # Local PC file within TARGET_DIR.
+      FILE_TO_COMPARE="[FILE_TO_COMPARE]"
+      #
+      # Version of TARGET_FILE.
+      VERSION=$(grep --max-count=1 "VERSION" $FILE_TO_COMPARE)
+      #
+      FILE_LIST=$THIS_DIR/$THIS_FILE"_file_temp.txt"
+      ERROR=0
+      #
+      #
+      #=================================================================
+      # EDIT THE LINES BELOW TO SPECIFY THE FILE NAMES TO UPDATE.
+      # FILE NAMES INCLUDE ALL DEPENDENT SCRIPTS LIBRARIES.
+      #=================================================================
+      #
+      #
+      # Create list of files to update and write to temporary file, FILE_LIST.
+      #
+      echo "menu.sh"                   > $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      echo "menu_module_main.lib"     >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      echo "menu_module_sub0.lib"     >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      echo "menu_module_sub1.lib"     >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      echo "common_bash_function.lib" >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      #
+      f_version_compare $1 $SERVER_DIR $MP_DIR $LOCAL_REPO_DIR $FILE_TO_COMPARE "$VERSION" $FILE_LIST
+      #
+      if [ -r  $FILE_LIST ] ; then
+         rm  $FILE_LIST
+      fi
+      #
+}  # End of function f_check_version.
 #
 # +----------------------------------------+
 # |          Function f_dir_listing        |
@@ -65,81 +194,7 @@ f_df () {
       df -hT > $TEMP_FILE
       f_message $1 "OK" "(use arrow keys to scroll up/down/side-ways)" $TEMP_FILE
       #
-      #
 }  # End of function f_df.
-#
-# +----------------------------------------+
-# |        Function f_check_version        |
-# +----------------------------------------+
-#
-#     Rev: 2021-02-08
-#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
-#    Uses: SERVER_DIR, MP_DIR, TARGET_DIR, TARGET_FILE, VERSION, TEMP_FILE, ERROR.
-# Outputs: $1=GUI.
-#          $2=Samba File server Directory
-#          $3=Local Mount Point (Directory)
-#          $4=File server Target Directory.
-#          $5=File server File Name to compare.
-#          $6=Version of file to compare. String$
-#          $7=Temporary file name with list of files to be upgraded.
-#          ERROR
-#
-# Synopsis: Check version $6 of $5 local file with version of repository file.
-#           If the repository file has latest version, then copy all 
-#           dependent files and libraries from the repository to local PC. 
-#
-f_check_version () {
-      #
-      #
-      #=================================================================
-      # EDIT THE LINES BELOW TO DEFINE THE LAN FILE SERVER DIRECTORY AND
-      # SHARED MOUNTPOINT DIRECTORY, LOCAL TARGET DIRECTORY AND FILE. 
-      #=================================================================
-      #
-      # Local File Server Directory.
-      # LAN File Server shared directory.
-      SERVER_DIR="[ FILE SERVER DIRECTORY NAME GOES HERE ]"
-      #
-      # Local Client PC Mount-Point Directory.
-      MP_DIR="[ LOCAL MOUNT-POINT DIRECTORY NAME GOES HERE ]"
-      #
-      # Local PC target directory, sub-directory below mount-point directory.
-      TARGET_DIR="[ LOCAL MOUNT-POINT DIRECTORY/REPOSITORY SUB-DIRECTORY PATH GOES HERE ]"
-      #
-      # Local PC file name to compare.
-      FILE_TO_COMPARE="menu.sh"
-      #
-      # Each file script contains the string "VERSION=[ YYYY-MM-DD HH:MM ]"
-      # i.e. VERSION="2020-12-31 23:59"
-      #
-      # Version of TARGET_FILE.
-      VERSION=$(grep --max-count=1 "VERSION" $FILE_TO_COMPARE)
-      #
-      FILE_LIST=$THIS_DIR/$THIS_FILE"_file_temp.txt"
-      ERROR=0
-      #
-      #
-      #=================================================================
-      # UNCOMMENT AND EDIT THE LINES BELOW TO SPECIFY THE FILE NAMES.
-      # FILE NAMES TO UPDATE INCLUDE ALL DEPENDENT LIBRARIES.
-      #=================================================================
-      #
-      #
-      # Create list of files to update and write to temporary file, FILE_LIST.
-      #
-      echo "menu.sh"                   > $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
-      echo "menu_module_main.lib"     >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
-      echo "menu_module_sub0.lib"     >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
-      echo "menu_module_sub1.lib"     >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
-      echo "common_bash_function.lib" >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
-      #
-      f_version_compare $1 $SERVER_DIR $MP_DIR $TARGET_DIR $FILE_TO_COMPARE "$VERSION" $FILE_LIST
-      #
-      if [ -r  $FILE_LIST ] ; then
-         rm  $FILE_LIST
-      fi
-      #
-}  # End of function f_check_version_TEMPLATE.
 #
 # +----------------------------------------+
 # |           Function f_sub-menu0         |
@@ -159,7 +214,7 @@ f_sub-menu0 () {
       # Create generated menu script from array data.
       #
       # Note: ***If Menu title contains spaces,
-      #       ***the size of the menu window will be too narrow.
+      #       ***the size of the Dialog/Whiptail menu window will be too narrow.
       #
       # Menu title MUST use underscores instead of spaces.
       MENU_TITLE="Sub-menu_Zero"  # Menu title must substitute underscores for spaces

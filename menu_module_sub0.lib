@@ -1,12 +1,23 @@
 #!/bin/bash
 #
-# ©2020 Copyright 2020 Robert D. Chin
+# ©2021 Copyright 2021 Robert D. Chin
+# Email: RDevChin@Gmail.com
 #
-# Usage: bash menu.sh
-#        (not sh menu.sh)
+# Usage: source menu_module_main.lib
 #
-VERSION="2021-02-21 21:53"
-THIS_FILE="menu_module_sub0.lib"
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program. If not, see <https://www.gnu.org/licenses/>.
 #
 # +--------------------------------------------------------------------------+
 # |                                                                          |
@@ -31,7 +42,54 @@ THIS_FILE="menu_module_sub0.lib"
 #@@Next Page#@@Next page of choices.#@@f_sub_menu1^$GUI
 #
 # +----------------------------------------+
-# |          Function f_hello_moon        |
+# |        Default Variable Values         |
+# +----------------------------------------+
+#
+VERSION="2021-02-26 01:04"
+#
+# Commented out THIS_FILE since it will conflict other scripts which
+# use this library.
+#THIS_FILE="$0"
+#
+# +----------------------------------------+
+# |            Brief Description           |
+# +----------------------------------------+
+#
+#& Brief Description
+#&
+#& This Library of functions for the Demonstration Menu is a
+#& child dependency used by the following scripts.
+#&
+#& Parent script: menu.sh.
+#&
+#& See script menu.sh for Edit History.
+#&
+#& Usage: source menu_module_sub0.lib
+#&
+#&    This program is free software: you can redistribute it and/or modify
+#&    it under the terms of the GNU General Public License as published by
+#&    the Free Software Foundation, either version 3 of the License, or
+#&    (at your option) any later version.
+#&
+#&
+#&    This program is distributed in the hope that it will be useful,
+#&    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#&    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#&    GNU General Public License for more details.
+#&
+#&    You should have received a copy of the GNU General Public License
+#&    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+# +----------------------------------------+
+# |           Code Change History          |
+# +----------------------------------------+
+#
+## Code Change History
+##
+## (Please see script "menu.sh" for Code History information.)
+#
+# +----------------------------------------+
+# |          Function f_hello_moon         |
 # +----------------------------------------+
 #
 #  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
@@ -48,7 +106,7 @@ f_hello_moon () {
 } # End of function f_hello_moon.
 #
 # +----------------------------------------+
-# |        Function f_goodbye_moon        |
+# |        Function f_goodbye_moon         |
 # +----------------------------------------+
 #
 #  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
@@ -66,7 +124,7 @@ f_goodbye_moon () {
 } # End of function f_goodbye_moon.
 #
 # +----------------------------------------+
-# |     Function f_good_morning_moon      |
+# |     Function f_good_morning_moon       |
 # +----------------------------------------+
 #
 #  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
@@ -84,7 +142,7 @@ f_good_morning_moon () {
 } # End of function f_good_morning_moon.
 #
 # +----------------------------------------+
-# |      Function f_good_night_moon       |
+# |      Function f_good_night_moon        |
 # +----------------------------------------+
 #
 #  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
@@ -137,7 +195,7 @@ f_sub_menu1 () {
       # Create generated menu script from array data.
       #
       # Note: ***If Menu title contains spaces,
-      #       ***the size of the menu window will be too narrow.
+      #       ***the size of the Dialog/Whiptail menu window will be too narrow.
       #
       # Menu title MUST use underscores instead of spaces.
       MENU_TITLE="Sub-menu_One"  # Menu title must substitute underscores for spaces
