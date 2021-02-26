@@ -40,7 +40,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2021-02-16 13:30"
+VERSION="2021-02-24 00:03"
 #
 # +----------------------------------------+
 # |            Brief Description           |
@@ -74,6 +74,9 @@ VERSION="2021-02-16 13:30"
 ## Code Change History
 ##
 ## (After each edit made, please update Code History and VERSION.)
+##
+## 2021-02-23 *f_version_compare prevented user message from displaying when
+##             a comparison is impossible (repository is unavailable).
 ##
 ## 2021-02-16 *f_menu_main_TEMPLATE, f_menu_sub_TEMPLATE added Summary.
 ##
@@ -350,7 +353,7 @@ f_check_version_TEMPLATE () {
 # |       Function f_version_compare       |
 # +----------------------------------------+
 #
-#     Rev: 2021-01-17
+#     Rev: 2021-02-23
 #  Inputs: $1=UI.
 #          $2=Samba File server Directory
 #          $3=Local Mount Point (Directory)
@@ -385,28 +388,33 @@ f_version_compare () {
                # Change string $VERSION_RELEASE from: VERSION="2020-12-31 23:59"
                #                                  to: 2020-12-31 23:59           (without quotes within string).
                VERSION_RELEASE=$(echo $VERSION_RELEASE | sed 's/VERSION=//' | sed 's/\"//g' | sed 's/ /_/g')
+               #
+               #f_message $1 "OK" "Version Information" "From Local Repository\n$4\nFile $5 $VERSION_RELEASE\n\nFrom this PC\nFile $5 $VER"
+               VER_MSG=$7"_MSG.txt"
+               echo "From Local Repository" > $VER_MSG
+               echo "$4" >> $VER_MSG
+               echo "File $5 $VERSION_RELEASE" >> $VER_MSG
+               echo >> $VER_MSG
+               echo "From this PC" >> $VER_MSG
+               echo "File $5 $VER" >> $VER_MSG
+               echo >> $VER_MSG
+               echo "                        >>> CAUTION <<<" >> $VER_MSG
+               echo >> $VER_MSG
+               echo -e "If you answer \"Yes\" to the next question \"Copy from Repository?\"" >> $VER_MSG
+               echo    "        ALL the files listed below WILL be OVER-WRITTEN." >> $VER_MSG 
+               echo >> $VER_MSG
+               cat $7 >> $VER_MSG
+               f_message $1 "OK" "List of Files to be Copied" $VER_MSG
+               #
+               # Delete temporary file.
+               if [ -e $VER_MSG ] ; then
+                  rm $VER_MSG
+               fi
+               #
             else
                f_message $1 "OK" "Error Missing Local Repository Directory" "Failed to access Local Repository Directory. Cannot compare script versions."
+               ERROR=1
             fi
-            #
-            #f_message $1 "OK" "Version Information" "From Local Repository\n$4\nFile $5 $VERSION_RELEASE\n\nFrom this PC\nFile $5 $VER"
-            VER_MSG=$7"_MSG.txt"
-            echo "From Local Repository" > $VER_MSG
-            echo "$4" >> $VER_MSG
-            echo "File $5 $VERSION_RELEASE" >> $VER_MSG
-            echo >> $VER_MSG
-            echo "From this PC" >> $VER_MSG
-            echo "File $5 $VER" >> $VER_MSG
-            echo >> $VER_MSG
-            echo "                        >>> CAUTION <<<" >> $VER_MSG
-            echo >> $VER_MSG
-            echo -e "If you answer \"Yes\" to the next question \"Copy from Repository?\"" >> $VER_MSG
-            echo    "        ALL the files listed below WILL be OVER-WRITTEN." >> $VER_MSG 
-            echo >> $VER_MSG
-            cat $7 >> $VER_MSG
-            f_message $1 "OK" "List of Files to be Copied" $VER_MSG
-            #
-            rm $VER_MSG
             #
          else
             f_message $1 "OK" "Error Mounting Local Repository Directory" "Failed to mount Local Repository Directory. Cannot compare script versions."
