@@ -47,7 +47,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2021-02-26 01:04"
+VERSION="2021-03-02 16:17"
 #
 # Commented out THIS_FILE since it will conflict other scripts which
 # use this library.
@@ -124,16 +124,21 @@ f_check_version () {
       #
       #
       # LAN File Server shared directory.
-      SERVER_DIR="[FILE_SERVER_DIRECTORY_NAME_GOES_HERE]"
+      # SERVER_DIR="[FILE_SERVER_DIRECTORY_NAME_GOES_HERE]"
+        SERVER_DIR="[FILE_SERVER_DIRECTORY_NAME_GOES_HERE]"
+
       #
       # Local PC mount-point directory.
-      MP_DIR="[LOCAL_MOUNT-POINT_DIRECTORY_NAME_GOES_HERE]"
+      # MP_DIR="[LOCAL_MOUNT-POINT_DIRECTORY_NAME_GOES_HERE]"
+        MP_DIR="[LOCAL_MOUNT-POINT_DIRECTORY_NAME_GOES_HERE]"
       #
       # Local PC mount-point with LAN File Server Local Repository full directory path.
-      LOCAL_REPO_DIR="$MP_DIR/LIBRARY/PC-stuff/PC-software/BASH_Scripting_Projects/Repository"
+      # LOCAL_REPO_DIR="[LOCAL_MOUNT-POINT_DIRECTORY_APPEND_FILE_SERVER_PATH_TO_REPOSITORY]"
+        LOCAL_REPO_DIR="[LOCAL_MOUNT-POINT_DIRECTORY_APPEND_FILE_SERVER_PATH_TO_REPOSITORY]"
       #
       # Local PC file within TARGET_DIR.
-      FILE_TO_COMPARE="[FILE_TO_COMPARE]"
+      # FILE_TO_COMPARE="[FILE_TO_COMPARE]"
+        FILE_TO_COMPARE="menu.sh"
       #
       # Version of TARGET_FILE.
       VERSION=$(grep --max-count=1 "VERSION" $FILE_TO_COMPARE)
@@ -214,7 +219,7 @@ f_sub-menu0 () {
       # Create generated menu script from array data.
       #
       # Note: ***If Menu title contains spaces,
-      #       ***the size of the Dialog/Whiptail menu window will be too narrow.
+      #       ***the size of the menu window will be too narrow.
       #
       # Menu title MUST use underscores instead of spaces.
       MENU_TITLE="Sub-menu_Zero"  # Menu title must substitute underscores for spaces

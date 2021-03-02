@@ -45,7 +45,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2021-02-26 01:04"
+VERSION="2021-03-02 16:17"
 #
 # Commented out THIS_FILE since it will conflict other scripts which
 # use this library.
@@ -195,7 +195,7 @@ f_sub_menu1 () {
       # Create generated menu script from array data.
       #
       # Note: ***If Menu title contains spaces,
-      #       ***the size of the Dialog/Whiptail menu window will be too narrow.
+      #       ***the size of the menu window will be too narrow.
       #
       # Menu title MUST use underscores instead of spaces.
       MENU_TITLE="Sub-menu_One"  # Menu title must substitute underscores for spaces
