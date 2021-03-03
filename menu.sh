@@ -24,7 +24,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2021-03-02 16:17"
+VERSION="2021-03-03 13:54"
 THIS_FILE="$0"
 TEMP_FILE=$THIS_FILE"_temp.txt"
 GENERATED_FILE=$THIS_FILE"_menu_generated.lib"
@@ -42,15 +42,20 @@ GENERATED_FILE=$THIS_FILE"_menu_generated.lib"
 #
 # LAN File Server shared directory.
 # SERVER_DIR="[FILE_SERVER_DIRECTORY_NAME_GOES_HERE]"
-  SERVER_DIR="[FILE_SERVER_DIRECTORY_NAME_GOES_HERE]"
+  SERVER_DIR="//file_server/public"
 #
 # Local PC mount-point directory.
 # MP_DIR="[LOCAL_MOUNT-POINT_DIRECTORY_NAME_GOES_HERE]"
-  MP_DIR="[LOCAL_MOUNT-POINT_DIRECTORY_NAME_GOES_HERE]"
+  MP_DIR="/mnt/file_server/public"
 #
-# Local File Server Local Repository full path
-# LOCAL_REPO_DIR="[LOCAL_MOUNT-POINT_DIRECTORY_APPEND_FILE_SERVER_PATH_TO_REPOSITORY]"
-  LOCAL_REPO_DIR="[LOCAL_MOUNT-POINT_DIRECTORY_APPEND_FILE_SERVER_PATH_TO_REPOSITORY]"
+# Local PC mount-point with LAN File Server Local Repository full directory path.
+# Example: 
+#                   File server shared directory is "//file_server/public".
+# Repostory directory under the shared directory is "scripts/BASH/Repository".
+#                 Local PC Mount-point directory is "/mnt/file_server/public".
+#
+# LOCAL_REPO_DIR="$MP_DIR/[DIRECTORY_PATH_TO_LOCAL_REPOSITORY]"
+  LOCAL_REPO_DIR="$MP_DIR/scripts/BASH/Repository"
 #
 #
 #=================================================================
@@ -183,6 +188,9 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ## Code Change History
 ##
 ## (After each edit made, please update Code History and VERSION.)
+##
+## 2021-03-03 *Section "Default Variable Values", f_check_version use a
+##             directory path example to clarify directory settings usage.
 ##
 ## 2021-03-02 *Updated to latest standards.
 ##
