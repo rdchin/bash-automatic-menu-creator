@@ -47,7 +47,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2021-03-03 13:54"
+VERSION="2021-03-04 10:18"
 #
 # Commented out THIS_FILE since it will conflict other scripts which
 # use this library.
@@ -94,7 +94,7 @@ VERSION="2021-03-03 13:54"
 # |        Function f_check_version        |
 # +----------------------------------------+
 #
-#     Rev: 2021-02-08
+#     Rev: 2021-03-04
 #  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
 #    Uses: SERVER_DIR, MP_DIR, TARGET_DIR, TARGET_FILE, VERSION, TEMP_FILE, ERROR.
 # Outputs: $1=GUI.

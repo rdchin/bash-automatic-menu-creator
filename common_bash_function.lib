@@ -40,7 +40,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2021-02-24 00:03"
+VERSION="2021-03-04 10:18"
 #
 # +----------------------------------------+
 # |            Brief Description           |
@@ -277,7 +277,7 @@ f_script_path () {
 # |        Function f_check_version_TEMPLATE        |
 # +----------------------------------------+
 #
-#     Rev: 2021-02-08
+#     Rev: 2021-03-04
 #  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
 #    Uses: SERVER_DIR, MP_DIR, TARGET_DIR, TARGET_FILE, VERSION, TEMP_FILE, ERROR.
 # Outputs: $1=GUI.
@@ -307,19 +307,26 @@ f_check_version_TEMPLATE () {
       #
       #
       # LAN File Server shared directory.
-      SERVER_DIR="[ FILE SERVER DIRECTORY NAME GOES HERE ]"
+      # SERVER_DIR="[FILE_SERVER_DIRECTORY_NAME_GOES_HERE]"
+        SERVER_DIR="//file_server/public"
       #
       # Local PC mount-point directory.
-      MP_DIR="[ LOCAL MOUNT-POINT DIRECTORY NAME GOES HERE ]"
+      # MP_DIR="[LOCAL_MOUNT-POINT_DIRECTORY_NAME_GOES_HERE]"
+        MP_DIR="/mnt/file_server/public"
       #
-      # Local PC target directory, sub-directory below mount-point directory.
-      TARGET_DIR="[ LOCAL MOUNT-POINT DIRECTORY/REPOSITORY SUB-DIRECTORY PATH GOES HERE ]"
+      # Local PC mount-point with LAN File Server Local Repository full directory path.
+      # Example: 
+      #                   File server shared directory is "//file_server/public".
+      # Repostory directory under the shared directory is "scripts/BASH/Repository".
+      #                 Local PC Mount-point directory is "/mnt/file_server/public".
       #
-      # Local PC file name to compare.
-      FILE_TO_COMPARE="[ LOCAL FILE NAME ]"
+      # Local PC mount-point with LAN File Server Local Repository full directory path.
+      # LOCAL_REPO_DIR="$MP_DIR/[DIRECTORY_PATH_TO_LOCAL_REPOSITORY]"
+        LOCAL_REPO_DIR="$MP_DIR/scripts/BASH/Repository"
       #
-      # Each file script contains the string "VERSION=[ YYYY-MM-DD HH:MM ]"
-      # i.e. VERSION="2020-12-31 23:59"
+      # Local PC file within TARGET_DIR.
+      # FILE_TO_COMPARE="[FILE_TO_COMPARE]"
+        FILE_TO_COMPARE="FILE_NAME1_GOES_HERE.sh"
       #
       # Version of TARGET_FILE.
       VERSION=$(grep --max-count=1 "VERSION" $FILE_TO_COMPARE)
@@ -329,8 +336,8 @@ f_check_version_TEMPLATE () {
       #
       #
       #=================================================================
-      # UNCOMMENT AND EDIT THE LINES BELOW TO SPECIFY THE FILE NAMES.
-      # FILE NAMES TO UPDATE INCLUDE ALL DEPENDENT LIBRARIES.
+      # EDIT THE LINES BELOW TO SPECIFY THE FILE NAMES TO UPDATE.
+      # FILE NAMES INCLUDE ALL DEPENDENT SCRIPTS LIBRARIES.
       #=================================================================
       #
       #
@@ -341,7 +348,7 @@ f_check_version_TEMPLATE () {
       #echo "[ FILE NAME3 GOES HERE ]" >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
       #echo "[ FILE NAME4 GOES HERE ]" >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
       #
-      f_version_compare $1 $SERVER_DIR $MP_DIR $TARGET_DIR $FILE_TO_COMPARE "$VERSION" $FILE_LIST
+      f_version_compare $1 $SERVER_DIR $MP_DIR $LOCAL_REPO_DIR $FILE_TO_COMPARE "$VERSION" $FILE_LIST
       #
       if [ -r  $FILE_LIST ] ; then
          rm  $FILE_LIST
