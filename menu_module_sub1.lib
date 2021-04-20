@@ -43,7 +43,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2021-03-03 13:54"
+VERSION="2021-04-01 00:54"
 #
 # Commented out THIS_FILE since it will conflict other scripts which
 # use this library.
@@ -95,6 +95,10 @@ VERSION="2021-03-03 13:54"
 #    Uses: None.
 # Outputs: temp.txt.
 #
+# Summary: 
+#
+# Dependencies: 
+#
 f_hello_world () {
       #
       clear  # Clear screen.
@@ -112,6 +116,10 @@ f_hello_world () {
 #          THIS_DIR, THIS_FILE.
 #    Uses: None.
 # Outputs: temp.txt.
+#
+# Summary: 
+#
+# Dependencies: 
 #
 f_goodbye_world () {
       #
@@ -131,6 +139,10 @@ f_goodbye_world () {
 #    Uses: None.
 # Outputs: temp.txt.
 #
+# Summary: 
+#
+# Dependencies: 
+#
 f_good_morning_world () {
       #
       clear  # Clear screen.
@@ -149,6 +161,10 @@ f_good_morning_world () {
 #    Uses: None.
 # Outputs: temp.txt.
 #
+# Summary: 
+#
+# Dependencies: 
+#
 f_good_night_world () {
       #
       clear  # Clear screen.
@@ -166,6 +182,10 @@ f_good_night_world () {
 #          THIS_DIR, THIS_FILE.
 #    Uses: None.
 # Outputs: temp.txt.
+#
+# Summary: 
+#
+# Dependencies: 
 #
 f_gn () {
       #

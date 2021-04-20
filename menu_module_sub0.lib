@@ -45,7 +45,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2021-03-04 10:18"
+VERSION="2021-04-01 00:54"
 #
 # Commented out THIS_FILE since it will conflict other scripts which
 # use this library.
@@ -97,6 +97,10 @@ VERSION="2021-03-04 10:18"
 #    Uses: None.
 # Outputs: temp.txt.
 #
+# Summary: 
+#
+# Dependencies: 
+#
 f_hello_moon () {
       clear  # Clear screen.
       echo "Hello Moon"
@@ -113,6 +117,10 @@ f_hello_moon () {
 #          THIS_DIR, THIS_FILE.
 #    Uses: None.
 # Outputs: temp.txt.
+#
+# Summary: 
+#
+# Dependencies: 
 #
 f_goodbye_moon () {
       #
@@ -150,6 +158,10 @@ f_good_morning_moon () {
 #    Uses: None.
 # Outputs: temp.txt.
 #
+# Summary: 
+#
+# Dependencies: 
+#
 f_good_night_moon () {
       #
       clear  # Clear screen.
@@ -168,6 +180,10 @@ f_good_night_moon () {
 #    Uses: None.
 # Outputs: temp.txt.
 #
+# Summary: 
+#
+# Dependencies: 
+#
 f_gnight_moon () {
       #
       clear  # Clear screen.
@@ -184,6 +200,10 @@ f_gnight_moon () {
 #  Inputs: $1=GUI.
 #    Uses: None.
 # Outputs: None.
+#
+# Summary: 
+#
+# Dependencies: 
 #
 f_sub_menu1 () {
       #

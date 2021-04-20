@@ -24,8 +24,9 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2021-03-04 10:18"
-THIS_FILE="$0"
+VERSION="2021-04-01 00:54"
+THIS_FILE=$(basename $0)
+FILE_TO_COMPARE=$THIS_FILE
 TEMP_FILE=$THIS_FILE"_temp.txt"
 GENERATED_FILE=$THIS_FILE"_menu_generated.lib"
 #
@@ -42,11 +43,11 @@ GENERATED_FILE=$THIS_FILE"_menu_generated.lib"
 #
 # LAN File Server shared directory.
 # SERVER_DIR="[FILE_SERVER_DIRECTORY_NAME_GOES_HERE]"
-  SERVER_DIR="//file_server/public"
+  SERVER_DIR="//scotty/files"
 #
 # Local PC mount-point directory.
 # MP_DIR="[LOCAL_MOUNT-POINT_DIRECTORY_NAME_GOES_HERE]"
-  MP_DIR="/mnt/file_server/public"
+  MP_DIR="/mnt/scotty/files"
 #
 # Local PC mount-point with LAN File Server Local Repository full directory path.
 # Example: 
@@ -55,7 +56,7 @@ GENERATED_FILE=$THIS_FILE"_menu_generated.lib"
 #                 Local PC Mount-point directory is "/mnt/file_server/public".
 #
 # LOCAL_REPO_DIR="$MP_DIR/[DIRECTORY_PATH_TO_LOCAL_REPOSITORY]"
-  LOCAL_REPO_DIR="$MP_DIR/scripts/BASH/Repository"
+  LOCAL_REPO_DIR="$MP_DIR/LIBRARY/PC-stuff/PC-software/BASH_Scripting_Projects/Repository"
 #
 #
 #=================================================================
@@ -71,7 +72,6 @@ GENERATED_FILE=$THIS_FILE"_menu_generated.lib"
 #
 # Temporary file FILE_LIST contains a list of file names of dependent
 # scripts and libraries.
-# Format: [File Name]^[Local/
 #
 FILE_LIST=$THIS_FILE"_file_temp.txt"
 #
@@ -81,13 +81,8 @@ echo "menu_module_sub0.lib^Local^$LOCAL_REPO_DIR^https://raw.githubusercontent.c
 echo "menu_module_sub1.lib^Local^$LOCAL_REPO_DIR^https://raw.githubusercontent.com/rdchin/bash-automatic-menu-creator/master/" >> $FILE_LIST
 echo "common_bash_function.lib^Local^/mnt/scotty/files/LIBRARY/PC-stuff/PC-software/BASH_Scripting_Projects/Repository^https://raw.githubusercontent.com/rdchin/BASH_function_library/master/"   >> $FILE_LIST
 #
-# Create a list of files FILE_DL_LIST, which need to be downloaded.
-
-# From FILE_LIST (list of script and library files), find the files which
-# need to be downloaded and put those file names in FILE_DL_LIST.
-#
+# Create a name for a temporary file which will have a list of files which need to be downloaded.
 FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
-# Format: [File Name]^[Local/Web]^[Local repository directory]^[web repository directory]
 #
 # +----------------------------------------+
 # |            Brief Description           |
@@ -130,11 +125,11 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 #? Examples:
 #?
 #?                         Force display to use a different UI.
-#? bash menu.sh text       Use Cmd-line user-interface (80x24 min.)
+#? bash menu.sh text       Use Cmd-line user-interface (80x24 minimum).
 #?              dialog     Use Dialog   user-interface.
 #?              whiptail   Use Whiptail user-interface.
 #?
-#? bash menu.sh --help     Displays this help message.
+#? bash menu.sh --help     Displays this help message using Cmd-line UI.
 #?              -?
 #?
 #? bash menu.sh --about    Displays script version.
@@ -154,47 +149,79 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 #?              --ver dialog
 #
 # +----------------------------------------+
+# |                Code Notes              |
+# +----------------------------------------+
+#
+# To disable the [ OPTION ] --update -u to update the script:
+#    1) Comment out the call to function fdl_download_missing_scripts in
+#       Section "Start of Main Program".
+#
+# To completely delete the [ OPTION ] --update -u to update the script:
+#    1) Delete the call to function fdl_download_missing_scripts in
+#       Section "Start of Main Program".
+#    2) Delete all functions beginning with "f_dl"
+#    3) Delete instructions to update script in Section "Help and Usage".
+#
+# To disable the Main Menu:
+#    1) Comment out the call to function f_menu_main under "Run Main Code"
+#       in Section "Start of Main Program".
+#    2) Add calls to desired functions under "Run Main Code"
+#       in Section "Start of Main Program".
+#
+# To completely remove the Main Menu and its code:
+#    1) Delete the call to function f_menu_main under "Run Main Code" in
+#       Section "Start of Main Program".
+#    2) Add calls to desired functions under "Run Main Code"
+#       in Section "Start of Main Program".
+#    3) Delete the function f_menu_main.
+#    4) Delete "Menu Choice Options" in this script located under
+#       Section "Customize Menu choice options below".
+#       The "Menu Choice Options" lines begin with "#@@".
+#
+# +----------------------------------------+
 # |           Code Change History          |
 # +----------------------------------------+
 #
-## Code Notes
-##
-## To disable the [ OPTION ] --update -u to update the script:
-##    1) Comment out the call to function fdl_download_missing_scripts in
-##       Section "Start of Main Program".
-##
-## To completely delete the [ OPTION ] --update -u to update the script:
-##    1) Delete the call to function fdl_download_missing_scripts in
-##       Section "Start of Main Program".
-##    2) Delete all functions beginning with "f_dl"
-##    3) Delete instructions to update script in Section "Help and Usage".
-##
-## To disable the Main Menu:
-##    1) Comment out the call to function f_menu_main under "Run Main Code"
-##       in Section "Start of Main Program".
-##    2) Add calls to desired functions under "Run Main Code"
-##       in Section "Start of Main Program".
-##
-## To completely remove the Main Menu and its code:
-##    1) Delete the call to function f_menu_main under "Run Main Code" in
-##       Section "Start of Main Program".
-##    2) Add calls to desired functions under "Run Main Code"
-##       in Section "Start of Main Program".
-##    3) Delete the function f_menu_main.
-##    4) Delete "Menu Choice Options" in example.lib located under
-##       Section "Customize Menu choice options below".
-##       The "Menu Choice Options" lines begin with "#@@".
-##
 ## Code Change History
 ##
 ## (After each edit made, please update Code History and VERSION.)
 ##
-## 2021-03-03 *Section "Default Variable Values", f_check_version use a
+## Includes changes to menu_module_main.lib.
+##
+## 2021-04-18 *f_display_common updated to latest standard.
+##
+## 2021-04-01 *Section "Code Notes" added. Improved comments.
+##
+## 2021-03-28 *Comment cleanup. Move the appended comments to start on the
+##             previous line to improve readability.
+##
+## 2021-03-25 *f_check_version updated to add a second optional argument.
+##             so a single copy in dropfsd_module_main.lib can replace the
+##             customized versions in fsds.sh, and fsdt.sh.
+##             Rewrote to eliminate comparing the version of a hard-coded
+##             script or file name in favor of passing any script or file
+##             name as an argument whose version is then compared to
+##             determine whether or not to upgrade.
+##            *Section "Main Program" detect UI before detecting arguments.
+##            *Comment cleanup. Move the appended comments to start on the
+##             previous line to improve readability.
+##            *fdl_source bug ERROR not initialized fixed.
+##            *Section "Default Variable Values" defined FILE_TO_COMPARE and
+##             defined THIS_FILE=$(basename $0) to reduce maintenance.
+##
+## 2021-03-12 *Updated to latest standards and improved comments.
+##            *fdl_download_missing_scripts added 2 arguments for file names
+##             as arguments.
+##            *fdl_download_missing_scripts, f_run_app, and application
+##             functions changed to allow missing dependent scripts to be
+##             automatically downloaded rather than simply displaying an
+##             error message that they were missing.
+##
+## 2021-03-03 *Updated to latest standards.
+##            *Section "Default Variable Values", f_check_version use a
 ##             directory path example to clarify directory settings usage.
 ##
-## 2021-03-02 *Updated to latest standards.
-##
-## 2021-02-25 *Updated to latest standards.
+## 2021-02-25 *Updated to latest standards and improved comments.
 ##
 ## 2021-02-23 *fdl_download_missing_scripts rewrote logic for downloading,
 ##             extensively tested mountpoint action, Local Repository and
@@ -229,8 +256,8 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ## 2020-10-25 *f_arguments, "Help and Usage" added option --update -u.
 ##            *f_check_version updated to latest standards.
 ##
-## 2020-10-24 *Main added functionality to download any dependent file or
-##             library from this script.
+## 2020-10-24 *Section "Main Program" added functionality to download any
+##             dependent file or library from this script.
 ##            *f_choose_dl_source, f_source added to optimize the enhanced
 ##             download functionality and to allow user a choice between
 ##             downloading file and library dependencies from a local
@@ -265,7 +292,7 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ## 2020-05-14 *f_yn_question fixed bug where temp file was undefined.
 ##            *msg_ui_str_nok, f_msg_txt_str_nok changed wait time
 ##             from 5 to 3 seconds.
-##            *f_exit_script to latest standard; clean-up temp files on exit.
+##            *Section "Main Program" clean-up temp files on exit.
 ##            *f_message, f_msg_ui_file_box_size, f_msg_ui_str_box_size,
 ##             f_ui_file_ok/nok, f_ui_str_ok/nok f_yn_question/defaults
 ##             specified parameter passing.
@@ -306,18 +333,18 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ## 2019-01-19 *Bug fix in return to previous menu.
 ##            *Clean up code and comments.
 ##
-## 2018-01-18 *Cosmetic improvements to automatically fit the Dialog or 
+## 2018-01-18 *Cosmetic improvements to automatically fit the Dialog or
 ##             Whiptail frame size to the amount of text.
 ##            *Optimized the generation of menus.
 ##
-## 2018-01-17 *Initial release.
+## 2018-01-17 *Initial Release.
 #
 # +------------------------------------+
 # |     Function f_display_common      |
 # +------------------------------------+
 #
-#     Rev: 2021-02-08
-#  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
+#     Rev: 2021-03-31
+#  Inputs: $1=UI - "text", "dialog" or "whiptail" the preferred user-interface.
 #          $2=Delimiter of text to be displayed.
 #          $3="NOK", "OK", or null [OPTIONAL] to control display of "OK" button.
 #          $4=Pause $4 seconds [OPTIONAL]. If "NOK" then pause to allow text to be read.
@@ -325,29 +352,32 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 #    Uses: X.
 # Outputs: None.
 #
-# PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
-#              THIS FUNCTION INTO ANY SCRIPT WHICH DEPENDS ON THE
-#              LIBRARY FILE "common_bash_function.lib".
+# Summary: Display lines of text beginning with a given comment delimiter.
+#
+# Dependencies: f_message.
 #
 f_display_common () {
       #
-      # Specify $THIS_FILE name of the file containing the text to be displayed.
-      # $THIS_FILE may be re-defined inadvertently when a library file defines it
-      # so when the command, source [ LIBRARY_FILE.lib ] is used, $THIS_FILE is
-      # redefined to the name of the library file, LIBRARY_FILE.lib.
+      # Set $THIS_FILE to the file name containing the text to be displayed.
+      #
+      # WARNING: Do not define $THIS_FILE within a library script.
+      #
+      # This prevents $THIS_FILE being inadvertently re-defined and set to
+      # the file name of the library when the command:
+      # "source [ LIBRARY_FILE.lib ]" is used.
+      #
       # For that reason, all library files now have the line
-      # THIS_FILE="[LIBRARY_FILE.lib]" deleted.
+      # THIS_FILE="[LIBRARY_FILE.lib]" commented out or deleted.
       #
       #
-      #================================================================================
-      # EDIT THE LINE BELOW TO DEFINE $THIS_FILE AS THE ACTUAL FILE NAME WHERE THE
-      # ABOUT, CODE HISTORY, AND HELP MESSAGE TEXT IS LOCATED.
-      #================================================================================
+      #==================================================================
+      # EDIT THE LINE BELOW TO DEFINE $THIS_FILE AS THE ACTUAL FILE NAME
+      # CONTAINING THE BRIEF DESCRIPTION, CODE HISTORY, AND HELP MESSAGE.
+      #==================================================================
       #
       #
-                           #
       THIS_FILE="menu.sh"  # <<<--- INSERT ACTUAL FILE NAME HERE.
-                           #
+      #
       TEMP_FILE=$THIS_DIR/$THIS_FILE"_temp.txt"
       #
       # Set $VERSION according as it is set in the beginning of $THIS_FILE.
@@ -362,7 +392,7 @@ f_display_common () {
       # Display text (all lines beginning ("^") with $2 but do not print $2).
       # sed substitutes null for $2 at the beginning of each line
       # so it is not printed.
-      sed --silent "s/$2//p" $THIS_DIR/$THIS_FILE >> $TEMP_FILE
+      sed -n "s/$2//"p $THIS_DIR/$THIS_FILE >> $TEMP_FILE
       #
       case $3 in
            "NOK" | "nok")
@@ -379,26 +409,20 @@ f_display_common () {
 # |          Function f_menu_main          |
 # +----------------------------------------+
 #
-#     Rev: 2021-02-13
-#  Inputs: $1=GUI.
+#     Rev: 2021-03-07
+#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
 #    Uses: ARRAY_FILE, GENERATED_FILE, MENU_TITLE.
 # Outputs: None.
 #
-# PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
-#              THIS FUNCTION INTO THE MAIN SCRIPT WHICH WILL CALL IT.
+# Summary: Display Main-Menu.
+#          This Main Menu function checks its script for the Main Menu
+#          options delimited by "#@@" and if it does not find any, then
+#          it it defaults to the specified library script.
+#
+# Dependencies: f_menu_arrays, f_create_show_menu.
 #
 f_menu_main () { # Create and display the Main Menu.
       #
-      #
-      #================================================================================
-      # EDIT THE LINE BELOW TO DEFINE $THIS_FILE AS THE ACTUAL FILE NAME WHERE THE
-      # ABOUT, CODE HISTORY, AND HELP MESSAGE TEXT IS LOCATED.
-      #================================================================================
-      #
-      #
-                           #
-      THIS_FILE="menu.sh"  # <<<--- INSERT ACTUAL FILE NAME HERE.
-                           #
       GENERATED_FILE=$THIS_DIR/$THIS_FILE"_menu_main_generated.lib"
       #
       # Does this file have menu items in the comment lines starting with "#@@"?
@@ -426,7 +450,7 @@ f_menu_main () { # Create and display the Main Menu.
          #
          # Specify library file name with menu item data.
          # ARRAY_FILE="[FILENAME_GOES_HERE]"
-         ARRAY_FILE="$THIS_DIR/menu_module_main.lib"
+           ARRAY_FILE="$THIS_DIR/menu_module_main.lib"
       fi
       #
       # Create arrays from data.
@@ -442,7 +466,7 @@ f_menu_main () { # Create and display the Main Menu.
       #       ***the size of the menu window will be too narrow.
       #
       # Menu title MUST use underscores instead of spaces.
-      MENU_TITLE="CLI_Action_Menu"  # Menu title must substitute underscores for spaces
+      MENU_TITLE="Example_Menu"
       TEMP_FILE=$THIS_DIR/$THIS_FILE"_menu_main_temp.txt"
       #
       f_create_show_menu $1 $GENERATED_FILE $MENU_TITLE $MAX_LENGTH $MAX_LINES $MAX_CHOICE_LENGTH $TEMP_FILE
@@ -461,15 +485,18 @@ f_menu_main () { # Create and display the Main Menu.
 # |  Function fdl_dwnld_file_from_web_site |
 # +----------------------------------------+
 #
-#     Rev: 2021-02-23
+#     Rev: 2021-03-08
 #  Inputs: $1=GitHub Repository
 #          $2=file name to download.
 #    Uses: None.
 # Outputs: None.
 #
-# PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
-#              THIS FUNCTION INTO ANY SCRIPT WHICH DEPENDS ON THE
-#              LIBRARY FILE "common_bash_function.lib".
+# Summary: Download a list of file names from a web site.
+#          Cannot be dependent on "common_bash_function.lib" as this library
+#          may not yet be available and may need to be downloaded.
+#
+# Dependencies: wget.
+#
 #
 fdl_dwnld_file_from_web_site () {
       #
@@ -516,15 +543,17 @@ fdl_dwnld_file_from_web_site () {
 # | Function fdl_dwnld_file_from_local_repository |
 # +-----------------------------------------------+
 #
-#     Rev: 2021-02-23
+#     Rev: 2021-03-08
 #  Inputs: $1=Local Repository Directory.
 #          $2=File to download.
 #    Uses: TEMP_FILE.
 # Outputs: ERROR.
 #
-# This is used to download any file with a text-only UI.
-# This can be used to download the Common Function Library.
-# Used to download any file before the Common Library is even downloaded.
+# Summary: Copy a file from the local repository on the LAN file server.
+#          Cannot be dependent on "common_bash_function.lib" as this library
+#          may not yet be available and may need to be downloaded.
+#
+# Dependencies: None.
 #
 fdl_dwnld_file_from_local_repository () {
       #
@@ -576,17 +605,24 @@ fdl_dwnld_file_from_local_repository () {
 # |       Function fdl_mount_local      |
 # +-------------------------------------+
 #
-#     Rev: 2021-02-23
+#     Rev: 2021-03-10
 #  Inputs: $1=Server Directory.
 #          $2=Local Mount Point Directory
 #          TEMP_FILE
 #    Uses: TARGET_DIR, UPDATE_FILE, ERROR, SMBUSER, PASSWORD.
 # Outputs: ERROR.
 #
+# Summary: Mount directory using Samba and CIFS and echo error message.
+#          Cannot be dependent on "common_bash_function.lib" as this library
+#          may not yet be available and may need to be downloaded.
+#
+# Dependencies: Software package "cifs-utils" in the Distro's Repository.
+#
 fdl_mount_local () {
       #
       # Mount local repository on mount-point.
-      mountpoint $2 >/dev/null 2>$TEMP_FILE # Write any error messages to file $TEMP_FILE. Get status of mountpoint, mounted?.
+      # Write any error messages to file $TEMP_FILE. Get status of mountpoint, mounted?.
+      mountpoint $2 >/dev/null 2>$TEMP_FILE
       ERROR=$?
       if [ $ERROR -ne 0 ] ; then
          # Mount directory.
@@ -600,8 +636,11 @@ fdl_mount_local () {
          read -s -p "Enter Password: " PASSWORD < /dev/tty
          echo sudo mount -t cifs $1 $2
          sudo mount -t cifs -o username="$SMBUSER" -o password="$PASSWORD" $1 $2
-         mountpoint $2 >/dev/null 2>$TEMP_FILE # Write any error messages to file $TEMP_FILE. Get status of mountpoint, mounted?.
+         #
+         # Write any error messages to file $TEMP_FILE. Get status of mountpoint, mounted?.
+         mountpoint $2 >/dev/null 2>$TEMP_FILE
          ERROR=$?
+         #
          if [ $ERROR -ne 0 ] ; then
             echo
             echo ">>>>>>>>>><<<<<<<<<<<"
@@ -620,14 +659,23 @@ fdl_mount_local () {
 } # End of function fdl_mount_local.
 #
 # +------------------------------------+
-# |         Function f_source          |
+# |        Function fdl_source         |
 # +------------------------------------+
 #
-#     Rev: 2021-02-23
+#     Rev: 2021-03-25
 #  Inputs: $1=File name to source.
 # Outputs: ERROR.
 #
-f_source () {
+# Summary: Source the provided library file and echo error message.
+#          Cannot be dependent on "common_bash_function.lib" as this library
+#          may not yet be available and may need to be downloaded.
+#
+# Dependencies: None.
+#
+fdl_source () {
+      #
+      # Initialize ERROR.
+      ERROR=0
       #
       if [ -x "$1" ] ; then
          # If $1 is a library, then source it.
@@ -650,49 +698,67 @@ f_source () {
          #
       fi
       #
-} # End of function f_source.
+} # End of function fdl_source.
 #
 # +----------------------------------------+
 # |  Function fdl_download_missing_scripts |
 # +----------------------------------------+
 #
-#     Rev: 2021-02-23
-#  Inputs: $1=File name to source.
+#     Rev: 2021-03-11
+#  Inputs: $1 - File containing a list of all file dependencies.
+#          $2 - File name of generated list of missing file dependencies.
 # Outputs: ANS.
+#
+# Summary: This function can be used when script is first run.
+#          It verifies that all dependencies are satisfied. 
+#          If any are missing, then any missing required dependencies of
+#          scripts and libraries are downloaded from a LAN repository or
+#          from a repository on the Internet.
+#
+#          This function allows this single script to be copied to any
+#          directory and then when it is executed or run, it will download
+#          automatically all other needed files and libraries, set them to be
+#          executable, and source the required libraries.
+#          
+#          Cannot be dependent on "common_bash_function.lib" as this library
+#          may not yet be available and may need to be downloaded.
+#
+# Dependencies: None.
 #
 fdl_download_missing_scripts () {
       #
-      #----------------------------------------------------------------
-      # Variables FILE_LIST and FILE_DL_LIST are defined in the section
-      # "Default Variable Values" at the beginning of this script.
-      #----------------------------------------------------------------
-      #
       # Delete any existing temp file.
-      if [ -r  $FILE_DL_LIST ] ; then
-         rm  $FILE_DL_LIST
+      if [ -r  $2 ] ; then
+         rm  $2
       fi
       #
       # ****************************************************
       # Create new list of files that need to be downloaded.
       # ****************************************************
       #
+      # While-loop will read the file names listed in FILE_LIST (list of
+      # script and library files) and detect which are missing and need 
+      # to be downloaded and then put those file names in FILE_DL_LIST.
+      #
       while read LINE
             do
                FILE=$(echo $LINE | awk -F "^" '{ print $1 }')
                if [ ! -x $FILE ] ; then
-                  # File needs to be downloaded or is not executable
-                  chmod +x $FILE 2>$TEMP_FILE # Write any error messages to file $TEMP_FILE.
+                  # File needs to be downloaded or is not executable.
+                  # Write any error messages to file $TEMP_FILE.
+                  chmod +x $FILE 2>$TEMP_FILE
                   ERROR=$?
+                  #
                   if [ $ERROR -ne 0 ] ; then
                      # File needs to be downloaded. Add file name to a file list in a text file.
                      # Build list of files to download.
-                     echo $LINE >> $FILE_DL_LIST
+                     echo $LINE >> $2
                   fi
                fi
-            done < $FILE_LIST
+            done < $1
       #
       # If there are files to download (listed in FILE_DL_LIST), then mount local repository.
-      if [ -s "$FILE_DL_LIST" ] ; then
+      if [ -s "$2" ] ; then
          echo
          echo "There are missing file dependencies which must be downloaded from"
          echo "the local repository or web repository."
@@ -701,7 +767,7 @@ fdl_download_missing_scripts () {
          while read LINE
                do
                   echo $LINE | awk -F "^" '{ print $1 }'
-               done < $FILE_DL_LIST
+               done < $2
          echo
          echo "You will need to present credentials."
          echo
@@ -765,7 +831,7 @@ fdl_download_missing_scripts () {
                           fi
                        ;;
                   esac
-               done < $FILE_DL_LIST
+               done < $2
          #
          if [ $ERROR -ne 0 ] ; then
             echo
@@ -791,8 +857,17 @@ fdl_download_missing_scripts () {
             do
                FILE=$(echo $LINE | awk -F "^" '{ print $1 }')
                # Invoke any library files.
-               f_source $FILE
-            done < $FILE_LIST
+               fdl_source $FILE
+               if [ $ERROR -ne 0 ] ; then
+                  echo
+                  echo ">>>>>>>>>><<<<<<<<<<<"
+                  echo ">>> Library Error <<<"
+                  echo ">>>>>>>>>><<<<<<<<<<<"
+                  echo
+                  echo -e "$1 cannot be sourced using command:\n\"source $1\""
+                  echo
+               fi
+            done < $1
       if [ $ERROR -ne 0 ] ; then
          echo
          echo
@@ -810,28 +885,36 @@ fdl_download_missing_scripts () {
 # ***     Start of Main Program      ***
 # **************************************
 # **************************************
-#     Rev: 2021-02-21
+#     Rev: 2021-03-11
 #
 #
 if [ -e $TEMP_FILE ] ; then
    rm $TEMP_FILE
 fi
 #
-clear  # Blank the screen.
+# Blank the screen.
+clear
 #
 echo "Running script $THIS_FILE"
 echo "***   Rev. $VERSION   ***"
 echo
-sleep 1  # pause for 1 second automatically.
+# pause for 1 second automatically.
+sleep 1
 #
-clear # Blank the screen.
+# Blank the screen.
+clear
 #
 #-------------------------------------------------------
 # Detect and download any missing scripts and libraries.
 #-------------------------------------------------------
 #
+#----------------------------------------------------------------
+# Variables FILE_LIST and FILE_DL_LIST are defined in the section
+# "Default Variable Values" at the beginning of this script.
+#----------------------------------------------------------------
+#
 # Are any files/libraries missing?
-fdl_download_missing_scripts
+fdl_download_missing_scripts $FILE_LIST $FILE_DL_LIST
 #
 # Are there any problems with the download/copy of missing scripts?
 if [ -r  $FILE_DL_LIST ] || [ $ERROR -ne 0 ] ; then
@@ -865,12 +948,8 @@ f_script_path
 # Set Temporary file using $THIS_DIR from f_script_path.
 TEMP_FILE=$THIS_DIR/$THIS_FILE"_temp.txt"
 #
-# Test for Optional Arguments.
-# Also sets variable GUI.
-f_arguments $1 $2
-#
 # If command already specifies GUI, then do not detect GUI.
-# i.e. "bash example.sh dialog" or "bash example.sh text".
+# i.e. "bash menu.sh dialog" or "bash menu.sh text".
 if [ -z $GUI ] ; then
    # Test for GUI (Whiptail or Dialog) or pure text environment.
    f_detect_ui
@@ -880,6 +959,10 @@ fi
 #GUI="whiptail"  # Diagnostic line.
 #GUI="dialog"    # Diagnostic line.
 #GUI="text"      # Diagnostic line.
+#
+# Test for Optional Arguments.
+# Also sets variable GUI.
+f_arguments $1 $2
 #
 # Delete temporary files.
 if [ -r  $FILE_LIST ] ; then

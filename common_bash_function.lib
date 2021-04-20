@@ -40,7 +40,13 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2021-03-04 10:18"
+VERSION="2021-03-31 15:54"
+#
+# WARNING: Do not define $THIS_FILE within a library script.
+#
+# This prevents $THIS_FILE being inadvertently re-defined and set to
+# the file name of the library when the command:
+# "source [ LIBRARY_FILE.lib ]" is used.
 #
 # +----------------------------------------+
 # |            Brief Description           |
@@ -74,6 +80,47 @@ VERSION="2021-03-04 10:18"
 ## Code Change History
 ##
 ## (After each edit made, please update Code History and VERSION.)
+##
+## 2021-03-31 *f_version_compare changed user-message question format to be
+##             more consistent with previous informative user-message.
+##            *f_display_common_TEMPLATE improved comments.
+##            *Generally improved comments.
+##
+## 2021-03-29 *f_version_compare changed user-message to be more consistent
+##             with Linux file manager user-message when copying files.
+##
+## 2021-03-28 *f_arguments changed to detect if an argument is a file or
+##             directory name and if not, display appropriate error message.
+##            *f_source bug fixed initialized ERROR.
+##
+## 2021-03-25 *f_check_version typo fixed.
+##
+## 2021-03-24 *f_arguments changed -u option variable used.
+##             Change from: $TARGET_DIR 
+##             Change   to: $LOCAL_REPO_DIR
+##            *f_check_version_TEMPLATE, f_version_compare updated to add
+##             a second optional argument.
+##            *f_version_compare fixed bug initialized ANS, improved user
+##             messages and comments.
+##
+## 2021-03-12 *f_check_version_TEMPLATE corrected summary comment.
+##            *f_version_compare rewrote summary comment.
+##
+## 2021-03-09 *Standardized some comments.
+##
+## 2021-03-08 *f_source_TEMPLATE renamed to f_source, since there is no 
+##             customization.
+##            *f_mount improved comments.
+##
+## 2021-03-07 *f_update_menu_gui/txt bug fix for grep --text when searching
+##             for the Copyright line where the Copyright symbol may make
+##             certain versions of grep treat the script as a binary file.
+##            *f_check_file deleted as obsoleted by f_source_TEMPLATE.
+##            *f_download_library, f_download_local deleted as obsolete.
+##            *f_download_file added to download files.
+##            *f_download_from_local_repository added.
+##            *f_download_from_web_site added.
+##            *Enhanced comments added "Summary" and "Dependencies".
 ##
 ## 2021-02-23 *f_version_compare prevented user message from displaying when
 ##             a comparison is impossible (repository is unavailable).
@@ -250,59 +297,108 @@ VERSION="2021-03-04 10:18"
 ##
 ## 2020-04-06 *Initial Release.
 #
-# +----------------------------------------+
-# |         Function f_script_path         |
-# +----------------------------------------+
+# +------------------------------------+
+# |     Function f_display_common_TEMPLATE      |
+# +------------------------------------+
 #
-#     Rev: 2020-04-20
-#  Inputs: $BASH_SOURCE (System variable).
-#    Uses: None.
-# Outputs: SCRIPT_PATH, THIS_DIR.
+#     Rev: 2021-03-31
+#  Inputs: $1=UI - "text", "dialog" or "whiptail" the preferred user-interface.
+#          $2=Delimiter of text to be displayed.
+#          $3="NOK", "OK", or null [OPTIONAL] to control display of "OK" button.
+#          $4=Pause $4 seconds [OPTIONAL]. If "NOK" then pause to allow text to be read.
+#          THIS_DIR, THIS_FILE, VERSION.
+#    Uses: X.
+# Outputs: None.
 #
-f_script_path () {
-      #
-      # BASH_SOURCE[0] gives the filename of the script.
-      # dirname "{$BASH_SOURCE[0]}" gives the directory of the script
-      # Execute commands: cd <script directory> and then pwd
-      # to get the directory of the script.
-      # NOTE: This code does not work with symlinks in directory path.
-      #
-      # !!!Non-BASH environments will give error message about line below!!!
-      SCRIPT_PATH=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-      THIS_DIR=$SCRIPT_PATH  # Set $THIS_DIR to location of this script.
-      #
-} # End of function f_script_path.
+# Synopsis: Display lines of text beginning with a given comment delimiter.
 #
-# +----------------------------------------+
-# |        Function f_check_version_TEMPLATE        |
-# +----------------------------------------+
-#
-#     Rev: 2021-03-04
-#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
-#    Uses: SERVER_DIR, MP_DIR, TARGET_DIR, TARGET_FILE, VERSION, TEMP_FILE, ERROR.
-# Outputs: $1=GUI.
-#          $2=Samba File server Directory
-#          $3=Local Mount Point (Directory)
-#          $4=File server Target Directory.
-#          $5=File server File Name to compare.
-#          $6=Version of file to compare. String$
-#          $7=Temporary file name with list of files to be upgraded.
-#          ERROR
+# Dependencies: f_message.
 #
 # PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
 #              THIS FUNCTION INTO ANY SCRIPT WHICH DEPENDS ON THE
 #              LIBRARY FILE "common_bash_function.lib".
 #
-# Synopsis: Check version $6 of $5 local file with version of repository file.
-#           If the repository file has latest version, then copy all 
-#           dependent files and libraries from the repository to local PC. 
+f_display_common_TEMPLATE () {
+      #
+      # Set $THIS_FILE to the file name containing the text to be displayed.
+      #
+      # WARNING: Do not define $THIS_FILE within a library script.
+      #
+      # This prevents $THIS_FILE being inadvertently re-defined and set to
+      # the file name of the library when the command:
+      # "source [ LIBRARY_FILE.lib ]" is used.
+      #
+      # For that reason, all library files now have the line
+      # THIS_FILE="[LIBRARY_FILE.lib]" commented out or deleted.
+      #
+      #
+      #==================================================================
+      # EDIT THE LINE BELOW TO DEFINE $THIS_FILE AS THE ACTUAL FILE NAME
+      # CONTAINING THE BRIEF DESCRIPTION, CODE HISTORY, AND HELP MESSAGE.
+      #==================================================================
+      #
+      #
+      THIS_FILE="[ THIS FILE GOES HERE ]"  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      #
+      TEMP_FILE=$THIS_DIR/$THIS_FILE"_temp.txt"
+      #
+      # Set $VERSION according as it is set in the beginning of $THIS_FILE.
+      X=$(grep --max-count=1 "VERSION" $THIS_FILE)
+      # X="VERSION=YYYY-MM-DD HH:MM"
+      # Use command "eval" to set $VERSION.
+      eval $X
+      #
+      echo "Script: $THIS_FILE. Version: $VERSION" > $TEMP_FILE
+      echo >>$TEMP_FILE
+      #
+      # Display text (all lines beginning ("^") with $2 but do not print $2).
+      # sed substitutes null for $2 at the beginning of each line
+      # so it is not printed.
+      sed -n "s/$2//"p $THIS_DIR/$THIS_FILE >> $TEMP_FILE
+      #
+      case $3 in
+           "NOK" | "nok")
+              f_message $1 "NOK" "Message" $TEMP_FILE $4
+           ;;
+           *)
+              f_message $1 "OK" "(use arrow keys to scroll up/down/side-ways)" $TEMP_FILE
+           ;;
+      esac
+      #
+} # End of function f_display_common.
+#
+# +----------------------------------------+
+# |        Function f_check_version_TEMPLATE        |
+# +----------------------------------------+
+#
+#     Rev: 2021-03-25
+#  Inputs: $1 - UI "dialog" or "whiptail" or "text".
+#          $2 - [OPTIONAL] File name to compare.
+#          FILE_TO_COMPARE.
+#    Uses: SERVER_DIR, MP_DIR, TARGET_DIR, TARGET_FILE, VERSION, TEMP_FILE, ERROR.
+# Outputs: ERROR.
+#
+# Summary: Check the version of a single, local file or script,
+#          FILE_TO_COMPARE with the version of repository file.
+#          If the repository file has latest version, then copy all 
+#          dependent files and libraries from the repository to local PC.
+#
+# TO DO enhancement: If local (LAN) repository is unavailable, then
+#          connect to repository on the web if available.
+#
+# Dependencies: f_version_compare.
+#
+# PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
+#              THIS FUNCTION INTO ANY SCRIPT WHICH DEPENDS ON THE
+#              LIBRARY FILE "common_bash_function.lib".
 #
 f_check_version_TEMPLATE () {
       #
       #
       #=================================================================
-      # EDIT THE LINES BELOW TO DEFINE THE LAN FILE SERVER DIRECTORY AND
-      # SHARED MOUNTPOINT DIRECTORY, LOCAL TARGET DIRECTORY AND FILE. 
+      # EDIT THE LINES BELOW TO DEFINE THE LAN FILE SERVER DIRECTORY,
+      # LOCAL MOUNTPOINT DIRECTORY, LOCAL REPOSITORY DIRECTORY AND
+      # FILE TO COMPARE BETWEEN THE LOCAL PC AND (LAN) LOCAL REPOSITORY.
       #=================================================================
       #
       #
@@ -317,18 +413,27 @@ f_check_version_TEMPLATE () {
       # Local PC mount-point with LAN File Server Local Repository full directory path.
       # Example: 
       #                   File server shared directory is "//file_server/public".
-      # Repostory directory under the shared directory is "scripts/BASH/Repository".
+      # Repository directory under the shared directory is "scripts/BASH/Repository".
       #                 Local PC Mount-point directory is "/mnt/file_server/public".
       #
       # Local PC mount-point with LAN File Server Local Repository full directory path.
       # LOCAL_REPO_DIR="$MP_DIR/[DIRECTORY_PATH_TO_LOCAL_REPOSITORY]"
         LOCAL_REPO_DIR="$MP_DIR/scripts/BASH/Repository"
       #
-      # Local PC file within TARGET_DIR.
-      # FILE_TO_COMPARE="[FILE_TO_COMPARE]"
-        FILE_TO_COMPARE="FILE_NAME1_GOES_HERE.sh"
+      # Local PC file to be compared.
+      if [ $# -eq 2 ] ; then
+         # There are 2 arguments that have been passed to this function.
+         # $2 contains the file name to compare.
+         FILE_TO_COMPARE=$2
+      else
+         # $2 is null, so specify file name.
+         if [ -z "$FILE_TO_COMPARE" ] ; then
+            # FILE_TO_COMPARE is undefined so specify file name.
+            FILE_TO_COMPARE=$(basename $0)
+         fi
+      fi
       #
-      # Version of TARGET_FILE.
+      # Version of Local PC file to be compared.
       VERSION=$(grep --max-count=1 "VERSION" $FILE_TO_COMPARE)
       #
       FILE_LIST=$THIS_DIR/$THIS_FILE"_file_temp.txt"
@@ -337,7 +442,7 @@ f_check_version_TEMPLATE () {
       #
       #=================================================================
       # EDIT THE LINES BELOW TO SPECIFY THE FILE NAMES TO UPDATE.
-      # FILE NAMES INCLUDE ALL DEPENDENT SCRIPTS LIBRARIES.
+      # FILE NAMES INCLUDE ALL DEPENDENT SCRIPTS AND LIBRARIES.
       #=================================================================
       #
       #
@@ -360,7 +465,7 @@ f_check_version_TEMPLATE () {
 # |       Function f_version_compare       |
 # +----------------------------------------+
 #
-#     Rev: 2021-02-23
+#     Rev: 2021-03-31
 #  Inputs: $1=UI.
 #          $2=Samba File server Directory
 #          $3=Local Mount Point (Directory)
@@ -368,14 +473,28 @@ f_check_version_TEMPLATE () {
 #          $5=File server Target File name.
 #          $6=Version of Local file. String.
 #          $7=Temporary file name with list of files to be upgraded.
-#    Uses: LINE, VER.
+#    Uses: LINE, VER, VER_MSG, VERSION_RELEASE.
 # Outputs: ERROR, ANS.
+#
+# Summary: Compare the version of a single local script against the
+#          version $6 of file $5 in the Local (LAN, non-web) repository
+#          directory $4 .
+#
+# Dependencies: f_message, f_mount, f_yn_question.
 #
 f_version_compare () {
       #
-      # Change string $VER from: VERSION="2020-12-31 23:59"
-      #                      to: 2020-12-31 23:59           (without quotes within string).
-      VER=$(echo $6 | sed 's/VERSION=//' | sed 's/\"//g' | sed 's/ /_/g')
+      # Get the version number of the Local software script file.
+      #
+      # Each file script contains the string "VERSION=[ YYYY-MM-DD HH:MM ]"
+      # i.e. VERSION="2020-12-31 23:59"
+      #
+      # Change string $VER_LOCAL from: VERSION="2020-12-31 23:59"
+      #                            to: 2020-12-31 23:59           (without quotes within string).
+      VER_LOCAL=$(echo $6 | sed 's/VERSION=//' | sed 's/\"//g')
+      #
+      # Initialize $ANS to "No" answer for f_yn_question "Copy from Repository?"
+      ANS=1
       #
       if [ ! -e $3 ] ; then
          f_message $1 "NOK" "Error missing directory" "Missing local mountpoint directory\n$3." 2
@@ -384,33 +503,35 @@ f_version_compare () {
          #
          if [ $ERROR -eq 0 ] ; then
             # Directory is mounted.
-            # Get the version number of the target software script.
+            #
             if [ -e $4/$5 ] ; then
+               # Get the version number of the target software script.
                #
                # Each file script contains the string "VERSION=[ YYYY-MM-DD HH:MM ]"
                # i.e. VERSION="2020-12-31 23:59"
-               VERSION_RELEASE=$(grep --max-count=1 "VERSION" $4/$5)
-               # Version of TARGET_FILE.
-               # Format: YYYY-MM-DD_HH:MM string.
-               # Change string $VERSION_RELEASE from: VERSION="2020-12-31 23:59"
-               #                                  to: 2020-12-31 23:59           (without quotes within string).
-               VERSION_RELEASE=$(echo $VERSION_RELEASE | sed 's/VERSION=//' | sed 's/\"//g' | sed 's/ /_/g')
+               #
+               VER_REPO=$(grep --max-count=1 "VERSION" $4/$5)
+               #
+               # Change string $VERSION_REPO from: VERSION="2020-12-31 23:59"
+               #                               to: 2020-12-31 23:59           (without quotes within string).
+               VER_REPO=$(echo $VER_REPO | sed 's/VERSION=//' | sed 's/\"//g')
                #
                #f_message $1 "OK" "Version Information" "From Local Repository\n$4\nFile $5 $VERSION_RELEASE\n\nFrom this PC\nFile $5 $VER"
                VER_MSG=$7"_MSG.txt"
-               echo "From Local Repository" > $VER_MSG
-               echo "$4" >> $VER_MSG
-               echo "File $5 $VERSION_RELEASE" >> $VER_MSG
+               echo "Replace Files on this PC?" > $VER_MSG
                echo >> $VER_MSG
-               echo "From this PC" >> $VER_MSG
-               echo "File $5 $VER" >> $VER_MSG
+
+               echo "***Original Software Version on this PC***" >> $VER_MSG
+               echo "$VER_LOCAL" >> $VER_MSG
                echo >> $VER_MSG
-               echo "                        >>> CAUTION <<<" >> $VER_MSG
+               echo "***Replace with***" >> $VER_MSG
+               echo "$VER_REPO" >> $VER_MSG
                echo >> $VER_MSG
-               echo -e "If you answer \"Yes\" to the next question \"Copy from Repository?\"" >> $VER_MSG
-               echo    "        ALL the files listed below WILL be OVER-WRITTEN." >> $VER_MSG 
-               echo >> $VER_MSG
+               echo "Replace files below:" >> $VER_MSG
                cat $7 >> $VER_MSG
+               echo >> $VER_MSG
+               echo "with files from Local Repository at" >> $VER_MSG
+               echo "$4" >> $VER_MSG
                f_message $1 "OK" "List of Files to be Copied" $VER_MSG
                #
                # Delete temporary file.
@@ -419,16 +540,16 @@ f_version_compare () {
                fi
                #
             else
-               f_message $1 "OK" "Error Missing Local Repository Directory" "Failed to access Local Repository Directory. Cannot compare script versions."
+               f_message $1 "OK" "Error Missing Local Repository File to compare" "Failed to access file to compare \"$5\" in Local Repository. Cannot compare script versions."
                ERROR=1
             fi
             #
          else
-            f_message $1 "OK" "Error Mounting Local Repository Directory" "Failed to mount Local Repository Directory. Cannot compare script versions."
+            f_message $1 "OK" "Error Mounting Local Repository Directory" "Failed to mount Local Repository Directory \"$4\". Cannot compare script versions."
          fi
          #
          if [ $ERROR -eq 0 ] ; then
-            f_yn_question $1 "N" "Copy from Repository?" "COPY from Repository\n$5 $VERSION_RELEASE\n\nand OVERWRITE\n\n$5 $VER\nalong with those files previously listed (on this PC?)"
+            f_yn_question $1 "N" "Copy from Repository?" "Original software version on this PC:\n   $VER_LOCAL\n\nReplace with Repository software version:\n   $VER_REPO\n\nand OVERWRITE original files on this PC?"
             #
             if [ $ANS -eq 0 ] ; then
                # Yes, copy from repository.
@@ -437,7 +558,6 @@ f_version_compare () {
                while read LINE
                      do
                         eval cp -p $4/$LINE . 2>$TEMP_FILE # Write any error messages to file $TEMP_FILE.
-                        # f_message $1 "OK" "Copy $LINE" "Copying $4/$LINE" 1  # Diagnostic line.
                         f_message $1 "NOK" "Copy $LINE" "Copying $4/$LINE" 2 2>$TEMP_FILE # Write any error messages to file $TEMP_FILE.
                         #
                         # Make file executable (useable).
@@ -459,15 +579,42 @@ f_version_compare () {
          fi
       fi
       #
-      unset LINE VER
+      unset LINE VER VER_MSG VERSION_RELEASE
       #
 } # End of function f_version_compare.
+#
+# +----------------------------------------+
+# |         Function f_script_path         |
+# +----------------------------------------+
+#
+#     Rev: 2020-03-07
+#  Inputs: $BASH_SOURCE (System variable).
+#    Uses: None.
+# Outputs: SCRIPT_PATH, THIS_DIR.
+#
+# Summary: Detect current directory and set path variables.
+#
+# Dependencies: None.
+#
+f_script_path () {
+      #
+      # BASH_SOURCE[0] gives the filename of the script.
+      # dirname "{$BASH_SOURCE[0]}" gives the directory of the script
+      # Execute commands: cd <script directory> and then pwd
+      # to get the directory of the script.
+      # NOTE: This code does not work with symlinks in directory path.
+      #
+      # !!!Non-BASH environments will give error message about line below!!!
+      SCRIPT_PATH=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+      THIS_DIR=$SCRIPT_PATH  # Set $THIS_DIR to location of this script.
+      #
+} # End of function f_script_path.
 #
 # +----------------------------------------+
 # |         Function f_arguments           |
 # +----------------------------------------+
 #
-#     Rev: 2020-12-18
+#     Rev: 2021-03-28
 #  Inputs: $1=Argument
 #             [ --help ] [ -? ]
 #             [ --about ]
@@ -479,6 +626,10 @@ f_version_compare () {
 #             [] [ text ] [ dialog ] [ whiptail ] 
 #    Uses: None.
 # Outputs: GUI, ERROR.
+#
+# Summary: Validate and process provided arguments.
+#
+# Dependencies: f_about, f_check_version, f_code_history, f_help_message.
 #
 f_arguments () {
       #
@@ -542,9 +693,9 @@ f_arguments () {
            ;;
            --update | -u)
               if [ -z $GUI ] ; then
-                 f_check_version text $SERVER_DIR $MP_DIR $TARGET_DIR $FILE_TO_COMPARE $VERSION_TO_COMPARE $FILE_LIST
+                 f_check_version text $SERVER_DIR $MP_DIR $LOCAL_REPO_DIR $FILE_TO_COMPARE $VERSION_TO_COMPARE $FILE_LIST
               else
-                 f_check_version $GUI $SERVER_DIR $MP_DIR $TARGET_DIR $FILE_TO_COMPARE $VERSION_TO_COMPARE $FILE_LIST
+                 f_check_version $GUI $SERVER_DIR $MP_DIR $LOCAL_REPO_DIR $FILE_TO_COMPARE $VERSION_TO_COMPARE $FILE_LIST
               fi
               #
               clear # Blank the screen.
@@ -576,11 +727,33 @@ f_arguments () {
            ;;
            *)
               # Check for 1st argument as a valid TARGET DIRECTORY.
+              #
+              # Initialize ERROR.
+              ERROR=0
+              #
               if [ -d $1 ] ; then
+                 # $1 is a valid directory so set TARGET_DIR.
                  TARGET_DIR=$1
+                 ERROR=0
               else
+                 # $1 is an invalid directory.
+                 ERROR=1
+                 #
+                 # Check for 1st argument as a valid TARGET FILE NAME.
+                 if [ -e $1 ] ; then
+                    # $1 is a valid full path file name so set TARGET_FILE.
+                    TARGET_FILE=$1
+                    ERROR=0
+                 else
+                    # $1 is an invalid file name.
+                    ERROR=1
+                 fi
+              fi
+              #
+              if [ $ERROR -eq 1 ] ; then
+                 # Error $1 is not a directory nor a file name. 
                  # Display help USAGE message.
-                 f_message "text" "OK" "Error Invalid Directory Name" "\Zb\Z1This directory does not exist:\Zn\n $1"
+                 f_message "text" "OK" "Error Invalid File or Directory Name" "\Zb\Z1This File or Directory does not exist:\Zn\n $1"
                  f_help_message "text"
                  exit 0  # This cleanly closes the process generated by #!bin/bash. 
                          # Otherwise every time this script is run, another instance of
@@ -595,10 +768,14 @@ f_arguments () {
 # |          Function f_detect_ui          |
 # +----------------------------------------+
 #
-#     Rev: 2020-04-20
+#     Rev: 2021-03-07
 #  Inputs: None.
 #    Uses: ERROR.
 # Outputs: GUI (dialog, whiptail, text).
+#
+# Summary: Detect the UI in order of preference Dialog, Whiptail, or CLI.
+#
+# Dependencies: Dialog/Whiptail.
 #
 f_detect_ui () {
       #
@@ -631,11 +808,16 @@ f_detect_ui () {
 # |      Function f_test_environment       |
 # +----------------------------------------+
 #
-#     Rev: 2020-05-01
+#     Rev: 2021-03-07
 #  Inputs: $1=GUI.
+#          $2=X-window Application name.
 #          $BASH_VERSION (System variable).
 #    Uses: None.
 # Outputs: None.
+#
+# Summary: Test for shell and then for an X-Window environment.
+#
+# Dependencies: f_abort, f_message, f_test_dash.
 #
 f_test_environment () {
       #
@@ -644,7 +826,7 @@ f_test_environment () {
       #
       # Test for X-Windows environment. Cannot run in CLI for LibreOffice.
       #if [ x$DISPLAY = x ] ; then
-      #   f_message $1 "OK" "Cannot run LibreOffice" "Cannot run LibreOffice without an X-Windows environment.\ni.e. LibreOffice must run in a terminal emulator in an X-Window."
+      #   f_message $1 "OK" "Cannot run $2" "Cannot run $2 without an X-Windows environment.\ni.e. application $2 must run in a terminal emulator in an X-Window."
       #   f_abort $1
       #fi
       #
@@ -654,15 +836,15 @@ f_test_environment () {
 # |          Function f_test_dash          |
 # +----------------------------------------+
 #
-#     Rev: 2020-06-22
+#     Rev: 2021-03-07
 #  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
 #          $BASH_VERSION (System variable), GUI.
 #    Uses: None.
 # Outputs: exit 1.
 #
-# Test the environment. Are you in the BASH environment?
-# Some scripts will have errors in the DASH environment that is the
-# default command-line interface shell in Ubuntu.
+# Summary: Test the environment. Are you in the BASH environment?
+#          Some scripts will have errors in the DASH environment that is the
+#          default command-line interface shell in Ubuntu.
 #
 f_test_dash () {
       #
@@ -692,10 +874,14 @@ f_test_dash () {
 # |         Function f_test_connect_TEMPLATE        |
 # +----------------------------------------+
 #
-#     Rev: 2020-08-07
+#     Rev: 2021-03-07
 #  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
 #    Uses: None.
 # Outputs: None.
+#
+# Summary: Test the internet connection by pinging IP address 8.8.8.8.
+#
+# Dependencies: f_test_connection.
 #
 # PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
 #              THIS FUNCTION INTO ANY SCRIPT WHICH DEPENDS ON THE
@@ -719,17 +905,21 @@ f_test_connect_TEMPLATE () {
 # |        Function f_test_connection      |
 # +----------------------------------------+
 #
-#     Rev: 2020-07-16
+#     Rev: 2021-03-07
 #  Inputs: $1 - "text", "dialog" or "whiptail" The CLI GUI application in use.
-#          $2 - Network name of server, ip address, or web site address (URL). 
+#          $2 - Network name of server, IP address, or web site address (URL). 
 #          $3 - Pause n seconds to read message (Optional).
 #    Uses: None.
 # Outputs: ERROR. 
 #
+# Summary: Test network connection using provided LAN or IP address, web site.
+#
+# Dependencies: f_message.
+#
 f_test_connection () {
       #
       # Check if there is an internet connection before doing a download.
-      ping -c 1 -q $2 >/dev/null # Ping server address.
+      ping -c 1 -q $2 > /dev/null # Ping server address. All output goes to /dev/null.
       ERROR=$?
       if [ $ERROR -ne 0 ] ; then
          f_message $1 "NOK" "Ping Test Network Connection" " \n\Z1\Zb  No network connection to $2.\Zn" $3
@@ -745,12 +935,16 @@ f_test_connection () {
 # |           Function f_username          |
 # +----------------------------------------+
 #
-#     Rev: 2020-10-25
+#     Rev: 2021-03-07
 #  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
 #          $2=USERNAME (default).
 #          $3=MP - Mount-point to display on --usernamebox.
 #    Uses: $TEMP_FILE, ANS.
 # Outputs: SMBUSER, ERROR.
+#
+# Summary: Prompt to enter user name.
+#
+# Dependencies: None.
 #
 f_username() {
       #
@@ -801,11 +995,15 @@ f_username() {
 # |           Function f_password          |
 # +----------------------------------------+
 #
-#     Rev: 2020-04-20
+#     Rev: 2021-03-07
 #  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
 #          $2=MP - Mount-point to display on --passwordbox.
 #    Uses: TEMP_FILE.
 # Outputs: PASSWORD, ERROR.
+#
+# Summary: Prompt to enter password.
+#
+# Dependencies: None.
 #
 f_password() {
       #
@@ -846,10 +1044,14 @@ f_password() {
 # |      Function f_bad_sudo_password      |
 # +----------------------------------------+
 #
-#     Rev: 2020-04-20
+#     Rev: 2021-03-07
 #  Inputs: $1=GUI.
 #    Uses: None.
 # Outputs: None.
+#
+# Summary: Display an error message when a bad Sudo password is entered.
+#
+# Dependencies: f_message.
 #
 f_bad_sudo_password () {
       #
@@ -863,10 +1065,14 @@ f_bad_sudo_password () {
 # | Function f_press_enter_key_to_continue |
 # +----------------------------------------+
 #
-#     Rev: 2020-04-20
+#     Rev: 2021-03-07
 #  Inputs: None.
 #    Uses: X.
 # Outputs: None.
+#
+# Summary: Pause display and Display message: Press 'Enter' key to continue.
+#
+# Dependencies: None.
 #
 f_press_enter_key_to_continue () { # Display message and wait for user input.
       #
@@ -881,10 +1087,14 @@ f_press_enter_key_to_continue () { # Display message and wait for user input.
 # |         Function f_exit_script         |
 # +----------------------------------------+
 #
-#     Rev: 2020-05-28
+#     Rev: 2021-03-07
 #  Inputs: $1=GUI.
 #    Uses: None.
 # Outputs: None.
+#
+# Summary: Display message and exit script with status 0.
+#
+# Dependencies: f_message.
 #
 f_exit_script() {
       #
@@ -904,10 +1114,14 @@ f_exit_script() {
 # |              Function f_abort          |
 # +----------------------------------------+
 #
-#     Rev: 2020-05-28
+#     Rev: 2021-03-07
 #  Inputs: $1=GUI.
 #    Uses: None.
 # Outputs: None.
+#
+# Summary: Display message and exit with status 1 (error).
+#
+# Dependencies: f_message.
 #
 f_abort () {
       #
@@ -935,7 +1149,7 @@ f_abort () {
 # |          Function f_about          |
 # +------------------------------------+
 #
-#     Rev: 2020-08-07
+#     Rev: 2021-03-07
 #  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
 #          $2="NOK", "OK", or null [OPTIONAL] to control display of "OK" button.
 #          $3=Pause $3 seconds [OPTIONAL]. If "NOK" then pause to allow text to be read.
@@ -943,8 +1157,10 @@ f_abort () {
 #    Uses: DELIM.
 # Outputs: None.
 #
-#    NOTE: This function needs to be in the same library or file as
-#          the function f_display_common.
+# Summary: Display a Brief Description of a script by showing any text lines
+#           beginning with "#&".
+#
+# Dependencies: f_display_common.
 #
 f_about () {
       #
@@ -960,7 +1176,7 @@ f_about () {
 # |      Function f_code_history       |
 # +------------------------------------+
 #
-#     Rev: 2020-08-07
+#     Rev: 2021-03-07
 #  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
 #          $2="NOK", "OK", or null [OPTIONAL] to control display of "OK" button.
 #          $3=Pause $3 seconds [OPTIONAL]. If "NOK" then pause to allow text to be read.
@@ -968,8 +1184,10 @@ f_about () {
 #    Uses: DELIM.
 # Outputs: None.
 #
-#    NOTE: This function needs to be in the same library or file as
-#          the function f_display_common.
+# Synopsis: Display the code history of a script by showing any text lines
+#           beginning with "##".
+#
+# Dependencies: f_display_common.
 #
 f_code_history () {
       #
@@ -985,7 +1203,7 @@ f_code_history () {
 # |      Function f_help_message       |
 # +------------------------------------+
 #
-#     Rev: 2020-08-07
+#     Rev: 2021-03-07
 #  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
 #          $2="NOK", "OK", or null [OPTIONAL] to control display of "OK" button.
 #          $3=Pause $3 seconds [OPTIONAL]. If "NOK" then pause to allow text to be read.
@@ -993,8 +1211,10 @@ f_code_history () {
 #    Uses: DELIM.
 # Outputs: None.
 #
-#    NOTE: This function needs to be in the same library or file as
-#          the function f_display_common.
+# Synopsis: Display the help message of a script by showing any text lines
+#           beginning with "#?".
+#
+# Dependencies: f_display_common.
 #
 f_help_message () {
       #
@@ -1006,75 +1226,12 @@ f_help_message () {
       #
 } # End of f_help_message.
 #
-# +------------------------------------+
-# |     Function f_display_common_TEMPLATE      |
-# +------------------------------------+
-#
-#     Rev: 2021-02-08
-#  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
-#          $2=Delimiter of text to be displayed.
-#          $3="NOK", "OK", or null [OPTIONAL] to control display of "OK" button.
-#          $4=Pause $4 seconds [OPTIONAL]. If "NOK" then pause to allow text to be read.
-#          THIS_DIR, THIS_FILE, VERSION.
-#    Uses: X.
-# Outputs: None.
-#
-# PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
-#              THIS FUNCTION INTO ANY SCRIPT WHICH DEPENDS ON THE
-#              LIBRARY FILE "common_bash_function.lib".
-#
-f_display_common_TEMPLATE () {
-      #
-      # Specify $THIS_FILE name of the file containing the text to be displayed.
-      # $THIS_FILE may be re-defined inadvertently when a library file defines it
-      # so when the command, source [ LIBRARY_FILE.lib ] is used, $THIS_FILE is
-      # redefined to the name of the library file, LIBRARY_FILE.lib.
-      # For that reason, all library files now have the line
-      # THIS_FILE="[LIBRARY_FILE.lib]" deleted.
-      #
-      #
-      #================================================================================
-      # EDIT THE LINE BELOW TO DEFINE $THIS_FILE AS THE ACTUAL FILE NAME WHERE THE 
-      # ABOUT, CODE HISTORY, AND HELP MESSAGE TEXT IS LOCATED.
-      #================================================================================
-      #
-      #
-                                           #
-      THIS_FILE="[ THIS FILE GOES HERE ]"  # <<<--- INSERT ACTUAL FILE NAME HERE.
-                                           #
-      TEMP_FILE=$THIS_DIR/$THIS_FILE"_temp.txt"
-      #
-      # Set $VERSION according as it is set in the beginning of $THIS_FILE.
-      X=$(grep --max-count=1 "VERSION" $THIS_FILE)
-      # X="VERSION=YYYY-MM-DD HH:MM"
-      # Use command "eval" to set $VERSION.
-      eval $X
-      #
-      echo "Script: $THIS_FILE. Version: $VERSION" > $TEMP_FILE
-      echo >>$TEMP_FILE
-      #
-      # Display text (all lines beginning ("^") with $2 but do not print $2).
-      # sed substitutes null for $2 at the beginning of each line
-      # so it is not printed.
-      sed -n "s/$2//"p $THIS_DIR/$THIS_FILE >> $TEMP_FILE
-      #
-      case $3 in
-           "NOK" | "nok")
-              f_message $1 "NOK" "Message" $TEMP_FILE $4
-           ;;
-           *)
-              f_message $1 "OK" "(use arrow keys to scroll up/down/side-ways)" $TEMP_FILE
-           ;;
-      esac
-      #
-} # End of function f_display_common.
-#
 # +----------------------------------------+
 # |          Function f_yn_question        |
 # +----------------------------------------+
 #
-#     Rev: 2020-08-10
-#  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
+#     Rev: 2021-03-07
+#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
 #          $2 - "Y" or "N" - the default answer.
 #          $3 - Title string (may be null).
 #          $4 - Question text string.
@@ -1085,17 +1242,19 @@ f_display_common_TEMPLATE () {
 # Example: f_yn_question $GUI "Y" "Title Goes Here" "I am hungry.\nAre you hungry?"
 #          f_yn_question "dialog" "Y" "Title Goes Here" hungry.txt
 #
-# This will display a title and a question using dialog/whiptail/text.
-# It will automatically calculate the optimum size of the displayed
-# Dialog or Whiptail box depending on screen resolution, number of lines
-# of text, and length of sentences to be displayed. 
+# Summary: This will display a title and a question using dialog/whiptail/text.
+#          It will automatically calculate the optimum size of the displayed
+#          Dialog or Whiptail box depending on screen resolution, number of lines
+#          of text, and length of sentences to be displayed. 
 #
-# It is a lengthy function, but using it allows for an easy way to display 
-# a yes/no question using either Dialog, Whiptail or text.
+#          It is a lengthy function, but using it allows for an easy way to display 
+#          a yes/no question using either Dialog, Whiptail or text.
 #
-# You do not have to worry about the differences in syntax between Dialog
-# and Whiptail, handling the answer, or about calculating the box size for
-# each text message.
+#          You do not have to worry about the differences in syntax between Dialog
+#          and Whiptail, handling the answer, or about calculating the box size for
+#          each text message.
+#
+# Dependencies: f_msg_ui_str_box_size, f_yn_defaults.
 #
 f_yn_question () {
       #
@@ -1194,8 +1353,8 @@ f_yn_question () {
 # |    Function f_yn_defaults    |
 # +------------------------------+
 #
-#     Rev: 2020-08-10
-#  Inputs: $1 - "text", "dialog" or "whiptail" The CLI GUI application in use.
+#     Rev: 2021-03-07
+#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
 #          $2 - "OK"  [OK] button at end of text.
 #               "NOK" No [OK] button or "Press Enter key to continue"
 #               at end of text but pause n seconds
@@ -1220,6 +1379,10 @@ f_yn_question () {
 #                --default-button string
 #                --backtitle backtitle
 #                --title title
+#
+# Summary: Display default answer to a Yes/No question.
+#
+# Dependencies: None.
 #
 f_yn_defaults () {
       #
@@ -1279,8 +1442,8 @@ f_yn_defaults () {
 # |       Function f_message     |
 # +------------------------------+
 #
-#     Rev: 2021-02-14
-#  Inputs: $1 - "text", "dialog" or "whiptail" The CLI GUI application in use.
+#     Rev: 2021-03-07
+#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
 #          $2 - "OK"  [OK] button at end of text.
 #               "NOK" No [OK] button or "Press Enter key to continue"
 #               at end of text but pause n seconds
@@ -1303,16 +1466,20 @@ f_yn_defaults () {
 #             echo "Line 3 of text file" >>$TEMP_FILE
 #             f_message $GUI "OK" "Test of Text file" $TEMP_FILE
 #
-# This will display a title and some text using dialog/whiptail/text.
-# It will automatically calculate the optimum size of the displayed
-# Dialog or Whiptail box depending on screen resolution, number of lines
-# of text, and length of sentences to be displayed. 
+# Summary: This will display a title and some text using dialog/whiptail/text.
+#          It will automatically calculate the optimum size of the displayed
+#          Dialog or Whiptail box depending on screen resolution, number of lines
+#          of text, and length of sentences to be displayed. 
 #
-# It is a lengthy function, but using it allows for an easy way to display 
-# some text (in a string or text file) using either Dialog, Whiptail or text.
+#          It is a lengthy function, but using it allows for an easy way to display 
+#          some text (in a string or text file) using either Dialog, Whiptail or text.
 #
-# You do not have to worry about the differences in syntax between Dialog
-# and Whiptail or about calculating the box size for each text message.
+#          You do not have to worry about the differences in syntax between Dialog
+#          and Whiptail or about calculating the box size for each text message.
+#
+# Dependencies: f_msg_color, f_msg_txt_file_nok, f_msg_txt_file_ok, f_msg_txt_str_nok,
+#          f_msg_txt_str_ok, f_msg_ui_file_box_size, f_msg_ui_file_nok, f_msg_ui_file_ok,
+#          f_msg_ui_str_box_size, f_msg_ui_str_nok, f_msg_ui_str_ok.
 #
 f_message () {
       #
@@ -1412,10 +1579,15 @@ f_message () {
 # |      Function f_msg_color     |
 # +-------------------------------+
 #
-#     Rev: 2020-06-04
+#     Rev: 2021-03-07
 #  Inputs: $1 - Text string or text file. 
 #    Uses: None.
 # Outputs: ZNO. 
+#
+# Summary: Used by f_message. For text UI only.
+#          Change text colors according to \Z commands in the text string or file.
+#
+# Dependencies: None.
 #
 f_msg_color () {
       #
@@ -1492,14 +1664,19 @@ f_msg_color () {
       fi
 } # End of function f_msg_color.
 #
-# +-------------------------------+
-# |Function f_msg_ui_file_box_size|
-# +-------------------------------+
+# +---------------------------------+
+# | Function f_msg_ui_file_box_size |
+# +---------------------------------+
 #
-#     Rev: 2020-07-16
+#     Rev: 2021-03-07
 #  Inputs: $1 - Text string or text file. 
 #    Uses: None.
 # Outputs: XBOX, YBOX.
+#
+# Summary: Used by f_message. For Dialog or Whiptail UI only.
+#          Determine minimum window dimensions in characters and number of lines.
+#
+# Dependencies: wc.
 #
 f_msg_ui_file_box_size () {
       #
@@ -1523,14 +1700,14 @@ f_msg_ui_file_box_size () {
 # |   Function f_msg_ui_file_ok  |
 # +------------------------------+
 #
-#     Rev: 2021-01-27
+#     Rev: 2021-03-07
 #  Inputs: $1 - "text", "dialog" or "whiptail" The CLI GUI application in use.
 #          $2 - "OK"  [OK] button at end of text.
 #               "NOK" No [OK] button or "Press Enter key to continue"
 #               at end of text but pause n seconds
 #               to allow reader to read text by using sleep n command.
 #          $3 - Title.
-#          $4 - Text string or text file. 
+#          $4 - Text file. 
 #          $5 - Box Height in characters.
 #          $6 - Box Width  in characters.
 #          $7 - (Optional) Text string to substitute for the "OK" label on the "OK" button.
@@ -1538,6 +1715,11 @@ f_msg_ui_file_box_size () {
 #
 #    Uses: None.
 # Outputs: ERROR. 
+#
+# Summary: Used by f_message. For Dialog or Whiptail UI only.
+#          Display contents of a text file using a Dialog or Whiptail textbox with an "OK" button.
+#
+# Dependencies: None.
 #
 f_msg_ui_file_ok () {
       #
@@ -1596,8 +1778,8 @@ f_msg_ui_file_ok () {
 # |  Function f_msg_ui_file_nok  |
 # +------------------------------+
 #
-#     Rev: 2020-08-07
-#  Inputs: $1 - "text", "dialog" or "whiptail" The CLI GUI application in use.
+#     Rev: 2021-03-07
+#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
 #          $2 - "OK"  [OK] button at end of text.
 #               "NOK" No [OK] button or "Press Enter key to continue"
 #               at end of text but pause n seconds
@@ -1608,12 +1790,20 @@ f_msg_ui_file_ok () {
 #          $6 - Box Width  in characters.
 #          $7 - Pause for $7 seconds to allow text to be read.
 #    Uses: None.
-# Outputs: ERROR. 
+# Outputs: ERROR.
+#
+# Summary: Used by f_message. For Dialog or Whiptail UI only.
+#          Display contents of a text file using a Dialog or Whiptail textbox without an "OK" button.
+#
+# Dependencies: None.
 #
 f_msg_ui_file_nok () {
       #
       # $4 is a text file.
       # If $2 is "NOK" then use a Dialog infobox or Whiptail textbox.
+      #
+      # NOTE: XSCREEN and YSCREEN was set by f_message before calling this function.
+      #
       case $1 in
            dialog)
               # Dialog needs about 6 more lines for the header and [OK] button.
@@ -1685,14 +1875,23 @@ f_msg_ui_file_nok () {
       #
 } # End of function f_msg_ui_file_nok
 #
-# +------------------------------+
-# |Function f_msg_ui_str_box_size|
-# +------------------------------+
+# +--------------------------------+
+# | Function f_msg_ui_str_box_size |
+# +--------------------------------+
 #
-#     Rev: 2020-07-16
+#     Rev: 2021-03-07
 #  Inputs: $1 - Text string or text file. 
 #    Uses: None.
 # Outputs: XBOX, YBOX, ZNO (string stripped of Dialog "\Z" commands).
+#
+# Summary: Used by f_message. For Dialog or Whiptail UI only.
+#          Determine minimum window dimensions in characters and number of lines.
+#          If the text to be displayed is a string with multiple "\n" line breaks,
+#          The string will be converted to a text file with multiple lines
+#          and then wc will count the number of lines and longest line length
+#          to get the minimum window dimensions.
+#
+# Dependencies: wc.
 #
 f_msg_ui_str_box_size () {
       #
@@ -1760,8 +1959,8 @@ f_msg_ui_str_box_size () {
 # |   Function f_msg_ui_str_ok   |
 # +------------------------------+
 #
-#     Rev: 2021-01-27
-#  Inputs: $1 - "text", "dialog" or "whiptail" The CLI GUI application in use.
+#     Rev: 2021-03-07
+#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
 #          $2 - "OK"  [OK] button at end of text.
 #               "NOK" No [OK] button or "Press Enter key to continue"
 #               at end of text but pause n seconds
@@ -1774,6 +1973,11 @@ f_msg_ui_str_box_size () {
 #          $8 - (Optional) Text string to substitute for the "Cancel" label on the "Cancel" button.
 #    Uses: None.
 # Outputs: ERROR. 
+#
+# Summary: Used by f_message. For Dialog or Whiptail UI only.
+#          Display contents of a text string using a Dialog or Whiptail msgbox with an "OK" button.
+#
+# Dependencies: None.
 #
 f_msg_ui_str_ok () {
       #
@@ -1789,6 +1993,8 @@ f_msg_ui_str_ok () {
       else
          OK_LABEL="OK"
       fi
+      #
+      # NOTE: XSCREEN and YSCREEN was set by f_message before calling this function.
       #
       case $1 in
            dialog)
@@ -1853,8 +2059,8 @@ f_msg_ui_str_ok () {
 # |   Function f_msg_ui_str_nok  |
 # +------------------------------+
 #
-#     Rev: 2020-05-22
-#  Inputs: $1 - "text", "dialog" or "whiptail" The CLI GUI application in use.
+#     Rev: 2021-03-07
+#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
 #          $2 - "OK"  [OK] button at end of text.
 #               "NOK" No [OK] button or "Press Enter key to continue"
 #               at end of text but pause n seconds
@@ -1864,13 +2070,21 @@ f_msg_ui_str_ok () {
 #          $5 - Box Height in characters.
 #          $6 - Box Width  in characters.
 #          $7 - Pause for $7 seconds to allow text to be read.
+#          XSCREEN, YSCREEN.
 #    Uses: None.
 # Outputs: ERROR. 
+#
+# Summary: Used by f_message. For Dialog or Whiptail UI only.
+#          Display contents of a text string using a Dialog or Whiptail msgbox without an "OK" button.
+#
+# Dependencies: None.
 #
 f_msg_ui_str_nok () {
       #
       # $4 is a text string.
       # If $2 in "NOK" then use a Dialog infobox or Whiptail msgbox.
+      #
+      # NOTE: XSCREEN and YSCREEN was set by f_message before calling this function.
       #
       case $1 in
            dialog)
@@ -1928,8 +2142,8 @@ f_msg_ui_str_nok () {
 # |  Function f_msg_txt_str_ok   |
 # +------------------------------+
 #
-#     Rev: 2020-04-22
-#  Inputs: $1 - "text", "dialog" or "whiptail" The CLI GUI application in use.
+#     Rev: 2021-03-07
+#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
 #          $2 - "OK"  [OK] button at end of text.
 #               "NOK" No [OK] button or "Press Enter key to continue"
 #               at end of text but pause n seconds
@@ -1938,6 +2152,11 @@ f_msg_ui_str_nok () {
 #          $4 - Text string or text file. 
 #    Uses: None.
 # Outputs: ERROR. 
+#
+# Summary: Used by f_message. For Text UI only.
+#          Display contents of a text string with "Press 'Enter' key to continue".
+#
+# Dependencies: f_press_enter_key_to_continue.
 #
 f_msg_txt_str_ok () {
       #
@@ -1963,8 +2182,8 @@ f_msg_txt_str_ok () {
 # |  Function f_msg_txt_str_nok  |
 # +------------------------------+
 #
-#     Rev: 2020-05-22
-#  Inputs: $1 - "text", "dialog" or "whiptail" The CLI GUI application in use.
+#     Rev: 2021-03-07
+#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
 #          $2 - "OK"  [OK] button at end of text.
 #               "NOK" No [OK] button or "Press Enter key to continue"
 #               at end of text but pause n seconds
@@ -1973,7 +2192,12 @@ f_msg_txt_str_ok () {
 #          $4 - Text string or text file.
 #          $5 - Pause for $5 seconds to allow text to be read.
 #    Uses: None.
-# Outputs: ERROR. 
+# Outputs: ERROR.
+#
+# Summary: Used by f_message. For Text UI only.
+#          Display contents of a text string with pause for $5 seconds.
+#
+# Dependencies: None.
 #
 f_msg_txt_str_nok () {
       #
@@ -2006,8 +2230,8 @@ f_msg_txt_str_nok () {
 # |  Function f_msg_txt_file_ok  |
 # +------------------------------+
 #
-#     Rev: 2020-04-22
-#  Inputs: $1 - "text", "dialog" or "whiptail" The CLI GUI application in use.
+#     Rev: 2021-03-07
+#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
 #          $2 - "OK"  [OK] button at end of text.
 #               "NOK" No [OK] button or "Press Enter key to continue"
 #               at end of text but pause n seconds
@@ -2016,6 +2240,11 @@ f_msg_txt_str_nok () {
 #          $4 - Text string or text file. 
 #    Uses: None.
 # Outputs: ERROR. 
+#
+# Summary: Used by f_message. For Text UI only.
+#          Display contents of a text file using command Less.
+#
+# Dependencies: less.
 #
 f_msg_txt_file_ok () {
       #
@@ -2034,8 +2263,8 @@ f_msg_txt_file_ok () {
 # |  Function f_msg_txt_file_nok |
 # +------------------------------+
 #
-#     Rev: 2020-05-22
-#  Inputs: $1 - "text", "dialog" or "whiptail" The CLI GUI application in use.
+#     Rev: 2021-03-07
+#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
 #          $2 - "OK"  [OK] button at end of text.
 #               "NOK" No [OK] button or "Press Enter key to continue"
 #               at end of text but pause n seconds
@@ -2045,6 +2274,11 @@ f_msg_txt_file_ok () {
 #          $5 - Pause for $5 seconds to allow text to be read.
 #    Uses: None.
 # Outputs: ERROR. 
+#
+# Summary: Used by f_message. For Text UI only.
+#          Display contents of a text file with pause for $5 seconds.
+#
+# Dependencies: None.
 #
 f_msg_txt_file_nok () {
       #
@@ -2073,10 +2307,14 @@ f_msg_txt_file_nok () {
 # |        Function f_menu_arrays          |
 # +----------------------------------------+
 #
-#     Rev: 2020-05-18
-#  Inputs: $1=file of menu choice strings.
+#     Rev: 2021-03-07
+#  Inputs: $1 - file of menu choice strings.
 #    Uses: ARRAY_NUM, ARRAY_NAME, ARRAY_VALUE, TEMP_FILE, XSTR.
 # Outputs: MAX_CHOICE_LENGTH, MAX_SUMMARY_LENGTH, arrays CHOICE(n), SUMMARY(n), FUNC(n). 
+#
+# Summary: Create an arrays CHOICE, SUMMARY, FUNC to store menu option information.
+#
+# Dependencies: None.
 #
 f_menu_arrays () {
       #
@@ -2171,14 +2409,19 @@ f_menu_arrays () {
 # |        Function f_update_menu_txt      |
 # +----------------------------------------+
 #
-#     Rev: 2021-02-13
-#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
-#          $2=GENERATED_FILE.
-#          $3=Menu Title.
-#          $4=MAX_CHOICE_LENGTH.
-#          $5=TEMP_FILE
+#     Rev: 2021-03-07
+#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
+#          $2 - GENERATED_FILE.
+#          $3 - Menu Title.
+#          $4 - MAX_CHOICE_LENGTH.
+#          $5 - TEMP_FILE
 #    Uses: X, Y, XNUM, YNUM, ARRAY_NAME, ARRAY_LEN, PAD, CHOICE.
 # Outputs: None.
+#
+# Summary: Create a generated script file with executable script code to
+#          display a Text UI Menu and case statement to take chosen action.
+#
+# Dependencies: None.
 #
 f_update_menu_txt () {
       #
@@ -2186,7 +2429,10 @@ f_update_menu_txt () {
       #
       echo "#!/bin/bash" >$2
       echo "#" >>$2
-      grep --max-count=1 Copyright $THIS_FILE >>$2
+      # grep search THIS_FILE for Copyright line to include in generated file.
+      # The option --text is needed because in some versions of grep, the
+      # Copyright symbol character causes the script to be interpreted as a binary file.
+      grep --max-count=1 --text Copyright $THIS_FILE >>$2
       echo "#" >>$2
       echo "# +----------------------------------------+" >>$2
       echo "# |        Default Variable Values         |" >>$2
@@ -2324,15 +2570,20 @@ f_update_menu_txt () {
 # |        Function f_update_menu_gui      |
 # +----------------------------------------+
 #
-#     Rev: 2020-06-03
-#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
-#          $2=GENERATED_FILE.
-#          $3=Menu Title.
-#          $4=MAX_LENGTH
-#          $5=MAX_LINES
-#          $6=TEMP_FILE
+#     Rev: 2021-03-07
+#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
+#          $2 - GENERATED_FILE.
+#          $3 - Menu Title.
+#          $4 - MAX_LENGTH
+#          $5 - MAX_LINES
+#          $6 - TEMP_FILE
 #    Uses: GENERATED_FILE, ARRAY_NAME, ARRAY_LEN, XNUM.
 # Outputs: None.
+#
+# Summary: Create a generated script file with executable script code to
+#          display a Dialog/Whiptail UI Menu and case statement to take chosen action.
+#
+# Dependencies: None.
 #
 f_update_menu_gui () {
       #
@@ -2340,7 +2591,10 @@ f_update_menu_gui () {
       #
       echo "#!/bin/bash" >$2
       echo "#" >>$2
-      grep --max-count=1 Copyright $THIS_FILE >>$2
+      # grep search THIS_FILE for Copyright line to include in generated file.
+      # The option --text is needed because in some versions of grep, the
+      # Copyright symbol character causes the script to be interpreted as a binary file.
+      grep --max-count=1 --text Copyright $THIS_FILE >>$2
       echo "#" >>$2
       echo "# +----------------------------------------+" >>$2
       echo "# |        Default Variable Values         |" >>$2
@@ -2468,8 +2722,8 @@ f_update_menu_gui () {
 # |          Function f_menu_main_TEMPLATE          |
 # +----------------------------------------+
 #
-#     Rev: 2021-02-16
-#  Inputs: $1=GUI.
+#     Rev: 2021-03-07
+#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
 #    Uses: ARRAY_FILE, GENERATED_FILE, MENU_TITLE.
 # Outputs: None.
 #
@@ -2477,6 +2731,8 @@ f_update_menu_gui () {
 #          This Main Menu function checks its script for the Main Menu
 #          options delimited by "#@@" and if it does not find any, then
 #          it it defaults to the specified library script.
+#
+# Dependencies: f_menu_arrays, f_create_show_menu.
 #
 # PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
 #              THIS FUNCTION INTO THE MAIN SCRIPT WHICH WILL CALL IT.
@@ -2503,14 +2759,16 @@ f_menu_main_TEMPLATE () { # Create and display the Main Menu.
       else
          #
          #
-         #================================================================================
-         # EDIT THE LINE BELOW TO DEFINE $ARRAY_FILE AS THE ACTUAL FILE NAME (LIBRARY)
-         # WHERE THE MENU ITEM DATA IS LOCATED. THE LINES OF DATA ARE PREFIXED BY "#@@".
-         #================================================================================
+         #==================================================================
+         # EDIT THE LINE BELOW TO DEFINE $ARRAY_FILE AS THE ACTUAL FILE NAME
+         # (LIBRARY) WHERE THE MENU ITEM DATA IS LOCATED. THE LINES OF DATA
+         # ARE PREFIXED BY "#@@".
+         #==================================================================
          #
          #
          # Specify library file name with menu item data.
-         ARRAY_FILE="[FILENAME_GOES_HERE]"
+         # ARRAY_FILE="[FILENAME_GOES_HERE]"
+           ARRAY_FILE="$THIS_DIR/[FILENAME_GOES_HERE]"
       fi
       #
       # Create arrays from data.
@@ -2545,8 +2803,8 @@ f_menu_main_TEMPLATE () { # Create and display the Main Menu.
 # |          Function f_menu_SUB-MENU_TEMPLATE  |
 # +----------------------------------------+
 #
-#     Rev: 2020-02-16
-#  Inputs: $1=GUI.
+#     Rev: 2021-03-07
+#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
 #    Uses: ARRAY_FILE, GENERATED_FILE, MENU_TITLE.
 # Outputs: None.
 #
@@ -2558,6 +2816,8 @@ f_menu_main_TEMPLATE () { # Create and display the Main Menu.
 #          Whereas the Main Menu function checks its script for the
 #          Main Menu options delimited by "#@@" and if it does not
 #          find any then it defaults to the specified library script.
+#
+# Dependencies: f_menu_arrays, f_create_show_menu.
 #
 f_menu_sub_TEMPLATE () {
       #
@@ -2573,10 +2833,11 @@ f_menu_sub_TEMPLATE () {
       TEMP_FILE=$THIS_DIR/$THIS_FILE"_menu_sub-01_temp.txt"
       #
       #
-      #================================================================================
-      # EDIT THE LINE BELOW TO DEFINE $ARRAY_FILE AS THE ACTUAL FILE NAME (LIBRARY)
-      # WHERE THE MENU ITEM DATA IS LOCATED. THE LINES OF DATA ARE PREFIXED BY "#@@".
-      #================================================================================
+      #==================================================================
+      # EDIT THE LINE BELOW TO DEFINE $ARRAY_FILE AS THE ACTUAL FILE NAME
+      # (LIBRARY) WHERE THE MENU ITEM DATA IS LOCATED. THE LINES OF DATA
+      # ARE PREFIXED BY "#@@".
+      #==================================================================
       #
       #
       # Specify library file name with menu item data.
@@ -2603,8 +2864,8 @@ f_menu_sub_TEMPLATE () {
 # |       Function f_create_show_menu      |
 # +----------------------------------------+
 #
-#     Rev: 2020-07-16
-#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#     Rev: 2021-03-07
+#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
 #          $2=GENERATED_FILE.
 #          $3=Menu Title.
 #          $4=MAX_LENGTH.
@@ -2613,6 +2874,11 @@ f_menu_sub_TEMPLATE () {
 #          $7=TEMP_FILE
 #    Uses: GENERATED_FILE, ARRAY_NAME, ARRAY_LEN, XNUM.
 # Outputs: None.
+#
+# Summary: Call functions to create menu and then source the generated file
+#          and display the menu.
+#
+# Dependencies: f_update_menu_gui, f_update_menu_txt, f_menu_gui$EXT, f_menu_txt$EXT.
 #
 f_create_show_menu () {
       #
@@ -2651,12 +2917,17 @@ f_create_show_menu () {
 # |             Function f_mount           |
 # +----------------------------------------+
 #
-#     Rev: 2020-09-13
-#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#     Rev: 2021-03-07
+#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
 #          $2=File server Directory
 #          $3=Mount Point (Directory)
 #    Uses: None
 # Outputs: ERROR, TEMP_FILE.
+#
+# Summary: Mount directory using Samba and CIFS.
+#
+# Dependencies: f_username, f_password.
+#               Software package "cifs-utils" in the Distro's Repository.
 #
 f_mount () {
       #
@@ -2678,229 +2949,230 @@ f_mount () {
 }  # End of function f_mount.
 #
 # +----------------------------------------+
-# |          f_check_file_TEMPLATE           |
+# |              f_download_file           |
 # +----------------------------------------+
 #
-#     Rev: 2020-09-07
-#  Inputs: $1=Library repository directory.
-#          $2=Library file name to download.
-#    Uses: ARRAY_FILE, GENERATED_FILE, MENU_TITLE.
-# Outputs: None.
+#     Rev: 2021-03-07
+#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
+#          $2 - DL_SOURCE ("Local" or "Web")
+#          $3 - SERVER_DIR File server directory.
+#          $4 - MP_DIR Mount-point directory.
+#          $5 - DL_REPOSITORY Download Repository on the web.
+#          $6 - DL_FILE File to download.
+#    Uses: None.
+# Outputs: ERROR.
 #
-# PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
-#              THIS FUNCTION INTO ANY SCRIPT WHICH DEPENDS ON THE
-#              LIBRARY FILE "common_bash_function.lib".
+# Summary: If a library file is missing, download it from a repository.
 #
-f_check_file_TEMPLATE () { # Create and display the Main Menu.
+# Dependencies: f_download_from_web_site, f_download_from_local_repository.
+#
+f_download_file () { # Create and display the Main Menu.
       #
-      if [ -x $2 ] ; then
-         source $2
-      else
-         if [ -e $2 ] ; then
-            chmod +x $2
-            source $2
-         else
-            echo "File Error"
-            echo
-            echo "Error with required file:"
-            echo "\"$2\""
-            echo
-            echo "File is missing or file is not executable."
-            echo
-            #
-            # Determine if repository is on the LAN or on the Internet.
-            case $2 in
-                 http*)
-                    echo "Do you want to download the file: $2"
-                    echo -n "from GitHub.com? (Y/n): " ; read ANS
-                    case $2 in
-                         "" | [Yy] | [Yy][Ee][Ss])
-                            f_download_library $1 $2
-                         ;;
-                         *)
-                            echo
-                            echo "Cannot continue, exiting program script."
-                            echo "Error with required file:"
-                            echo "      \"$2\""
-                            sleep 3
-                            exit 1  # Exit with error.
-                         ;;
-                    esac
-                 ;;
-                 *)
-                    echo "Do you want to download the file: $2"
-                    echo -n "from the local repository? (Y/n): " ; read ANS
-                    case $2 in
-                         "" | [Yy] | [Yy][Ee][Ss])
-                            f_download_local $1 $2
-                         ;;
-                         *)
-                            echo
-                            echo "Cannot continue, exiting program script."
-                            echo "Error with required file:"
-                            echo "      \"$2\""
-                            sleep 3
-                            exit 1  # Exit with error.
-                         ;;
-                    esac
-                 ;;
-            esac
-            chmod +x $2
-            source $2
-         fi
-         #
-      fi
       #
-} # End of function f_check_file.
+      #===================================================================
+      # EDIT THE LINE BELOW WITH THE LOCAL REPOSITORY DIRECTORY ON THE PC.
+      #===================================================================
+      #
+      #
+      LOCAL_REPO_DIR="$4/scripts/BASH/Repository"
+      #
+      case $2 in
+           Local)
+              # Download from Local Repository on LAN File Server.
+              # Are LAN File Server directories available on Local Mount-point?
+              f_mount $1 $3 $4
+              #
+              if [ $ERROR -ne 0 ] ; then
+                 # Failed to mount LAN File Server directory on Local Mount-point.
+                 # So download from Web Repository.
+                 f_download_from_web_site $1 $5 $6
+              else
+                 # Sucessful mount of LAN File Server directory. 
+                 # Continue with download from Local Repository on LAN File Server.
+                 f_download_from_local_repository $LOCAL_REPO_DIR $6
+                 #
+                 if [ $ERROR -ne 0 ] ; then
+                    # Failed to download from Local Repository on LAN File Server.
+                    # So download from Web Repository.
+                    f_download_from_web_site $5 $6
+                 fi
+              fi
+              ;;
+           Web)
+              # Download from Web Repository.
+              f_download_from_web_site $5 $6
+              if [ $ERROR -ne 0 ] ; then
+                 # Failed so mount LAN File Server directory on Local Mount-point.
+                 f_mount $1 $3 $4
+                 #
+                 if [ $ERROR -eq 0 ] ; then
+                    # Successful mount of LAN File Server directory.
+                    # Continue with download from Local Repository on LAN File Server.
+                    f_download_from_local_repository $LOCAL_REPO_DIR $6
+                 fi
+              fi
+              ;;
+      esac
+      #
+} # End of function f_download_file.
 #
 # +----------------------------------------+
 # |          f_download_from_web_site      |
 # +----------------------------------------+
 #
-#     Rev: 2020-10-03
-#  Inputs: $1=UI.
-#          $2=Internet URL of repository.
-#          $3=Temporary file name with list of files to be upgraded.
+#     Rev: 2021-03-07
+#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
+#          $2 - DL_REPOSITORY Download Repository URL on the web.
+#          $3 - DL_FILE File to download.
 #    Uses: LINE.
 # Outputs: ERROR.
 #
+# Summary: Download a list of file names from a web site.
+#
+# Dependencies: wget, f_message.
+#
 f_download_from_web_site () {
       #
-      while read LINE
-            do
-               # Copy file from web site.
-               wget --show-progress $2$LINE
-               ERROR=$?
-               if [ $ERROR -eq 0 ] ; then
-                  # Make file executable (useable).
-                  chmod +x $LINE
-               else
-                  f_message $1 "OK" "Error" "!!! wget download failed !!!\n    for file: $LINE."
-               fi
-               #
-               if [ ! -x "$LINE" ] ; then
-                  f_message $1 "OK" "File Error"  "Error with required file:\n\"$5\"\n\n\Z1\ZbFile is missing or file is not executable.\n\n\ZnCannot continue, exiting program script." 3
-                  ERROR=1
-               fi
-            done < $3
-      unset LINE
+      TEMP_FILE=$THIS_DIR/$THIS_FILE"_temp.txt"
       #
+      echo >$TEMP_FILE
+      echo ">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<" >>$TEMP_FILE
+      echo ">>> Download file from Web Repository <<<" >>$TEMP_FILE
+      echo ">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<" >>$TEMP_FILE
+      echo >>$TEMP_FILE
+      f_message $1 "NOK" "Download" $TEMP_FILE
+      #
+      # $2 ends with a slash "/" so can append $3 immediately after $2.
+      wget --show-progress $2$3
+      ERROR=$?
       if [ $ERROR -ne 0 ] ; then
-         f_message $1 "OK" "Copy Error" "!!! Copy failed !!!\nfrom $2 for file: $3\n\nCannot continue, exiting program script."
+            echo >$TEMP_FILE
+            echo ">>>>>>>>>>>>>><<<<<<<<<<<<<<" >>$TEMP_FILE
+            echo ">>> wget download failed <<<" >>$TEMP_FILE
+            echo ">>>>>>>>>>>>>><<<<<<<<<<<<<<" >>$TEMP_FILE
+            echo >>$TEMP_FILE
+            echo "Error copying from Web Repository file: \"$3.\"" >>$TEMP_FILE
+            echo >>$TEMP_FILE
+            f_message $1 "NOK" "Download Error" $TEMP_FILE
       else
-         f_message $1 "OK" "Successful Update" "Latest version was successfully copied for use.\nScript must be re-started to use the latest version."
+         # Make file executable (useable).
+         chmod +x $3
+         #
+         if [ -x $3 ] ; then
+            # File is good.
+            ERROR=0
+         else
+            echo >$TEMP_FILE
+            echo ">>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<" >>$TEMP_FILE
+            echo ">>> File Error after download from Web Repository <<<" >>$TEMP_FILE
+            echo ">>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<" >>$TEMP_FILE
+            echo >>$TEMP_FILE
+            echo "$3 is missing or file is not executable." >>$TEMP_FILE
+            echo >>$TEMP_FILE
+            f_message $1 "NOK" "Download Error" $TEMP_FILE
+
+         fi
       fi
+      #
+      # Make downloaded file executable.
+      chmod 755 $3
       #
 } # End of function f_download_from_web_site.
 #
-# +----------------------------------------+
-# |    f_download_from_local_repository    |
-# +----------------------------------------+
+# +-----------------------------------------------+
+# |   Function f_download_from_local_repository   |
+# +-----------------------------------------------+
 #
-#     Rev: 2020-12-11
+#     Rev: 2021-03-07
+#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
+#          $2 - Local Repository Directory.
+#          $3 - File to download.
+#    Uses: TEMP_FILE.
+# Outputs: ERROR.
 #
-#  Inputs: $1=UI.
-#          $2=Samba File server Directory
-#          $3=Local Mount Point (Directory)
-#          $4=File server Target Directory.
-#          $5=Temporary file name with list of files to be upgraded.
-#          TEMP_FILE.
-#    Uses: LINE.
-# Outputs: None.
+# Summary: Copy a file from the local repository on the LAN file server.
+#
+# Dependencies: f_message.
 #
 f_download_from_local_repository () {
       #
-      # Is file server directory already mounted on mount-point directory?
-      #    Yes - Download file from LAN file server.
-      #    No  - Does mount-point exist?
-      #        No  - Exit.
-      #        Yes - Mount file server share on mount-point.
-      #            Is the mount-point mounted OK?
-      #               No  - Exit.
-      #               Yes - Copy (Download) file from local repository on LAN file server.
-      #                   Was the copy successful?
-      #                      No  - Message fail and Exit.
-      #                      Yes - Message success and Exit.
+      TEMP_FILE=$THIS_DIR/$THIS_FILE"_temp.txt"
       #
-      # Is file server directory already mounted on mount-point directory?
-      mountpoint $3 >/dev/null 2>$TEMP_FILE # Write any error messages to file $TEMP_FILE. Get status of mountpoint, mounted?.
+      echo >$TEMP_FILE
+      echo ">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<" >>$TEMP_FILE
+      echo ">>> File Copy from Local Repository <<<" >>$TEMP_FILE
+      echo ">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<" >>$TEMP_FILE
+      echo >>$TEMP_FILE
+      f_message $1 "NOK" "File Copy" $TEMP_FILE
+      #
+      # $2 ends with a slash "/" so can append $3 immediately after $2.
+      eval cp -p $2/$3 .
+      ERROR=$?
+      #
+      if [ $ERROR -ne 0 ] ; then
+         echo >$TEMP_FILE
+         echo ">>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<" >>$TEMP_FILE
+         echo ">>> File Copy Error from Local Repository <<<" >>$TEMP_FILE
+         echo ">>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<" >>$TEMP_FILE
+         echo >>$TEMP_FILE
+         echo -e "Error copying from Local Repository file: \"$3.\"" >>$TEMP_FILE
+         echo >>$TEMP_FILE
+         f_message $1 "NOK" "Copy Error" $TEMP_FILE
+         ERROR=1
+      else
+         # Make file executable (useable).
+         chmod +x $3
+         #
+         if [ -x $3 ] ; then
+            # File is good.
+            ERROR=0
+         else
+            echo >$TEMP_FILE
+            echo ">>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<" >>$TEMP_FILE
+            echo ">>> File Error after copy from Local Repository <<<" >>$TEMP_FILE
+            echo ">>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<" >>$TEMP_FILE
+            echo >>$TEMP_FILE
+            echo -e "File \"$3\" is missing or file is not executable." >>$TEMP_FILE
+            echo >>$TEMP_FILE
+            f_message $1 "NOK" "File not executable" $TEMP_FILE
+          ERROR=1
+         fi
+      fi
       #
       if [ $ERROR -eq 0 ] ; then
-         # File server directory is already mounted at the mount-point.
-         # Download (copy) file from local repository to PC.
-         while read LINE
-               do
-                  eval cp -p $4/$LINE . 2>$TEMP_FILE # Write any error messages to file $TEMP_FILE.
-                  #
-                  # Make file executable (useable).
-                  chmod +x $LINE
-                  #
-                  if [ ! -x "$LINE" ] ; then
-                     f_message $1 "OK" "File Error"  "Error with required file:\n\"$LINE\"\n\n\Z1\ZbFile is missing or file is not executable.\n\n\ZnCannot continue, exiting program script." 3
-                     ERROR=1
-                  fi
-               done < $5
-         unset LINE
-         #
-      else
-         # File server directory is not mounted at the mount-point.
-         # Does mount-point directory exist?
-         if [ ! -e $3 ] ; then
-            f_message $1 "NOK" "Error missing directory" "Missing local mountpoint directory\n$3.\n\nCannot continue to download." 2
-         else
-            # Yes, mount-point directory exists.
-            # Mount file server directory at the mount-point.
-            f_mount $1 $2 $3
-            #
-            if [ $ERROR -eq 0 ] ; then
-               # Directory is mounted.
-               # Download (copy) files from local repository to PC.
-               while read LINE
-                     do
-                        eval cp -p $4/$LINE . 2>$TEMP_FILE # Write any error messages to file $TEMP_FILE.
-                        if [ ! -e $4/$LINE ] ; then
-                           f_message $1 "OK" "Copy Error" "Error copying file:\n\"$LINE\"\n\n\Z1\ZbFile not copied.\n\n\ZnCannot continue, exiting program script." 3
-                        fi
-                        #
-                        # Make file executable (useable).
-                        chmod +x $LINE
-                        #
-                        if [ ! -x "$LINE" ] ; then
-                          f_message $1 "OK" "File Error"  "Error with required file:\n\"$LINE\"\n\n\Z1\ZbFile is missing or file is not executable.\n\n\ZnCannot continue, exiting program script." 3
-                          ERROR=1
-                        fi
-                     done < $5
-               unset LINE
-            else
-               f_message $1 "OK" "Mount Error" "Error mounting directory $2 to $3.\n\n\ZnCannot continue, exiting program script." 3
-            fi
-            #
-         fi
+         echo >$TEMP_FILE
+         echo "Successful Update of file \"$3\" to latest version." >>$TEMP_FILE
+         echo >>$TEMP_FILE
+         echo "Script must be re-started to use the latest version." >>$TEMP_FILE
+         echo "____________________________________________________" >>$TEMP_FILE
+         f_message $1 "NOK" "Successful Update" $TEMP_FILE
       fi
       #
 } # End of function f_download_from_local_repository.
 #
 # +----------------------------------------+
-# |             Function f_source_TEMPLATE          |
+# |             Function f_source          |
 # +----------------------------------------+
 #
-#     Rev: 2020-10-22
-#  Inputs: $1=File name to source.
-# Outputs: ANS.
+#     Rev: 2021-03-08
+#  Inputs: $1 - File name to source.
+# Outputs: ERROR.
 #
-# PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
-#              THIS FUNCTION INTO ANY SCRIPT WHICH DEPENDS ON THE
-#              LIBRARY FILE "common_bash_function.lib".
+# Summary: Source the provided library file.
 #
-f_source_TEMPLATE () {
+# Dependencies: None.
+#
+f_source () {
+      #
+      # Initialize ERROR.
+      ERROR=0
+      #
       if [ -x "$1" ] ; then
          # If $1 is a library, then source it.
          case $1 in
-              common_bash_function.lib)
-                 source $1
-              ;;
               *.lib)
                  source $1
+                 ERROR=$?
               ;;
          esac
       fi

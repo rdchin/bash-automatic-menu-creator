@@ -47,11 +47,11 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2021-03-04 10:18"
+VERSION="2021-04-01 00:54"
 #
 # Commented out THIS_FILE since it will conflict other scripts which
 # use this library.
-#THIS_FILE="$0"
+#THIS_FILE=$(basename $0)
 #
 # +----------------------------------------+
 # |            Brief Description           |
@@ -94,32 +94,30 @@ VERSION="2021-03-04 10:18"
 # |        Function f_check_version        |
 # +----------------------------------------+
 #
-#     Rev: 2021-03-04
-#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#     Rev: 2021-03-25
+#  Inputs: $1 - UI "dialog" or "whiptail" or "text".
+#          $2 - [OPTIONAL] File name to compare.
+#          FILE_TO_COMPARE.
 #    Uses: SERVER_DIR, MP_DIR, TARGET_DIR, TARGET_FILE, VERSION, TEMP_FILE, ERROR.
-# Outputs: $1=GUI.
-#          $2=Samba File server Directory
-#          $3=Local Mount Point (Directory)
-#          $4=File server Target Directory.
-#          $5=File server File Name to compare.
-#          $6=Version of file to compare. String$
-#          $7=Temporary file name with list of files to be upgraded.
-#          ERROR
+# Outputs: ERROR.
 #
-# PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
-#              THIS FUNCTION INTO ANY SCRIPT WHICH DEPENDS ON THE
-#              LIBRARY FILE "common_bash_function.lib".
+# Summary: Check the version of a single, local file or script,
+#          FILE_TO_COMPARE with the version of repository file.
+#          If the repository file has latest version, then copy all 
+#          dependent files and libraries from the repository to local PC.
 #
-# Synopsis: Check version $6 of $5 local file with version of repository file.
-#           If the repository file has latest version, then copy all 
-#           dependent files and libraries from the repository to local PC. 
+# TO DO enhancement: If local (LAN) repository is unavailable, then
+#          connect to repository on the web if available.
+#
+# Dependencies: f_version_compare.
 #
 f_check_version () {
       #
       #
       #=================================================================
-      # EDIT THE LINES BELOW TO DEFINE THE LAN FILE SERVER DIRECTORY AND
-      # SHARED MOUNTPOINT DIRECTORY, LOCAL TARGET DIRECTORY AND FILE. 
+      # EDIT THE LINES BELOW TO DEFINE THE LAN FILE SERVER DIRECTORY,
+      # LOCAL MOUNTPOINT DIRECTORY, LOCAL REPOSITORY DIRECTORY AND
+      # FILE TO COMPARE BETWEEN THE LOCAL PC AND (LAN) LOCAL REPOSITORY.
       #=================================================================
       #
       #
@@ -134,18 +132,27 @@ f_check_version () {
       # Local PC mount-point with LAN File Server Local Repository full directory path.
       # Example: 
       #                   File server shared directory is "//file_server/public".
-      # Repostory directory under the shared directory is "scripts/BASH/Repository".
+      # Repository directory under the shared directory is "scripts/BASH/Repository".
       #                 Local PC Mount-point directory is "/mnt/file_server/public".
       #
       # Local PC mount-point with LAN File Server Local Repository full directory path.
       # LOCAL_REPO_DIR="$MP_DIR/[DIRECTORY_PATH_TO_LOCAL_REPOSITORY]"
         LOCAL_REPO_DIR="$MP_DIR/scripts/BASH/Repository"
       #
-      # Local PC file within TARGET_DIR.
-      # FILE_TO_COMPARE="[FILE_TO_COMPARE]"
-        FILE_TO_COMPARE="menu.sh"
+      # Local PC file to be compared.
+      if [ $# -eq 2 ] ; then
+         # There are 2 arguments that have been passed to this function.
+         # $2 contains the file name to compare.
+         FILE_TO_COMPARE=$2
+      else
+         # $2 is null, so specify file name.
+         if [ -z "$FILE_TO_COMPARE" ] ; then
+            # FILE_TO_COMPARE is undefined so specify file name.
+            FILE_TO_COMPARE=$(basename $0)
+         fi
+      fi
       #
-      # Version of TARGET_FILE.
+      # Version of Local PC file to be compared.
       VERSION=$(grep --max-count=1 "VERSION" $FILE_TO_COMPARE)
       #
       FILE_LIST=$THIS_DIR/$THIS_FILE"_file_temp.txt"
@@ -154,17 +161,16 @@ f_check_version () {
       #
       #=================================================================
       # EDIT THE LINES BELOW TO SPECIFY THE FILE NAMES TO UPDATE.
-      # FILE NAMES INCLUDE ALL DEPENDENT SCRIPTS LIBRARIES.
+      # FILE NAMES INCLUDE ALL DEPENDENT SCRIPTS AND LIBRARIES.
       #=================================================================
       #
       #
       # Create list of files to update and write to temporary file, FILE_LIST.
       #
-      echo "menu.sh"                   > $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
-      echo "menu_module_main.lib"     >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
-      echo "menu_module_sub0.lib"     >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
-      echo "menu_module_sub1.lib"     >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
-      echo "common_bash_function.lib" >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      #echo "[ FILE NAME1 GOES HERE ]"  > $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      #echo "[ FILE NAME2 GOES HERE ]" >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      #echo "[ FILE NAME3 GOES HERE ]" >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      #echo "[ FILE NAME4 GOES HERE ]" >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
       #
       f_version_compare $1 $SERVER_DIR $MP_DIR $LOCAL_REPO_DIR $FILE_TO_COMPARE "$VERSION" $FILE_LIST
       #
@@ -183,6 +189,10 @@ f_check_version () {
 #    Uses: None.
 # Outputs: None.
 #
+# Summary: List contents of the directory.
+#
+# Dependencies: f_messages.
+#
 f_dir_listing () {
       #
       ls -lh > $TEMP_FILE
@@ -199,6 +209,10 @@ f_dir_listing () {
 #    Uses: None.
 # Outputs: None.
 #
+# Summary: Display file system information.
+#
+# Dependencies: f_messages.
+#
 f_df () {
       #
       df -hT > $TEMP_FILE
@@ -214,7 +228,11 @@ f_df () {
 #    Uses: None.
 # Outputs: None.
 #
-f_sub-menu0 () {
+# Summary: Display first sub-menu.
+#
+# Dependencies: f_menu_arrays, f_create_show_menu.
+#
+f_sub_menu0 () {
       #
       GENERATED_FILE="menu_generated.lib"
       #
