@@ -47,7 +47,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2021-04-01 00:54"
+VERSION="2021-04-20 00:13"
 #
 # Commented out THIS_FILE since it will conflict other scripts which
 # use this library.
@@ -167,10 +167,11 @@ f_check_version () {
       #
       # Create list of files to update and write to temporary file, FILE_LIST.
       #
-      #echo "[ FILE NAME1 GOES HERE ]"  > $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
-      #echo "[ FILE NAME2 GOES HERE ]" >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
-      #echo "[ FILE NAME3 GOES HERE ]" >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
-      #echo "[ FILE NAME4 GOES HERE ]" >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      echo "menu.sh"                   > $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      echo "menu_module_main.lib"     >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      echo "menu_module_sub0.lib"     >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      echo "menu_module_sub1.lib"     >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      echo "common_bash_function.lib" >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.      #
       #
       f_version_compare $1 $SERVER_DIR $MP_DIR $LOCAL_REPO_DIR $FILE_TO_COMPARE "$VERSION" $FILE_LIST
       #

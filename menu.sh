@@ -24,7 +24,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2021-04-01 00:54"
+VERSION="2021-04-20 00:13"
 THIS_FILE=$(basename $0)
 FILE_TO_COMPARE=$THIS_FILE
 TEMP_FILE=$THIS_FILE"_temp.txt"
@@ -43,11 +43,11 @@ GENERATED_FILE=$THIS_FILE"_menu_generated.lib"
 #
 # LAN File Server shared directory.
 # SERVER_DIR="[FILE_SERVER_DIRECTORY_NAME_GOES_HERE]"
-  SERVER_DIR="//scotty/files"
+  SERVER_DIR="//file_server/public"
 #
 # Local PC mount-point directory.
 # MP_DIR="[LOCAL_MOUNT-POINT_DIRECTORY_NAME_GOES_HERE]"
-  MP_DIR="/mnt/scotty/files"
+  MP_DIR="/mnt/file_server/public"
 #
 # Local PC mount-point with LAN File Server Local Repository full directory path.
 # Example: 
@@ -56,7 +56,7 @@ GENERATED_FILE=$THIS_FILE"_menu_generated.lib"
 #                 Local PC Mount-point directory is "/mnt/file_server/public".
 #
 # LOCAL_REPO_DIR="$MP_DIR/[DIRECTORY_PATH_TO_LOCAL_REPOSITORY]"
-  LOCAL_REPO_DIR="$MP_DIR/LIBRARY/PC-stuff/PC-software/BASH_Scripting_Projects/Repository"
+  LOCAL_REPO_DIR="$MP_DIR/scripts/BASH/Repository"
 #
 #
 #=================================================================
