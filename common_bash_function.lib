@@ -40,7 +40,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2021-03-31 15:54"
+VERSION="2021-06-18 23:58"
 #
 # WARNING: Do not define $THIS_FILE within a library script.
 #
@@ -80,6 +80,12 @@ VERSION="2021-03-31 15:54"
 ## Code Change History
 ##
 ## (After each edit made, please update Code History and VERSION.)
+##
+## 2021-06-18 *f_update_menu_txt fixed bug where given two menu option names
+##             of which one included the name of the other, the shorter
+##             name would always be selected when typing the name.
+##             i.e. Menu options: "apple", "apple pie".
+##             When typing "apple pie" then "apple" would be selected.
 ##
 ## 2021-03-31 *f_version_compare changed user-message question format to be
 ##             more consistent with previous informative user-message.
@@ -2506,7 +2512,7 @@ f_update_menu_txt () {
              let YNUM=$XNUM-1  # Start numbering choices from zero so zero selects CHOICE[1]
              #
              # Save the pattern matching for the case statement which is later inserted into the function, "f_menu_txt".
-             echo "                    $YNUM | \"${CHOICE_LC:0:1}\" | \"${CHOICE_LC:0:2}\" | \"${CHOICE_LC:0:3}\" | \"${CHOICE_LC:0:4}\" | \"${CHOICE_LC:0:5}\" | \"${CHOICE_LC:0:6}\" | \"${CHOICE_LC:0:7}\" | \"${CHOICE_LC:0:8}\" | \"${CHOICE_LC:0:9}\" | \"${CHOICE_LC:0:10}\" | \"${CHOICE_LC:0:11}\" | \"${CHOICE_LC:0:12}\" | \"${CHOICE_LC:0:13}\" | \"${CHOICE_LC:0:14}\" | \"${CHOICE_LC:0:15}\"*) $FUNC  ;;" >>$TEMP_FILE
+              echo "                    $YNUM | \"${CHOICE_LC:0:1}\" | \"${CHOICE_LC:0:2}\" | \"${CHOICE_LC:0:3}\" | \"${CHOICE_LC:0:4}\" | \"${CHOICE_LC:0:5}\" | \"${CHOICE_LC:0:6}\" | \"${CHOICE_LC:0:7}\" | \"${CHOICE_LC:0:8}\" | \"${CHOICE_LC:0:9}\" | \"${CHOICE_LC:0:10}\" | \"${CHOICE_LC:0:11}\" | \"${CHOICE_LC:0:12}\" | \"${CHOICE_LC:0:13}\" | \"${CHOICE_LC:0:14}\" | \"${CHOICE_LC:0:15}\") $FUNC  ;;" >>$TEMP_FILE
              #
              if [ -n "$CHOICE" ] ; then
                 # Read next Menu Option Choice string and get its string length.
