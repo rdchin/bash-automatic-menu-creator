@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# ©2021 Copyright 2021 Robert D. Chin
+# ©2022 Copyright 2022 Robert D. Chin
 # Email: RDevChin@Gmail.com
 #
 # Usage: source menu_module_main.lib
@@ -27,6 +27,17 @@
 #
 # Format: <#@@> <Menu Option> <#@@> <Description of Menu Option> <#@@> <Corresponding function or action or cammand>
 #
+# Format of <Corresponding function or action or command> when using f_create_menu
+#        f_create_menu^"text", "dialog", or "whiptail"^menu_generated.lib^Menu Name^Temporary File Name^Library name containing menu entries
+#
+#  f_create_menu inputs:
+#
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
+#          $2 - GENERATED_FILE (The name of a temporary library file containing the suggested phrase "generated.lib" which contains the code to display the sub-menu).
+#          $3 - MENU_TITLE (Title of the sub-menu)
+#          $4 - TEMP_FILE (Temporary file).
+#          $5 - ARRAY_FILE (Not a temporary file).
+#
 #@@Exit#@@Return to previous menu.#@@break
 #
 #@@Hello Moon#@@Print Hello Moon.#@@f_hello_moon
@@ -39,13 +50,13 @@
 #
 #@@GNight Moon#@@Print GNight Moon.#@@f_gnight_moon
 #
-#@@Next Page#@@Next page of choices.#@@f_sub_menu1^$GUI
+#@@Next Page#@@Next page of choices.#@@f_create_menu^$GUI^menu_generated.lib^Sub-menu_One^$THIS_DIR/$THIS_FILE"_sub_menu1_temp.txt"^$THIS_DIR/menu_module_sub1.lib
 #
 # +----------------------------------------+
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2021-04-20 00:13"
+VERSION="2022-05-26 11:28"
 #
 # Commented out THIS_FILE since it will conflict other scripts which
 # use this library.
@@ -97,9 +108,9 @@ VERSION="2021-04-20 00:13"
 #    Uses: None.
 # Outputs: temp.txt.
 #
-# Summary: 
+# Summary:
 #
-# Dependencies: 
+# Dependencies:
 #
 f_hello_moon () {
       clear  # Clear screen.
@@ -118,9 +129,9 @@ f_hello_moon () {
 #    Uses: None.
 # Outputs: temp.txt.
 #
-# Summary: 
+# Summary:
 #
-# Dependencies: 
+# Dependencies:
 #
 f_goodbye_moon () {
       #
@@ -158,9 +169,9 @@ f_good_morning_moon () {
 #    Uses: None.
 # Outputs: temp.txt.
 #
-# Summary: 
+# Summary:
 #
-# Dependencies: 
+# Dependencies:
 #
 f_good_night_moon () {
       #
@@ -180,9 +191,9 @@ f_good_night_moon () {
 #    Uses: None.
 # Outputs: temp.txt.
 #
-# Summary: 
+# Summary:
 #
-# Dependencies: 
+# Dependencies:
 #
 f_gnight_moon () {
       #
@@ -193,39 +204,3 @@ f_gnight_moon () {
       #
 } # End of function f_gnight_moon.
 #
-# +----------------------------------------+
-# |           Function f_sub_menu1         |
-# +----------------------------------------+
-#
-#  Inputs: $1=GUI.
-#    Uses: None.
-# Outputs: None.
-#
-# Summary: 
-#
-# Dependencies: 
-#
-f_sub_menu1 () {
-      #
-      GENERATED_FILE="menu_generated.lib"
-      #
-      # Create generated menu script from array data.
-      #
-      #
-      # Create generated menu script from array data.
-      #
-      # Note: ***If Menu title contains spaces,
-      #       ***the size of the menu window will be too narrow.
-      #
-      # Menu title MUST use underscores instead of spaces.
-      MENU_TITLE="Sub-menu_One"  # Menu title must substitute underscores for spaces
-      TEMP_FILE=$THIS_DIR/$THIS_FILE"_sub_menu1_temp.txt"
-      #
-      # Create arrays from data.
-      ARRAY_FILE="$THIS_DIR/menu_module_sub1.lib"
-      f_menu_arrays $ARRAY_FILE
-      #
-      # Create generated menu script from array data.
-      f_create_show_menu $1 $GENERATED_FILE $MENU_TITLE $MAX_LENGTH $MAX_LINES $MAX_CHOICE_LENGTH $TEMP_FILE
-      #
-}  # End of function f_submenu0.

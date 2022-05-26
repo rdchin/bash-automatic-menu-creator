@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# ©2021 Copyright 2021 Robert D. Chin
+# ©2022 Copyright 2022 Robert D. Chin
 # Email: RDevChin@Gmail.com
 #
 # Usage: source common_bash_function.lib
@@ -19,28 +19,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
-# +--------------------------------------------------------------------------+
-# |                                                                          |
-# |                 Customize Menu choice options below.                     |
-# |                                                                          |
-# +--------------------------------------------------------------------------+
-#
-#  Format: <#@@> <Menu Option> <#@@> <Description of Menu Option> <#@@> <Corresponding function or action or cammand>
-# WARNING: Text strings cannot include apostrophes (').
-#
-#@@Exit#@@Exit this menu.#@@break
-#
-#@@About#@@Version information of this script.#@@f_about^$GUI
-#
-#@@Code History#@@Display code change history of this script.#@@f_code_history^$GUI
-#
-#@@Help#@@Display help message.#@@f_help_message^$GUI
-#
 # +----------------------------------------+
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2021-06-18 23:58"
+VERSION="2022-05-20 02:16"
 #
 # WARNING: Do not define $THIS_FILE within a library script.
 #
@@ -81,6 +64,106 @@ VERSION="2021-06-18 23:58"
 ##
 ## (After each edit made, please update Code History and VERSION.)
 ##
+## 2022-05-20 *f_version_compare, f_check_version_TEMPLATE improved user
+##             messages.
+##            *f_message added debug hint.
+##            *f_msg_ui_str_box_size, f_msg_ui_file_box_size corrected
+##             comments.
+##
+## 2022-05-17 *f_ask_question corrected documentation of ERROR=1 or 255.
+##             Bug fixed with $3 parameter needing quotes as it could be a
+##             file name or a string of words.
+##            *f_select_file improved user messages. Bug fixed where if-then
+##             statements test $4 parameter as integer rather than a string.
+##             Changed to display user message "File Entered" only if selecting
+##             multiple files.
+##            *f_select_dir changed to display user message "Directory Entered"
+##             only if selecting multiple directories.
+##
+## 2022-04-29 *Improved comments for passing strings as parameters
+##             for many functions.
+##            *f_select_dir corrected user message.
+##
+## 2022-04-27 *f_select_file bug fixed when $4=1 to select a single file,
+##             output ANS was not set correctly.
+##            *f_text_editor bug fixed by deleting the ampersand after the
+##             command so scripts that are dependent on the edited file don't
+##             keep running before edited file is saved.
+##
+## 2022-04-24 *f_username changed prompt include more context.
+##            *f_password changed prompt and delete temporary files
+##             immediately after usage.
+##
+## 2022-04-18 *f_select_file added a Go/NoGo confirmation question and
+##             improved user messages.
+##            *f_select_dir improved user messages.
+##
+## 2022-04-14 *f_file_manager added instructions on how to exit out of the
+##             CLI applications and changed run command to exit out directly
+##             to men.sh rather than to the invoked bash shell and having to
+##             exit out from that environment also.
+##             Change from: eval $FILE_MGR $2 &
+##             Change   to: $FILE_MGR $2
+##             Also made the application Ranger the preferred CLI app and
+##             improved comments.
+##            *f_text_editor added Nano as the preferred CLI editor app and
+##             improved comments.
+##
+## 2022-04-08 *f_file_manager, f_text_editor bug fix to detect CLI or
+##             XWINDOW environment and use appropriate app.
+##            *Section "Customize Menu choice options below" deleted
+##             since it would never work because a menu display would be
+##             dependent on f_display_common which is in each script and
+##             customized for that script based on f_display_common_TEMPLATE.
+##             Therefore any f_display_common function in this script would
+##             interfere with the customized version in each parent script.
+##
+## 2022-04-06 *f_select_file, f_select_dir bug fixed with $4 optional
+##             parameter change if statement from number to string compare.
+##
+## 2022-04-01 *Library-wide improved comments on function specifications.
+##            *f_default_ans improved comments.
+##
+## 2022-03-30 *f_select_dir, f_select_file added optional parameter to
+##             select only a single directory_file.
+##
+## 2022-03-29 *f_ask_question enhanced to accept a text file as text for a
+##             question. Text within the file is converted to a single-line
+##             string with "\n" marking line endings.
+##
+## 2022-03-26 *f_file_manager, f_text_editor changed to run processes in
+##             the background.
+##
+## 2022-03-09 *f_file_manager improved user messages.
+##
+## 2022-03-08 *f_ask_question bug fixed in text UI using wrong variable name.
+##            *f_msg_ui_str_ok increase box height calculation.
+##
+## 2022-02-27 *f_ask_question bug fixed calculation of box size.
+##            *f_select_file, f_select_dir improved user messages.
+##
+## 2022-02-26 *f_select_dir, f_select_file changed default directory to
+##             be the last selected directory when using Dialog in a loop.
+##
+## 2022-02-25 *f_check_version_TEMPLATE added code to assure FILE_LIST is
+##             not appended to but is newly created.
+##
+## 2022-02-24 *f_msg_txt/ui_file/str_nok added comments.
+##            *f_select_file, f_select_dir changed minimum X-Window size
+##             settings, added more error checking. File description string
+##             is now limited to 28 characters to work on 80x24 displays.
+##             It is used in the "--ok-label" "--back-title" options.
+##
+## 2022-02-23 *f_ask_question added.
+##
+## 2022-01-30 *f_select_directory, f_select_file require a minimum X-window
+##             size for the Dialog command "f_select".
+##
+## 2022-01-22 *f_file_manager, f_text_editor, f_select_directory,
+##             f_select_file added.
+##
+## 2022-01-21 *f_mount added option to specify the default user name.
+##
 ## 2021-06-18 *f_update_menu_txt fixed bug where given two menu option names
 ##             of which one included the name of the other, the shorter
 ##             name would always be selected when typing the name.
@@ -102,7 +185,7 @@ VERSION="2021-06-18 23:58"
 ## 2021-03-25 *f_check_version typo fixed.
 ##
 ## 2021-03-24 *f_arguments changed -u option variable used.
-##             Change from: $TARGET_DIR 
+##             Change from: $TARGET_DIR
 ##             Change   to: $LOCAL_REPO_DIR
 ##            *f_check_version_TEMPLATE, f_version_compare updated to add
 ##             a second optional argument.
@@ -114,7 +197,7 @@ VERSION="2021-06-18 23:58"
 ##
 ## 2021-03-09 *Standardized some comments.
 ##
-## 2021-03-08 *f_source_TEMPLATE renamed to f_source, since there is no 
+## 2021-03-08 *f_source_TEMPLATE renamed to f_source, since there is no
 ##             customization.
 ##            *f_mount improved comments.
 ##
@@ -159,7 +242,8 @@ VERSION="2021-06-18 23:58"
 ##            *f_arguments updated comments.
 ##
 ## 2020-12-11 *f_version_compare allowed logging of file copy errors.
-##            *f_download_from_local_repository allowed logging of file copy errors.
+##            *f_download_from_local_repository allowed logging of
+##             file copy errors.
 ##
 ## 2020-11-25 *f_version_compare improved display messages.
 ##
@@ -205,7 +289,7 @@ VERSION="2021-06-18 23:58"
 ##            *f_menu_main_TEMPLATE, f_test_connect_TEMPLATE changed comments
 ##             to standize format of template functions.
 ##
-## 2020-07-31 *Main bug fix pattern matching code to download Common BASH Library. 
+## 2020-07-31 *Main bug fix pattern matching code to download Common BASH Library.
 ##
 ## 2020-07-16 *f_update_menu_txt bug fixed due to ommitting comment mark.
 ##            *f_test connection added a pause to vary the seconds the message is displayed.
@@ -250,7 +334,7 @@ VERSION="2021-06-18 23:58"
 ## 2020-05-20 *f_update_menu_txt/gui cleaned up comments in generated code.
 ##
 ## 2020-05-18 *f_update_menu/gui/txt cosmetic fixed comments.
-##            *f_main_menu, f_update_menu_gui, f_menu_arrays fixed bug in 
+##            *f_main_menu, f_update_menu_gui, f_menu_arrays fixed bug in
 ##             calculating menu width for displaying on screen.
 ##
 ## 2020-05-15 *f_test_connection changed message from "Internet" to "Network".
@@ -308,15 +392,15 @@ VERSION="2021-06-18 23:58"
 # +------------------------------------+
 #
 #     Rev: 2021-03-31
-#  Inputs: $1=UI - "text", "dialog" or "whiptail" the preferred user-interface.
-#          $2=Delimiter of text to be displayed.
-#          $3="NOK", "OK", or null [OPTIONAL] to control display of "OK" button.
-#          $4=Pause $4 seconds [OPTIONAL]. If "NOK" then pause to allow text to be read.
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
+#          $2 - Delimiter of text to be displayed.
+#          $3 - "NOK", "OK", or null [OPTIONAL] to control display of "OK" button.
+#          $4 - Pause $4 seconds [OPTIONAL]. If "NOK" then pause to allow text to be read.
 #          THIS_DIR, THIS_FILE, VERSION.
 #    Uses: X.
 # Outputs: None.
 #
-# Synopsis: Display lines of text beginning with a given comment delimiter.
+# Summary: Display lines of text beginning with a given comment delimiter.
 #
 # Dependencies: f_message.
 #
@@ -377,16 +461,17 @@ f_display_common_TEMPLATE () {
 # |        Function f_check_version_TEMPLATE        |
 # +----------------------------------------+
 #
-#     Rev: 2021-03-25
-#  Inputs: $1 - UI "dialog" or "whiptail" or "text".
+#     Rev: 2022-05-19
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
 #          $2 - [OPTIONAL] File name to compare.
 #          FILE_TO_COMPARE.
-#    Uses: SERVER_DIR, MP_DIR, TARGET_DIR, TARGET_FILE, VERSION, TEMP_FILE, ERROR.
+#    Uses: SERVER_DIR, MP_DIR, LOCAL_REPO_DIR, $FILE_TO_COMPARE, FILE_LIST,
+#          VERSION, TEMP_FILE, ERROR.
 # Outputs: ERROR.
 #
 # Summary: Check the version of a single, local file or script,
 #          FILE_TO_COMPARE with the version of repository file.
-#          If the repository file has latest version, then copy all 
+#          If the repository file has latest version, then copy all
 #          dependent files and libraries from the repository to local PC.
 #
 # TO DO enhancement: If local (LAN) repository is unavailable, then
@@ -417,7 +502,7 @@ f_check_version_TEMPLATE () {
         MP_DIR="/mnt/file_server/public"
       #
       # Local PC mount-point with LAN File Server Local Repository full directory path.
-      # Example: 
+      # Example:
       #                   File server shared directory is "//file_server/public".
       # Repository directory under the shared directory is "scripts/BASH/Repository".
       #                 Local PC Mount-point directory is "/mnt/file_server/public".
@@ -442,8 +527,18 @@ f_check_version_TEMPLATE () {
       # Version of Local PC file to be compared.
       VERSION=$(grep --max-count=1 "VERSION" $FILE_TO_COMPARE)
       #
+      # Initialize variables.
       FILE_LIST=$THIS_DIR/$THIS_FILE"_file_temp.txt"
       ERROR=0
+      #
+      # Delete any existing file.
+      # This assures that FILE_LIST is not appended to but is newly created
+      # in the code below. Added because typo may occur when using redirection
+      # where typo ">>" is used instead of ">" at FILE NAME1.
+      # i.e. typo at echo "[ FILE NAME1 GOES HERE ]"  >> $FILE_LIST
+      if [ -e $FILE_LIST ] ; then
+         rm $FILE_LIST
+      fi
       #
       #
       #=================================================================
@@ -465,21 +560,23 @@ f_check_version_TEMPLATE () {
          rm  $FILE_LIST
       fi
       #
+      unset FILE_LIST
+      #
 }  # End of function f_check_version_TEMPLATE.
 #
 # +----------------------------------------+
 # |       Function f_version_compare       |
 # +----------------------------------------+
 #
-#     Rev: 2021-03-31
-#  Inputs: $1=UI.
-#          $2=Samba File server Directory
-#          $3=Local Mount Point (Directory)
-#          $4=File server Target Directory.
-#          $5=File server Target File name.
-#          $6=Version of Local file. String.
-#          $7=Temporary file name with list of files to be upgraded.
-#    Uses: LINE, VER, VER_MSG, VERSION_RELEASE.
+#     Rev: 2022-05-19
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
+#          $2 - Samba File server Directory
+#          $3 - Local Mount Point (Directory)
+#          $4 - File server Target Directory.
+#          $5 - File server Target File name.
+#          $6 - Version of Local file. String.
+#          $7 - Temporary file name with list of files to be upgraded.
+#    Uses: LINE, VER, VER_MSG, VERSION_RELEASE, ERROR2.
 # Outputs: ERROR, ANS.
 #
 # Summary: Compare the version of a single local script against the
@@ -502,13 +599,17 @@ f_version_compare () {
       # Initialize $ANS to "No" answer for f_yn_question "Copy from Repository?"
       ANS=1
       #
-      if [ ! -e $3 ] ; then
+      # Does the Local Mount Point directory exist?
+      if [ ! -e "$3" ] ; then
+         # No, directory is missing.
          f_message $1 "NOK" "Error missing directory" "Missing local mountpoint directory\n$3." 2
       else
+         # Yes, directory is OK so mount the file server directory.
          f_mount $1 $2 $3
          #
+         # Were there any errors when mounting?
          if [ $ERROR -eq 0 ] ; then
-            # Directory is mounted.
+            # No, File Server directory is mounted.
             #
             if [ -e $4/$5 ] ; then
                # Get the version number of the target software script.
@@ -516,13 +617,12 @@ f_version_compare () {
                # Each file script contains the string "VERSION=[ YYYY-MM-DD HH:MM ]"
                # i.e. VERSION="2020-12-31 23:59"
                #
-               VER_REPO=$(grep --max-count=1 "VERSION" $4/$5)
+               VER_REPO=$(grep --max-count=1 "VERSION" "$4"/"$5")
                #
                # Change string $VERSION_REPO from: VERSION="2020-12-31 23:59"
                #                               to: 2020-12-31 23:59           (without quotes within string).
                VER_REPO=$(echo $VER_REPO | sed 's/VERSION=//' | sed 's/\"//g')
                #
-               #f_message $1 "OK" "Version Information" "From Local Repository\n$4\nFile $5 $VERSION_RELEASE\n\nFrom this PC\nFile $5 $VER"
                VER_MSG=$7"_MSG.txt"
                echo "Replace Files on this PC?" > $VER_MSG
                echo >> $VER_MSG
@@ -561,31 +661,42 @@ f_version_compare () {
                # Yes, copy from repository.
                # Update files required for this script.
                #
+               # Initialize variable.
+               ERROR2=0
+               TEMP_FILE="common_bash_function.lib_temp.txt"
                while read LINE
                      do
-                        eval cp -p $4/$LINE . 2>$TEMP_FILE # Write any error messages to file $TEMP_FILE.
-                        f_message $1 "NOK" "Copy $LINE" "Copying $4/$LINE" 2 2>$TEMP_FILE # Write any error messages to file $TEMP_FILE.
+                        echo > $TEMP_FILE
+                        echo "Copying File from Local Repository\n$4/$LINE" >> $TEMP_FILE
+                        cp -p "$4"/$LINE . 2>>$TEMP_FILE # Write any error messages to file $TEMP_FILE.
+                        ERROR=$?
                         #
                         # Make file executable (useable).
-                        chmod +x $LINE
+                        chmod +x $LINE 2>>$TEMP_FILE # Write any error messages to file $TEMP_FILE.
+                        let ERROR=$ERROR+$?
                         #
-                        if [ ! -x "$LINE" ] ; then
-                           f_message $1 "OK" "File Error"  "Error with required file:\n\"$LINE\"\n\n\Z1\ZbFile is missing or file is not executable.\n\n\ZnCannot continue, exiting program script." 3
-                           ERROR=1
+                        if [ $ERROR -ne 0 ] ; then
+                           f_message $1 "OK" "Error Copying File from Local Repository" "$TEMP_FILE"
+                           ERROR2=1
+                        else
+                           f_message $1 "NOK" "Copying File from Local Repository" $TEMP_FILE 2
                         fi
+                        #
                        done < $7
                unset LINE
                #
-               if [ $ERROR -ne 0 ] ; then
-                  f_message $1 "NOK" "Error occurred" "Error Retrieving Version Information." 2
+               if [ $ERROR2 -ne 0 ] ; then
+                  f_message $1 "OK" "Error occurred" $TEMP_FILE
+                  ERROR=1
                else
-                  f_message $1 "OK" "Successful Update" "Latest version was successfully copied for use.\nScript must be re-started to use the latest version."
+                  f_message $1 "NOK" "Successful Update" "Latest version was successfully copied for use.\nScript must be re-started to use the latest version." 2
+                  ERROR=0
                fi
             fi
          fi
       fi
       #
-      unset LINE VER VER_MSG VERSION_RELEASE
+      unset LINE VER VER_MSG VERSION_RELEASE ERROR2
       #
 } # End of function f_version_compare.
 #
@@ -621,7 +732,7 @@ f_script_path () {
 # +----------------------------------------+
 #
 #     Rev: 2021-03-28
-#  Inputs: $1=Argument
+#  Inputs: $1 - Argument
 #             [ --help ] [ -? ]
 #             [ --about ]
 #             [ --version ] [ --ver ] [ -v ] [--about ]
@@ -629,7 +740,7 @@ f_script_path () {
 #             [ --history ] [ --hist ]
 #             [] [ text ] [ dialog ] [ whiptail ]
 #          $2=Argument
-#             [] [ text ] [ dialog ] [ whiptail ] 
+#             [] [ text ] [ dialog ] [ whiptail ]
 #    Uses: None.
 # Outputs: GUI, ERROR.
 #
@@ -645,7 +756,7 @@ f_arguments () {
          #
          clear # Blank the screen.
          #
-         exit 0  # This cleanly closes the process generated by #!bin/bash. 
+         exit 0  # This cleanly closes the process generated by #!bin/bash.
                  # Otherwise every time this script is run, another instance of
                  # process /bin/bash is created using up resources.
       fi
@@ -667,7 +778,7 @@ f_arguments () {
               #
               clear # Blank the screen.
               #
-              exit 0  # This cleanly closes the process generated by #!bin/bash. 
+              exit 0  # This cleanly closes the process generated by #!bin/bash.
                       # Otherwise every time this script is run, another instance of
                       # process /bin/bash is created using up resources.
            ;;
@@ -680,7 +791,7 @@ f_arguments () {
               #
               clear # Blank the screen.
               #
-              exit 0  # This cleanly closes the process generated by #!bin/bash. 
+              exit 0  # This cleanly closes the process generated by #!bin/bash.
                       # Otherwise every time this script is run, another instance of
                       # process /bin/bash is created using up resources.
            ;;
@@ -693,7 +804,7 @@ f_arguments () {
               #
               clear # Blank the screen.
               #
-              exit 0  # This cleanly closes the process generated by #!bin/bash. 
+              exit 0  # This cleanly closes the process generated by #!bin/bash.
                       # Otherwise every time this script is run, another instance of
                       # process /bin/bash is created using up resources.
            ;;
@@ -706,10 +817,10 @@ f_arguments () {
               #
               clear # Blank the screen.
               #
-              exit 0  # This cleanly closes the process generated by #!bin/bash. 
+              exit 0  # This cleanly closes the process generated by #!bin/bash.
                       # Otherwise every time this script is run, another instance of
                       # process /bin/bash is created using up resources.
-           
+
            ;;
            -*)
               # If the one argument is "-<unrecognized>" display help USAGE message.
@@ -721,7 +832,7 @@ f_arguments () {
               #
               clear # Blank the screen.
               #
-              exit 0  # This cleanly closes the process generated by #!bin/bash. 
+              exit 0  # This cleanly closes the process generated by #!bin/bash.
                       # Otherwise every time this script is run, another instance of
                       # process /bin/bash is created using up resources.
            ;;
@@ -757,11 +868,11 @@ f_arguments () {
               fi
               #
               if [ $ERROR -eq 1 ] ; then
-                 # Error $1 is not a directory nor a file name. 
+                 # Error $1 is not a directory nor a file name.
                  # Display help USAGE message.
                  f_message "text" "OK" "Error Invalid File or Directory Name" "\Zb\Z1This File or Directory does not exist:\Zn\n $1"
                  f_help_message "text"
-                 exit 0  # This cleanly closes the process generated by #!bin/bash. 
+                 exit 0  # This cleanly closes the process generated by #!bin/bash.
                          # Otherwise every time this script is run, another instance of
                          # process /bin/bash is created using up resources.
               fi
@@ -815,8 +926,10 @@ f_detect_ui () {
 # +----------------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1=GUI.
-#          $2=X-window Application name.
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
+#          $2 - X-window Application name.
+#                  (String must either begin and end with double-quotes
+#                  or must not include spaces but must have underscores substituting for spaces).
 #          $BASH_VERSION (System variable).
 #    Uses: None.
 # Outputs: None.
@@ -843,7 +956,7 @@ f_test_environment () {
 # +----------------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
 #          $BASH_VERSION (System variable), GUI.
 #    Uses: None.
 # Outputs: exit 1.
@@ -859,8 +972,8 @@ f_test_dash () {
       # if [ -z "$BASH_VERSION" ]; then
       # if [ "$BASH_VERSION" = '' ]; then
       #
-      if [ -z "$BASH_VERSION" ]; then 
-         # DASH Environment detected, display error message 
+      if [ -z "$BASH_VERSION" ]; then
+         # DASH Environment detected, display error message
          # to invoke the BASH environment.
          f_detect_ui # Automatically detect UI environment.
          #
@@ -881,7 +994,7 @@ f_test_dash () {
 # +----------------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
 #    Uses: None.
 # Outputs: None.
 #
@@ -912,11 +1025,11 @@ f_test_connect_TEMPLATE () {
 # +----------------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1 - "text", "dialog" or "whiptail" The CLI GUI application in use.
-#          $2 - Network name of server, IP address, or web site address (URL). 
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
+#          $2 - Network name of server, IP address, or web site address (URL).
 #          $3 - Pause n seconds to read message (Optional).
 #    Uses: None.
-# Outputs: ERROR. 
+# Outputs: ERROR.
 #
 # Summary: Test network connection using provided LAN or IP address, web site.
 #
@@ -942,9 +1055,11 @@ f_test_connection () {
 # +----------------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
-#          $2=USERNAME (default).
-#          $3=MP - Mount-point to display on --usernamebox.
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
+#          $2 - USERNAME (default or "n" for none. One word without spaces).
+#          $3 - String (server and/or mount-point) used in prompt.
+#                  (String must begin and end with double-quotes if it includes spaces).
+#                  or must have underscores substituting for spaces).
 #    Uses: $TEMP_FILE, ANS.
 # Outputs: SMBUSER, ERROR.
 #
@@ -954,17 +1069,20 @@ f_test_connection () {
 #
 f_username() {
       #
+      # Format string, substitute spaces for underscores.
+      PRINT_STRING3=$(echo $3 | tr "_" " ")
+      #
       TEMP_FILE=$THIS_DIR/$THIS_FILE"_temp.txt"
       ERROR=0
       #
       case $1 in
            dialog | whiptail)
-              $1 --title "User name for $3" --inputbox "Enter SMB mount-point user name:" 10 50 $2 2>$TEMP_FILE
+              $1 --title "User name for $PRINT_STRING3" --inputbox "Enter user name:" 10 50 $2 2>$TEMP_FILE
               ERROR=$?
               ANS=$(cat $TEMP_FILE)
            ;;
            text)
-              echo "           --User name for $3--"
+              echo "           --User name for $PRINT_STRING3--"
               echo
               if [ $2 = "n" ] ; then
                  read -p "Enter user name or n=none (n): " ANS
@@ -995,15 +1113,19 @@ f_username() {
          rm $TEMP_FILE
       fi
       #
+      unset PRINT_STRING3
+      #
 } # End of function f_username.
 #
 # +----------------------------------------+
 # |           Function f_password          |
 # +----------------------------------------+
 #
-#     Rev: 2021-03-07
-#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
-#          $2=MP - Mount-point to display on --passwordbox.
+#     Rev: 2022-04-24
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
+#          $2 - String (server and/or username) used in prompt.
+#                  (String must begin and end with double-quotes if it includes spaces).
+#                  or must have underscores substituting for spaces).
 #    Uses: TEMP_FILE.
 # Outputs: PASSWORD, ERROR.
 #
@@ -1013,24 +1135,35 @@ f_username() {
 #
 f_password() {
       #
+      # Format string, substitute spaces for underscores.
+      PRINT_STRING2=$(echo $2 | tr "_" " ")
+      #
       TEMP_FILE=$THIS_DIR/$THIS_FILE"_temp.txt"
       PASSWORD=""
       #
       case $1 in
            dialog)
-              $1 --title "Password for $2" --clear --insecure --passwordbox "Enter SMB mount-point password:" 10 70 2>$TEMP_FILE
+              $1 --title "Password for $PRINT_STRING2" --clear --insecure --passwordbox "Enter SMB password for $PRINT_STRING2:" 10 70 2>$TEMP_FILE
               ERROR=$?
               PASSWORD=$(cat $TEMP_FILE)
+              #
+              if [ -r  $TEMP_FILE ] ; then
+                 rm  $TEMP_FILE
+              fi
            ;;
            whiptail)
-              $1 --title "Password for $2" --clear --passwordbox "Enter SMB mount-point password:" 10 70 2>$TEMP_FILE
+              $1 --title "Password for $PRINT_STRING2" --clear --passwordbox "Enter SMB password for $PRINT_STRING2:" 10 70 2>$TEMP_FILE
               ERROR=$?
               PASSWORD=$(cat $TEMP_FILE)
+              #
+              if [ -r  $TEMP_FILE ] ; then
+                 rm  $TEMP_FILE
+              fi
            ;;
            text)
               echo
               echo "To [Cancel] press \"Enter\" key."
-              read -s -p "Password for $2: " PASSWORD
+              read -s -p "Enter Password for $PRINT_STRING2: " PASSWORD
               echo
            ;;
       esac
@@ -1044,6 +1177,8 @@ f_password() {
          rm  $TEMP_FILE
       fi
       #
+      unset PRINT_STRING2
+      #
 } # End of function f_password.
 #
 # +----------------------------------------+
@@ -1051,7 +1186,7 @@ f_password() {
 # +----------------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1=GUI.
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
 #    Uses: None.
 # Outputs: None.
 #
@@ -1080,8 +1215,9 @@ f_bad_sudo_password () {
 #
 # Dependencies: None.
 #
-f_press_enter_key_to_continue () { # Display message and wait for user input.
+f_press_enter_key_to_continue () {
       #
+      # Display message and wait for user input.
       echo
       echo -n "Press '"Enter"' key to continue."
       read X
@@ -1094,7 +1230,7 @@ f_press_enter_key_to_continue () { # Display message and wait for user input.
 # +----------------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1=GUI.
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
 #    Uses: None.
 # Outputs: None.
 #
@@ -1107,7 +1243,7 @@ f_exit_script() {
       f_message $1 "NOK" "End of script" " \nExiting script." 1
       #
       # Blank the screen. Nicer ending especially if you chose custom colors for this script.
-      clear 
+      clear
       #
       if [ -r  $TEMP_FILE ] ; then
          rm  $TEMP_FILE
@@ -1121,7 +1257,7 @@ f_exit_script() {
 # +----------------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1=GUI.
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
 #    Uses: None.
 # Outputs: None.
 #
@@ -1133,7 +1269,7 @@ f_abort () {
       #
       # Temporary file has \Z commands embedded for red bold font.
       #
-      # \Z commands are used by Dialog to change font attributes 
+      # \Z commands are used by Dialog to change font attributes
       # such as color, bold/normal.
       #
       # A single string is used with echo -e \Z1\Zb\Zn commands
@@ -1156,9 +1292,9 @@ f_abort () {
 # +------------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
-#          $2="NOK", "OK", or null [OPTIONAL] to control display of "OK" button.
-#          $3=Pause $3 seconds [OPTIONAL]. If "NOK" then pause to allow text to be read.
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
+#          $2 - "NOK", "OK", or null [OPTIONAL] to control display of "OK" button.
+#          $3 - Pause $3 seconds [OPTIONAL]. If "NOK" then pause to allow text to be read.
 #          THIS_DIR, THIS_FILE, VERSION.
 #    Uses: DELIM.
 # Outputs: None.
@@ -1183,14 +1319,14 @@ f_about () {
 # +------------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
-#          $2="NOK", "OK", or null [OPTIONAL] to control display of "OK" button.
-#          $3=Pause $3 seconds [OPTIONAL]. If "NOK" then pause to allow text to be read.
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
+#          $2 - "NOK", "OK", or null [OPTIONAL] to control display of "OK" button.
+#          $3 - Pause $3 seconds [OPTIONAL]. If "NOK" then pause to allow text to be read.
 #          THIS_DIR, THIS_FILE, VERSION.
 #    Uses: DELIM.
 # Outputs: None.
 #
-# Synopsis: Display the code history of a script by showing any text lines
+# Summary: Display the code history of a script by showing any text lines
 #           beginning with "##".
 #
 # Dependencies: f_display_common.
@@ -1210,14 +1346,14 @@ f_code_history () {
 # +------------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1=GUI - "text", "dialog" or "whiptail" the preferred user-interface.
-#          $2="NOK", "OK", or null [OPTIONAL] to control display of "OK" button.
-#          $3=Pause $3 seconds [OPTIONAL]. If "NOK" then pause to allow text to be read.
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
+#          $2 - "NOK", "OK", or null [OPTIONAL] to control display of "OK" button.
+#          $3 - Pause $3 seconds [OPTIONAL]. If "NOK" then pause to allow text to be read.
 #          THIS_DIR, THIS_FILE, VERSION.
 #    Uses: DELIM.
 # Outputs: None.
 #
-# Synopsis: Display the help message of a script by showing any text lines
+# Summary: Display the help message of a script by showing any text lines
 #           beginning with "#?".
 #
 # Dependencies: f_display_common.
@@ -1233,14 +1369,924 @@ f_help_message () {
 } # End of f_help_message.
 #
 # +----------------------------------------+
+# |         Function f_file_manager        |
+# +----------------------------------------+
+#
+#     Rev: 2022-04-08
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
+#          $2 - TARGET_DIR.
+#                  (String must either begin and end with double-quotes
+#                  or must not include spaces but must have underscores substituting for spaces).
+#    Uses: RUNAPP
+# Outputs: ERROR.
+#
+# Summary: Detect file manager application and run it on the $2 Directory.
+#
+# Dependencies: f_message.
+#
+f_file_manager () {
+      #
+      # Initialize variable.
+      RUNAPP=0
+      #
+      # Detect the environment (CLI or X-Windows) then run the preferred
+      # file manager appropriate for the current environment.
+      #
+      #   +--------------------------------------------------------------+
+      #   | Determine what environment is in use, pure CLI or X-Windows? |
+      #   +--------------------------------------------------------------+
+      # Determine if user is in a pure CLI environment
+      # or if using a CLI within an X-Window on a GUI Desktop.
+      #
+      # Set XWIN equal to the value of $DISPLAY.
+      XWIN=$(echo $DISPLAY)
+      #
+      # $DISPLAY is null if in a pure CLI environment.
+      # $DISPLAY is not null then in an X-Window environment.
+      #
+      # In an X-Window environment:
+      # Format of $DISPLAY is: <hostname>:<Display number>.<Screen number>
+      #
+      # If on local PC (localhost) in X-Windows then <hostname> is null.
+      # i.e. ":0" or ":0.0"
+      #
+      # If on a remote file server "Mainfileserver" in X-Windows then:
+      # i.e. "Mainfileserver:0" or "Mainfileserver:0.1"
+      #
+      #
+      #================================================================================
+      # EDIT $FILE_MGR_APPS BELOW TO INCLUDE APPS FOR EITHER X-WINDOWS OR CLI.
+      # THE FILE MANAGER APPS APPS ARE LISTED IN THE ORDER OF PREFERENCE, FIRST APP IS
+      # FIRST USED (IF INSTALLED). IF NOT INSTALLED, THE FOR-LOOP WILL TRY THE NEXT APP.
+      #================================================================================
+      #
+      #
+      # Is the environment a pure CLI environment?
+      if [ -z $XWIN ] ; then
+         # Yes, a pure CLI environment so use only CLI file manager apps.
+         # List file managers in preferred order with most preferred first.
+         FILE_MGR_APPS="ranger mc nnn vifm"
+      else
+         # No, it is an X-Window environment so can use both X-Window and CLI file manager apps.
+         # List file managers in preferred order with most preferred first.
+         FILE_MGR_APPS="pcmanfm pcmanfm-qt caja nemo nautilus konqueror krusader dolphin thunar xfe 4pane"
+      fi
+      #
+      for FILE_MGR in $FILE_MGR_APPS
+          do
+             if [ $RUNAPP -eq 0 ] ; then
+                # Test if $FILEMGR application is installed.
+                type $FILE_MGR >/dev/null 2>&1
+                ERROR=$?
+                #
+                # Is application installed.
+                if [ $ERROR -eq 0 ] ; then
+                   # Yes, application is installed.
+                   # Below is How-To exit out of the CLI file managers.
+                   case $FILE_MGR in
+                        mc)
+                           f_message $1 "NOK" "To exit $FILE_MGR" "Type 'exit' to exit out of the $FILE_MGR application.\n\n The application $FILE_MANAGER takes of few seconds to start, please be patient." 0
+                        ;;
+                        ranger)
+                           f_message $1 "NOK" "To exit $FILE_MGR" "Type 'q' or 'q!' to exit out of the $FILE_MGR application."
+                        ;;
+                        vifm)
+                           f_message $1 "NOK" "To exit $FILE_MGR" "Type ':q' to exit out of the $FILE_MGR application."
+                        ;;
+                        nnn)
+                           f_message $1 "NOK" "To exit $FILE_MGR" "Type 'q' to exit out of the $FILE_MGR application."
+                        ;;
+                   esac
+                   #
+                   # Run application $FILE_MGR to display $2 target directory.
+                   $FILE_MGR "$2"
+                   ERROR=$?
+                   if [ $ERROR -eq 0 ] ; then
+                      RUNAPP=1
+                   else
+                      RUNAPP=0
+                      f_message $1 "OK" "File Manager Error" "\nFile Manager $FILEMGR failed to run."
+                   fi
+                fi
+             fi
+          done
+      #
+      # Blank the screen.
+      clear
+      #
+      if [ $RUNAPP -eq 0 ] ; then
+         f_message $1 "OK" "File Manager Error" "\nA File Manager was not automatically detected or not installed."
+      fi
+      #
+      # Throw out this variable.
+      unset RUNAPPM FILE_MGR FILE_MGR_APPS
+      #
+} # End of function f_file_manager.
+#
+# +----------------------------------------+
+# |         Function f_text_editor         |
+# +----------------------------------------+
+#
+#     Rev: 2022-04-08
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
+#          $2 - String "[Description of] File(s)"
+#                  (String must either begin and end with double-quotes
+#                  or must have underscores substituting for spaces).
+#          $3 - Default directory.
+#          $4 - [Optional] File name.
+#          THIS_DIR.
+#    Uses: RUNAPP
+# Outputs: ERROR.
+#
+# Summary: Select a file for editing and then select and use a text editor.
+#
+# Dependencies: f_message, f_select_file.
+#
+f_text_editor () {
+      #
+      FILE_TXT=""
+      #
+      if [ -e $4 ] ; then
+         ANS=$4
+      else
+         f_select_file $1 "$2" $3
+      fi
+      #
+      # Set FILE_TXT to the list of selected files.
+      FILE_TXT=$ANS
+      #
+      if [ -n "$FILE_TXT" ] ; then
+         # Valid files selected.
+         # Format:
+         # FILE_TXT="<FILE1> <FILE2>...<FILEn>"
+         #
+         # Initialize variable.
+         RUNAPP=0
+         #
+         # Detect the environment (CLI or X-Windows) then run the preferred
+         # text editor appropriate for the current environment.
+         #
+         #   +--------------------------------------------------------------+
+         #   | Determine what environment is in use, pure CLI or X-Windows? |
+         #   +--------------------------------------------------------------+
+         # Determine if user is in a pure CLI environment
+         # or if using a CLI within an X-Window on a GUI Desktop.
+         #
+         # Set XWIN equal to the value of $DISPLAY.
+         XWIN=$(echo $DISPLAY)
+         #
+         # $DISPLAY is null if in a pure CLI environment.
+         # $DISPLAY is not null then in an X-Window environment.
+         #
+         # In an X-Window environment:
+         # Format of $DISPLAY is: <hostname>:<Display number>.<Screen number>
+         #
+         # If on local PC (localhost) in X-Windows then <hostname> is null.
+         # i.e. ":0" or ":0.0"
+         #
+         # If on a remote file server "Mainfileserver" in X-Windows then:
+         # i.e. "Mainfileserver:0" or "Mainfileserver:0.1"
+         #
+         #
+         #================================================================================
+         # EDIT $TEXT_EDITOR_APPS BELOW TO INCLUDE APPS FOR EITHER X-WINDOWS OR CLI.
+         # THE TEXT EDITOR APPS ARE LISTED IN THE ORDER OF PREFERENCE, FIRST APP IS FIRST
+         # USED (IF INSTALLED). IF NOT INSTALLED, THE FOR-LOOP WILL TRY THE NEXT APP.
+         #================================================================================
+         #
+         #
+         # Is the environment a pure CLI environment?
+         if [ -z $XWIN ] ; then
+            # Yes, a pure CLI environment so use only CLI file manager apps.
+            # List file managers in preferred order with most preferred first.
+            TEXT_EDITOR_APPS="nano jed joe emacs ed vim vi"
+         else
+            # No, it is an X-Window environment so can use both X-Window and CLI file manager apps.
+            # List file managers in preferred order with most preferred first.
+            TEXT_EDITOR_APPS="xed gedit kedit pluma mousepad nano"
+         fi
+         #
+         for TEXT_EDITOR in $TEXT_EDITOR_APPS
+             do
+                if [ "$RUNAPP" -eq 0 ] ; then
+                   type $TEXT_EDITOR >/dev/null 2>&1  # Test if $TEXT_EDITOR application is installed.
+                   ERROR=$?
+                   if [ "$ERROR" -eq 0 ] ; then
+                      # Opening text editor to allow editing.
+                      #
+                      # Run application $TEXT_EDITOR to open document $FILE_TEXT.
+                      eval $TEXT_EDITOR $FILE_TXT
+                      RUNAPP=1
+                   fi
+                fi
+             done
+         #
+         if [ "$RUNAPP" -eq 0 ] ; then
+            f_message "OK" "Text Editor Error" "Text editor was not automatically detected."
+         fi
+         #
+         unset RUNAPP TEXT_EDITOR TEXT_EDITOR_APPS
+      fi
+      #
+} # End of function f_text_editor.
+#
+# +----------------------------------------+
+# |          Function f_select_dir         |
+# +----------------------------------------+
+#
+#     Rev: 2022-04-29
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
+#          $2 - String "[Description] Directory".
+#                  (String must either begin and end with double-quotes
+#                  or must have underscores substituting for spaces).
+#                  !!! String cannot be longer than 28 characters !!!
+#          $3 - Default parent directory.
+#          $4 - [Optional] 1/0 1=Select only one directory
+#                            0 or null=Select multiple directories.
+#          THIS_DIR.
+#    Uses: TEMP_FILE, ANS, ERROR, SCRIPT_LIST.
+# Outputs: ANS (List of selected files), ERROR.
+#
+# Summary: Prompt user-entered file name.
+#
+# Dependencies: f_yn_question, f_message.
+#
+f_select_dir () {
+      #
+      # Get the screen resolution or X-window size.
+      # Get rows (height).
+      YSCREEN=$(stty size | awk '{ print $1 }')
+      # Get columns (width).
+      XSCREEN=$(stty size | awk '{ print $2 }')
+      #
+      # If window size is less than 80 x 24, then Dialog f_select_dir will not work properly.
+      if [ $YSCREEN -lt 24 ] || [ $XSCREEN -lt 80 ] ; then
+         f_message $1 "OK" "Window Size too Small" "\nThis window is too small at $XSCREEN x $YSCREEN.\n\nThe minimum window size is 80 characters x 30 lines but preferably at least 120x40.\n\nPlease increase the window size now."
+         #
+         # Get the screen resolution or X-window size.
+         # Get rows (height).
+         YSCREEN=$(stty size | awk '{ print $1 }')
+         # Get columns (width).
+         XSCREEN=$(stty size | awk '{ print $2 }')
+      fi
+      #
+      # Initialize variable DEFAULT_DIR to passed argument base directory.
+      DEFAULT_DIR=$3
+      #
+      # Format string, substitute spaces for underscores.
+      DIR_DESCR=$(echo $2 | tr "_" " ")
+      #
+      case $1 in
+           dialog)
+              TEMP_FILE2=$THIS_DIR/$THIS_FILE"_temp2.txt"
+              #
+              # Delete TEMP_FILE2.
+              if [ -e "$TEMP_FILE2" ] ; then
+                 rm $TEMP_FILE2
+              fi
+              #
+              DIR_DESCR=$2
+              # Is the length of $DIR_DESCR String longer than 28 characters?
+              # Truncate string length so Dialog f_select works on an 80x24 character VGA display.
+              DIR_DESCR=${DIR_DESCR:0:28}
+              #
+              # Initialize variables.
+              DIR_SELECTED=""
+              ANS=""
+              # Initialize variable DEFAULT_DIR to passed argument base directory.
+              DEFAULT_DIR=$3
+              #
+              # Reset ERROR for while-loop to work.
+              ERROR=0
+              #
+              while [ "$ERROR" -eq 0 ]
+                    do
+                       # Dialog needs about 16 more lines for the header and [OK] button.
+                       let Y=$YSCREEN-16
+                       # If number of lines exceeds screen/window height then set textbox height.
+                       #
+                       # Dialog needs about 0 more spaces for the right and left window frame.
+                       let X=$XSCREEN
+                       #
+                       DIR_SELECTED=$($1 --stdout --title "Use <tab>, <up/down arrows> and <spacebar> to select a $DIR_DESCR." --backtitle "Please choose $DIR_DESCR" --ok-label "Choose $DIR_DESCR" --cancel-label "Done choosing" --dselect $DEFAULT_DIR $Y $X)
+                       ERROR=$?
+                       #
+                       # From man dialog page.
+                       # Exit status is subject to being overridden by environment variables.
+                       # The default values and corresponding environment variables that can override them are:
+                       #
+                       # 0    if the YES or OK button is pressed (DIALOG_OK).
+                       #
+                       # 1    if the No or Cancel button is pressed (DIALOG_CANCEL).
+                       #
+                       # 2    if the Help button is pressed (DIALOG_HELP),
+                       #      except as noted below about DIALOG_ITEM_HELP.
+                       #
+                       # 3    if the Extra button is pressed (DIALOG_EXTRA).
+                       #
+                       # 4    if the Help button is pressed,
+                       #      and the --item-help option is set
+                       #      and the DIALOG_ITEM_HELP environment variable is set to 4.
+                       #
+                       #      While any of the exit-codes can be overridden using
+                       #      environment variables, this special case was introduced
+                       #      in 2004 to simplify compatibility.
+                       #
+                       #      Dialog uses DIALOG_ITEM_HELP(4)  internally,  but  unless  the  environment
+                       #      variable is also set, it changes that to DIALOG_HELP(2) on exit.
+                       #
+                       # -1   if errors occur inside dialog (DIALOG_ERROR) or dialog exits because the ESC key (DIALOG_ESC) was pressed.
+                       #
+                       if [ "$ERROR" -eq 0 ] && [ -n "$DIR_SELECTED" ] ; then
+                          f_yn_question $1 "Y" "Confirm $DIR_DESCR name" "$DIR_DESCR name:\n$DIR_SELECTED\n\nIs the $DIR_DESCR name correct?"
+                          #
+                          # Is the selected directory name correct?
+                          if [ "$ANS" -ne 1 ] ; then
+                             if [ -d "$DIR_SELECTED" ] ; then
+                                # Yes, $DIR_DESCR name is correct. Note: $DIR_SELECTED includes "Directory Name".
+                                # Add selected directory name to list of selected directories in TEMP_FILE2
+                                echo $DIR_SELECTED >> $TEMP_FILE2
+                                #
+                                # Only select a single directory?
+                                if [ "$4" = "1" ] ; then
+                                   # Yes, a single directory has already been selected
+                                   # so exit loop by setting ERROR flag.
+                                   ERROR=1
+                                else
+                                   # No, multiple directories can be selected, so continue.
+                                   f_message $1 "NOK" "Directory Entered" "Directory name accepted. Enter next directory name or press \"Done Choosing\" button.\n\n$DIR_SELECTED" 2
+                                fi
+                             else
+                                # No, $DIR_SELECTED does not exist.
+                                f_message $1 "OK" "Error Directory Missing" "Directory does not exist:\n$DIR_SELECTED\n\n\Z1\ZbCreating a new empty directory.\Zn"
+                                mkdir -p $DIR_SELECTED
+                                #
+                                # Add selected directory to list of selected directories in TEMP_FILE2
+                                echo $DIR_SELECTED >> $TEMP_FILE2
+                             fi
+                          fi
+                       fi
+                    done
+              #
+              # Set ANS=contents of TEMP_FILE2 which is a string of selected directory names delimited by spaces.
+              if [ -e "$TEMP_FILE2" ] ; then
+                 ANS=$(cat $TEMP_FILE2)
+                 # f_message $1 "OK" "Continue" "\n\nContinue to process directories:\n\n$ANS"  # Diagnostic line.
+              else
+                 ANS=""
+              fi
+              #
+              # Reset ERROR since on exiting WHILE-loop it will always be EXIT=1.
+              ERROR=0
+              #
+              if [ -e "$TEMP_FILE2" ] ; then
+                 rm $TEMP_FILE2
+              fi
+              #
+           ;;
+           whiptail)
+              # User-input via "inputbox" free-form directory name entry.
+              $1 --title "User-entered $DIR_DESCR" --cancel-button "Exit" --inputbox "Enter $DIR_DESCR name:" 8 70 $DEFAULT_DIR 2>$TEMP_FILE
+              ERROR=$?
+              ANS=$(cat $TEMP_FILE)
+              #
+           ;;
+           text)
+              ERROR=0
+              # The user-entered directory name is whatever is after $3 default parent directory.
+              echo "User-entered $DIR_DESCR name"
+              echo
+              echo -n "Enter $DIR_DESCR name(s): $DEFAULT_DIR/"
+              read ANS
+              #
+              if [ -z "$ANS" ] ; then
+              ANS=$DEFAULT_DIR
+              fi
+           ;;
+      esac
+      #
+      if [ "$ERROR" -eq 1 ] ; then
+         return 1  # Return to Main Menu.
+      fi
+      #
+} # End of function f_select_dir.
+#
+# +----------------------------------------+
+# |         Function f_select_file         |
+# +----------------------------------------+
+#
+#     Rev: 2022-05-17
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
+#          $2 - String "[Description] File(s)".
+#                  (String must either begin and end with double-quotes
+#                  or must have underscores substituting for spaces).
+#                  !!! String cannot be longer than 28 characters !!!
+#          $3 - Default directory or Default directory/file name.
+#          $4 - [Optional] 1/0 1=Select only one file
+#                              0 or null=Select multiple files.
+#          THIS_DIR.
+#    Uses: TEMP_FILE, ANS, ERROR, SCRIPT_LIST.
+# Outputs: ANS (List of selected files: "DIR1/FILE1 DIR2/FILE2 DIR3/FILE3..."), ERROR.
+#
+# Summary: Prompt user-entered file name.
+#
+# Dependencies: f_yn_question, f_message.
+#
+f_select_file () {
+      #
+      # Get the screen resolution or X-window size.
+      # Get rows (height).
+      YSCREEN=$(stty size | awk '{ print $1 }')
+      # Get columns (width).
+      XSCREEN=$(stty size | awk '{ print $2 }')
+      #
+      # If window size is less than 80 x 24, then Dialog f_select_dir will not work properly.
+      if [ $YSCREEN -lt 24 ] || [ $XSCREEN -lt 80 ] ; then
+         f_message $1 "OK" "Window Size too Small" "\nThis window is too small at $XSCREEN x $YSCREEN.\n\nThe minimum window size is 80 characters x 24 lines but preferably at least 120x40.\n\nPlease increase the window size now."
+         #
+         # Get the screen resolution or X-window size.
+         # Get rows (height).
+         YSCREEN=$(stty size | awk '{ print $1 }')
+         # Get columns (width).
+         XSCREEN=$(stty size | awk '{ print $2 }')
+      fi
+      #
+      # Initialize variable DEFAULT_DIR to passed argument base directory.
+      DEFAULT_DIR=$3
+      #
+      # Format string, substitute spaces for underscores.
+      FILE_DESCR=$(echo "$2" | tr "_" " ")
+      #
+      case $1 in
+           dialog)
+              TEMP_FILE2=$THIS_DIR/$THIS_FILE"_temp2.txt"
+              #
+              # Delete TEMP_FILE2.
+              if [ -e "$TEMP_FILE2" ] ; then
+                 rm $TEMP_FILE2
+              fi
+              #
+              # Initialize variables.
+              FILE_SELECTED=""
+              ANS=""
+              #
+              # Is the length of $FILE_DESCR String longer than 28 characters?
+              # Truncate string length so Dialog f_select works on an 80x24 character VGA display.
+              FILE_DESCR=${FILE_DESCR:0:28}
+              #
+              # Reset ERROR for while-loop to work.
+              ERROR=0
+              #
+              while [ "$ERROR" -eq 0 ]
+                    do
+                       # Dialog needs about 16 more lines for the header and [OK] button.
+                       let Y=$YSCREEN-16
+                       #
+                       # Dialog needs about 0 more spaces for the right and left window frame.
+                       X=$XSCREEN
+                       #
+                       FILE_SELECTED=$($1 --stdout --title "Use <tab>, <up/down arrows> and <spacebar> to select a $2." --backtitle "Please choose $FILE_DESCR" --ok-label "Choose $FILE_DESCR" --cancel-label "Done choosing" --fselect $DEFAULT_DIR $Y $X)
+                       ERROR=$?
+                       #
+                       # From man dialog page.
+                       # Exit status is subject to being overridden by environment variables.
+                       # The default values and corresponding environment variables that can override them are:
+                       #
+                       # 0    if the YES or OK button is pressed (DIALOG_OK).
+                       #
+                       # 1    if the No or Cancel button is pressed (DIALOG_CANCEL).
+                       #
+                       # 2    if the Help button is pressed (DIALOG_HELP),
+                       #      except as noted below about DIALOG_ITEM_HELP.
+                       #
+                       # 3    if the Extra button is pressed (DIALOG_EXTRA).
+                       #
+                       # 4    if the Help button is pressed,
+                       #      and the --item-help option is set
+                       #      and the DIALOG_ITEM_HELP environment variable is set to 4.
+                       #
+                       #      While any of the exit-codes can be overridden using
+                       #      environment variables, this special case was introduced
+                       #      in 2004 to simplify compatibility.
+                       #
+                       #      Dialog uses DIALOG_ITEM_HELP(4)  internally,  but  unless  the  environment
+                       #      variable is also set, it changes that to DIALOG_HELP(2) on exit.
+                       #
+                       # -1   if errors occur inside dialog (DIALOG_ERROR) or dialog exits because the ESC key (DIALOG_ESC) was pressed.
+                       #
+                       # Was any file selected?
+                       if [ $ERROR -eq 0 ] && [ -n $FILE_SELECTED ] ; then
+                          f_yn_question $1 "Y" "Confirm $FILE_DESCR name" "$FILE_DESCR name:\n$FILE_SELECTED\n\nIs the $FILE_DESCR name correct?"
+                          #
+                          # Is the selected file name correct?
+                          if [ "$ANS" -ne 1 ] ; then
+                             # Yes, $FILE_SELECTED name is correct. Note: $FILE_SELECTED includes "Directory/File Name".
+                             #
+                             # Does the file exist?
+                             if [ -e "$FILE_SELECTED" ] ; then
+                                # Yes, file $FILE_SELECTED exists.
+                                #
+                                # Set DEFAULT_DIR to newly selected base directory.
+                                DEFAULT_DIR=$(dirname $FILE_SELECTED)
+                                #
+                                # Add selected file to list of selected files in TEMP_FILE2
+                                echo $FILE_SELECTED >> $TEMP_FILE2
+                                #
+                                # Only select a single file?
+                                if [ "$4" -eq 1 ] ; then
+                                   # Yes, a single file has already been selected
+                                   # so exit loop by setting ERROR flag.
+                                   ERROR=1
+                                else
+                                   # No, multiple files can be selected, so continue.
+                                   f_message $1 "NOK" "File Entered" "File name accepted. Enter next file name or press \"Done choosing\" button.\n\n$FILE_SELECTED" 2
+                                fi
+                             else
+                                # No, $FILE_SELECTED does not exist.
+                                f_yn_question $1 "N" "Error $FILE_SELECTED Missing" "\n$FILE_SELECTED does not exist:\n$FILE_SELECTED\n\nDo you want to create a new directory/file?"
+                                if [ $ANS -eq 0 ] ; then
+                                   # Create new sub-directory.
+                                   mkdir -p $DEFAULT_DIR
+                                   #
+                                   # Create new file.
+                                   touch $FILE_SELECTED
+                                   #
+                                   # Add selected file to list of selected files in TEMP_FILE2
+                                   echo $FILE_SELECTED >> $TEMP_FILE2
+                                fi
+                             fi
+                          fi
+                       fi
+                    done
+                    #
+              # Outputs: $TEMP_FILE2 has list of files delimited by spaces.
+              #         (List of selected files: "DIR1/FILE1 DIR2/FILE2 DIR3/FILE3...").
+              #
+              if [ -e "$TEMP_FILE2" ] && [ "$4" -ne 1 ] ; then
+                 # Multiple files are selected so display list of files
+                 # followed by a Go/NoGo question.
+                 #
+                 # TEMP_FILE2 still contains the list of selected files which
+                 # was the result of the Dialog fselect command.
+                 # So don't change contents.
+                 #
+                 # Build a list of selected files followed by a Go/NoGo question.
+                 # Use temporary file TEMP_FILE3 for this.
+                 TEMP_FILE3=$TEMP_FILE2"_temp3.txt"
+                 cat $TEMP_FILE2 > $TEMP_FILE3
+                 echo >> $TEMP_FILE3
+                 echo "Are_all_the_file_names_correct?_Continue_to_process_files?" >> $TEMP_FILE3
+                 #
+                 # Convert text in TEMP_FILE3 to be displayable by function f_yn_question.
+                 # Convert text file into a single sentence string.
+                 # Convert the multi-lines of data in the temporary text file to a single line string.
+                 # This is needed because f_ask_question can take only a string as a parameter and not a file.
+                 #
+                 # Translate "\n" or the <crlf> to "|". Join all lines together delimited by "|".
+                 cat $TEMP_FILE3 | tr "\n" "|"  > $TEMP_FILE3"-out.txt" ; sed -i 's/|/\\n/g' $TEMP_FILE3"-out.txt"
+                 mv $TEMP_FILE3"-out.txt" $TEMP_FILE3
+                 X=$(cat $TEMP_FILE3)
+                 f_yn_question $1 "Y" "Continue?" $X
+                 #
+                 # Was the answer "Y" Continue?
+                 if [ $ANS -eq 0 ] ; then
+                    # Yes, continue with processing.
+                    ANS=$(cat $TEMP_FILE2)
+                 else
+                    # Do not continue with processing, set $ANS to null.
+                    ANS=""
+                 fi
+              else
+                 # Only a single file allowed to be selected ($4=1).
+                 # Set $ANS string to include the single file name.
+                 ANS=$(cat $TEMP_FILE2)
+              fi
+              #
+              # Reset ERROR since on exiting WHILE-loop it will always be EXIT=1.
+              ERROR=0
+              #
+              if [ -e $TEMP_FILE2 ] ; then
+                 rm $TEMP_FILE2
+              fi
+              #
+              if [ -e $TEMP_FILE3 ] ; then
+                 rm $TEMP_FILE3
+              fi
+              #
+              if [ -e $TEMP_FILE3"-out.txt" ] ; then
+                 rm $TEMP_FILE3"-out.txt"
+              fi
+              #
+           ;;
+           whiptail)
+              # User-input via "inputbox" free-form file name entry.
+              $1 --title "User-entered $2" --cancel-button "Exit" --inputbox "Enter $2 name(s):" 8 70 $DEFAULT_DIR 2>$TEMP_FILE
+              ERROR=$?
+              ANS=$(cat $TEMP_FILE)
+              #
+           ;;
+           text)
+              ERROR=0
+              if [ "$4" -eq 1 ] ; then
+                 echo "Enter file name"
+                 echo
+                 echo "File name with full-path:"
+                 echo -n "Enter file name(s): "
+                 read ANS
+              else
+                 echo "Enter list of file names separated by spaces"
+                 echo
+                 echo "File names with full-path delimited by spaces:"
+                 echo -n "Enter file names: "
+                 read ANS
+             fi
+              #
+              if [ -z "$ANS" ] ; then
+                 ERROR=1
+              fi
+           ;;
+      esac
+      #
+      if [ "$ERROR" -eq 1 ] ; then
+         return 1  # Return to Main Menu.
+      fi
+      #
+} # End of function f_select_file.
+#
+# +----------------------------------------+
+# |         Function f_choose_files        |
+# +----------------------------------------+
+#
+#     Rev: 2022-02-28
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
+#          $2 - String "[Data File Description] File(s)".
+#                  (String must either begin and end with double-quotes
+#                  or must have underscores substituting for spaces).
+#          $3 - Default directory.
+#          $4=Function name to call.
+#    Uses: None.
+# Outputs: None.
+#
+# Summary: Select data file(s) to process one at a time using a given function.
+#
+# Dependencies: f_select_file.
+#
+f_choose_files () {
+      #
+      # Select file with regular address list.
+      # Address data file ($FILE"_address.txt") containing text data.
+      #
+      f_select_file $1 "$2" $3
+      #
+      # Set FILE_LIST to the list of selected files of string $ANS output from f_select_files.
+      FILE_LIST=$ANS
+      #
+      # Outputs: ANS (List of selected files: "DIR1/FILE1 DIR2/FILE2 DIR3/FILE3..."), ERROR.
+      if [ -n "$FILE_LIST" ] ; then
+         # Valid files selected.
+         # Format:
+         # FILE_TXT="<FILE1> <FILE2>...<FILEn>"
+         #
+         # Call function name $4 for each file $FILE.
+         for FILE in $FILE_LIST
+             do
+                # Format: <Function-to-call> <GUI> <Description> <Selected File name>
+                $4 $1 $2 $FILE
+             done
+      fi
+      unset FILE FILE_LIST FILE_STR
+      #
+}  # End of function f_choose_files.
+#
+# +----------------------------------------+
+# |         Function f_ask_question        |
+# +----------------------------------------+
+#
+#     Rev: 2022-05-17
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
+#          $2 - Title string.
+#          $3 - Question text string or text file.
+#                  (String must either begin and end with double-quotes
+#                  or must have underscores substituting for spaces).
+#          $4 - [Optional] Default answer - Default answer string.
+#                  (String must either begin and end with double-quotes
+#                  or must have underscores substituting for spaces).
+#    Uses: None.
+# Outputs: ANS=String.
+#          ERROR=1 "Exit" or "Cancel" button pressed in Dialog or Whiptail.
+#          ERROR=255 if <Esc> is pressed in dialog/whiptail --input box.
+#
+# Example:
+#          Using a question string:
+#          f_ask_question $GUI "Hungry Hippo" "I am hungry.\nWhat do you want to eat?" "Pizza"
+#
+#          Using a question with additional text in a text file: (which may include an expanation, example, etc.)
+#          f_ask_question "dialog" "Hungry Hippo" hungry.txt "Pizza"
+#          Where file hungry.txt may include:
+#                                             We have a choice between Italian, Chinese, fast food, or pizza.
+#                                             I am hungry.
+#                                             What do you want to eat?"
+#
+# Summary: This will display a title and a question using dialog/whiptail/text.
+#          It will automatically calculate the optimum size of the displayed
+#          Dialog or Whiptail box depending on screen resolution, number of lines
+#          of text, and length of sentences to be displayed.
+#
+#          It is a lengthy function, but using it allows for an easy way to display
+#          a question and allow user-input answer using either Dialog, Whiptail or text.
+#
+#          You do not have to worry about the differences in syntax between Dialog
+#          and Whiptail, handling the answer, or about calculating the box size for
+#          each text message.
+#
+# Dependencies: f_msg_ui_str_box_size, f_yn_defaults.
+#
+f_ask_question () {
+      #
+      # Get the screen resolution or X-window size.
+      # Get rows (height).
+      YSCREEN=$(stty size | awk '{ print $1 }')
+      # Get columns (width).
+      XSCREEN=$(stty size | awk '{ print $2 }')
+      #
+      # Initialize variable.
+      QUESTION="$3"
+      #
+      # Is $3 a text file?
+      if [ -r "$3" ] ; then
+         # Yes $3 is a text file.
+         #
+         # Convert text in TEMP_FILE3 to be displayable by function f_yn_question.
+         # Convert text file into a single sentence string.
+         # Convert the multi-lines of data in the temporary text file to a single line string.
+         # This is needed because f_ask_question can take only a string as a parameter and not a file.
+         #
+         # Translate "\n" or the <crlf> to "|". Join all lines together delimited by "|".
+         cat $TEMP_FILE | tr "\n" "|" >$TEMP_FILE"_2.txt"
+         #
+         # Substitute string "|" with string "\n"
+         sed -i 's/|/\\n/g' $TEMP_FILE"_2.txt"
+         #
+         # Preserve spacing in text by substituting underscores for spaces.
+         # Spaces cannot be in the string when it is passed as a parameter to function f_ask_question.
+         sed -i 's/ /_/g' $TEMP_FILE"_2.txt"
+         #
+         # Create string QUESTION from the converted string in the temporary file.
+         QUESTION=$(cat $TEMP_FILE"_2.txt")
+         #
+         # Delete temporary file.
+         if [ -e $TEMP_FILE"_2.txt" ] ; then
+            rm $TEMP_FILE"_2.txt"
+         fi
+      fi
+      #
+      case $1 in
+           dialog | whiptail)
+              # Calculate dialog/whiptail box dimensions $YBOX, $XBOX.
+              # Calculate box dimensions for $4 Default answer string.
+              f_msg_ui_str_box_size "$4"
+              XBOX_MAX=$XBOX
+              #
+              # Calculate box dimensions for $2 Title string.
+              f_msg_ui_str_box_size "$2"
+              #
+              if [ $XBOX -gt $XBOX_MAX ] ; then
+                 XBOX_MAX=$XBOX
+              fi
+              #
+              # Calculate box dimensions for $3 Question string.
+              f_msg_ui_str_box_size "$QUESTION"
+              #
+              if [ $XBOX -gt $XBOX_MAX ] ; then
+                 XBOX_MAX=$XBOX
+              fi
+              #
+              XBOX=$XBOX_MAX
+           ;;
+      esac
+      #
+      case $1 in
+           dialog)
+              # Dialog needs about 5 more lines for the header and [OK] button.
+              let Y=$YBOX+5
+              # If number of lines exceeds screen/window height then set textbox height.
+              if [ $Y -ge $YSCREEN ] ; then
+                 Y=$YSCREEN
+              fi
+              #
+              # Dialog needs about 10 more spaces for the right and left window frame.
+              let X=$XBOX+10
+              # If line length exceeds screen/window width then set textbox width.
+              if [ $X -ge $XSCREEN ] ; then
+                 X=$XSCREEN
+              fi
+              #
+              # Define question string.
+              # Format string, substitute spaces for underscores.
+              QUESTION=$(echo $QUESTION | tr '_' ' ')
+           ;;
+           whiptail)
+              # Whiptail does not have option "--colors" with "\Z" commands for font color bold/normal.
+              # Filter out any "\Z" commands when using the same string for both Dialog and Whiptail.
+              # Use command "sed" with "-e" to filter out multiple "\Z" commands.
+              # Filter out "\Z[0-7]", "\Zb", \ZB", "\Zr", "\ZR", "\Zu", "\ZU", "\Zn".
+              ZNO=$(echo $QUESTION | sed -e 's|\\Z0||g' -e 's|\\Z1||g' -e 's|\\Z2||g' -e 's|\\Z3||g' -e 's|\\Z4||g' -e 's|\\Z5||g' -e 's|\\Z6||g' -e 's|\\Z7||g' -e 's|\\Zb||g' -e 's|\\ZB||g' -e 's|\\Zr||g' -e 's|\\ZR||g' -e 's|\\Zu||g' -e 's|\\ZU||g' -e 's|\\Zn||g')
+              #
+              # Whiptail needs about 6 more lines for the header and [OK] button.
+              let Y=$YBOX+6
+              # If number of lines exceeds screen/window height then set textbox height.
+              if [ $Y -ge $YSCREEN ] ; then
+                 Y=$YSCREEN
+              fi
+              #
+              # Whiptail needs about 6 more spaces for the right and left window frame.
+              let X=$XBOX+6
+              # If line length exceeds screen/window width then set textbox width.
+              if [ $X -ge $XSCREEN ] ; then
+                 X=$XSCREEN
+              fi
+              #
+              # Define question string.
+              # Format string, substitute spaces for underscores.
+              QUESTION=$(echo $ZNO | tr '_' ' ')
+           ;;
+           text)
+              # Does $QUESTION contain "\n"?  Does the string $3 contain multiple sentences?
+              case $3 in
+                   *\n*)
+                      # Yes, string $QUESTION contains multiple sentences.
+                      #
+                      # Command-Line interface (CLI) does not have option "--colors" with "\Z" commands for font color bold/normal.
+                      # Use command "sed" with "-e" to filter out multiple "\Z" commands.
+                      # Filter out "\Z[0-7]", "\Zb", \ZB", "\Zr", "\ZR", "\Zu", "\ZU", "\Zn".
+                      ZNO=$(echo "$QUESTION" | sed -e 's|\\Z0||g' -e 's|\\Z1||g' -e 's|\\Z2||g' -e 's|\\Z3||g' -e 's|\\Z4||g' -e 's|\\Z5||g' -e 's|\\Z6||g' -e 's|\\Z7||g' -e 's|\\Zb||g' -e 's|\\ZB||g' -e 's|\\Zr||g' -e 's|\\ZR||g' -e 's|\\Zu||g' -e 's|\\ZU||g' -e 's|\\Zn||g')
+                      #
+                   ;;
+                   *)
+                      # No, string $QUESTION contains a single sentence.
+                      #
+                      # Create a text file from the string.
+                      ZNO="$QUESTION"
+                   ;;
+              esac
+              #
+              # Define question string.
+              # Format string, substitute spaces for underscores.
+              QUESTION=$(echo $ZNO | tr '_' ' ')
+           ;;
+      esac
+      #
+      # Initialize variables.
+      # Do not substitute spaces for underscores for DEFAULT since it may be a directory or file.
+      DEFAULT=$4
+      #
+      # Define Title string.
+      # Format string, substitute spaces for underscores.
+      TITLE=$(echo $2 | tr '_' ' ')
+      ERROR=0
+      #
+      case $1 in
+           dialog)
+              # Ask question.
+              $1 --title "$TITLE" --cancel-label "Exit" --inputbox "$QUESTION" $Y $X "$DEFAULT" 2>$TEMP_FILE
+              ERROR=$?
+              ANS=$(cat $TEMP_FILE)
+           ;;
+           whiptail)
+              # Ask question.
+              $1 --title "$TITLE" --cancel-button "Exit" --inputbox "$QUESTION" $Y $X "$DEFAULT" 2>$TEMP_FILE
+              ERROR=$?
+              ANS=$(cat $TEMP_FILE)
+           ;;
+           text)
+              clear  # Blank screen.
+              #
+              # Ask question.
+              echo "$TITLE"
+              echo
+              echo -n -e "$QUESTION ($DEFAULT):"
+              read ANS
+              if [ -z $ANS ] ; then
+                 ANS="$DEFAULT"
+              fi
+           ;;
+      esac
+      #
+} # End of function f_ask_question
+#
+# +----------------------------------------+
 # |          Function f_yn_question        |
 # +----------------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
 #          $2 - "Y" or "N" - the default answer.
 #          $3 - Title string (may be null).
+#                  (String must either begin and end with double-quotes
+#                  or must have underscores substituting for spaces).
 #          $4 - Question text string.
+#                  (String must either begin and end with double-quotes
+#                  or must have underscores substituting for spaces).
 #    Uses: None.
 # Outputs: ANS=0 is "Yes".
 #          ANS=1 is "No".
@@ -1251,9 +2297,9 @@ f_help_message () {
 # Summary: This will display a title and a question using dialog/whiptail/text.
 #          It will automatically calculate the optimum size of the displayed
 #          Dialog or Whiptail box depending on screen resolution, number of lines
-#          of text, and length of sentences to be displayed. 
+#          of text, and length of sentences to be displayed.
 #
-#          It is a lengthy function, but using it allows for an easy way to display 
+#          It is a lengthy function, but using it allows for an easy way to display
 #          a yes/no question using either Dialog, Whiptail or text.
 #
 #          You do not have to worry about the differences in syntax between Dialog
@@ -1291,7 +2337,7 @@ f_yn_question () {
                  Y=$YSCREEN
               fi
               #
-              # Dialog needs about 10 more spaces for the right and left window frame. 
+              # Dialog needs about 10 more spaces for the right and left window frame.
               let X=$XBOX+10
               # If line length exceeds screen/window width then set textbox width.
               if [ $X -ge $XSCREEN ] ; then
@@ -1313,7 +2359,7 @@ f_yn_question () {
                  Y=$YSCREEN
               fi
               #
-              # Whiptail needs about 6 more spaces for the right and left window frame. 
+              # Whiptail needs about 6 more spaces for the right and left window frame.
               let X=$XBOX+6
               # If line length exceeds screen/window width then set textbox width.
               if [ $X -ge $XSCREEN ] ; then
@@ -1335,6 +2381,7 @@ f_yn_question () {
                    *\n*)
                       # Yes, string $4 contains multiple sentences.
                       #
+                      # Command-Line interface (CLI) does not have option "--colors" with "\Z" commands for font color bold/normal.
                       # Use command "sed" with "-e" to filter out multiple "\Z" commands.
                       # Filter out "\Z[0-7]", "\Zb", \ZB", "\Zr", "\ZR", "\Zu", "\ZU", "\Zn".
                       ZNO=$(echo $4 | sed -e 's|\\Z0||g' -e 's|\\Z1||g' -e 's|\\Z2||g' -e 's|\\Z3||g' -e 's|\\Z4||g' -e 's|\\Z5||g' -e 's|\\Z6||g' -e 's|\\Z7||g' -e 's|\\Zb||g' -e 's|\\ZB||g' -e 's|\\Zr||g' -e 's|\\ZR||g' -e 's|\\Zu||g' -e 's|\\ZU||g' -e 's|\\Zn||g')
@@ -1342,7 +2389,7 @@ f_yn_question () {
                       #
                    ;;
                    *)
-                      # No, string $4 contains a single sentence. 
+                      # No, string $4 contains a single sentence.
                       #
                       # Create a text file from the string.
                       XSTR="$4"
@@ -1359,18 +2406,19 @@ f_yn_question () {
 # |    Function f_yn_defaults    |
 # +------------------------------+
 #
-#     Rev: 2021-03-07
-#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
-#          $2 - "OK"  [OK] button at end of text.
-#               "NOK" No [OK] button or "Press Enter key to continue"
-#               at end of text but pause n seconds
-#               to allow reader to read text by using sleep n command.
+#     Rev: 2022-04-01
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
+#          $2 - "Y" or "N" - the default answer.
 #          $3 - Title.
+#                  (String must either begin and end with double-quotes
+#                  or must have underscores substituting for spaces).
 #          $4 - Text string or text file.
 #          $5 - Box Height in characters.
 #          $6 - Box Width  in characters.
 #    Uses: None.
-# Outputs: ANS. 
+# Outputs: ANS=0 is "Yes".
+#          ANS=1 is "No".
+#
 # Example:
 #         whiptail --yesno text height width
 #                  --defaultno
@@ -1392,7 +2440,10 @@ f_yn_question () {
 #
 f_yn_defaults () {
       #
+      # Format string, substitute spaces for underscores.
       TITLE_STR=$(echo $3 | tr '_' ' ')
+      #
+      # Format string, substitute spaces for underscores.
       TEXT_STR=$(echo $4 | tr '_' ' ')
       #
       case $1 in
@@ -1448,15 +2499,20 @@ f_yn_defaults () {
 # |       Function f_message     |
 # +------------------------------+
 #
-#     Rev: 2021-03-07
-#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
+#     Rev: 2022-05-19
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
 #          $2 - "OK"  [OK] button at end of text.
 #               "NOK" No [OK] button or "Press Enter key to continue"
 #               at end of text but pause n seconds
 #               to allow reader to read text by using sleep n command.
 #          $3 - Title.
-#          $4 - Text string or text file. 
+#                  (String must either begin and end with double-quotes
+#                  Underscores in text string are not converted to spaces).
+#          $4 - Text string or text file.
+#                  (String must either begin and end with double-quotes
+#                  Underscores in text string are not converted to spaces).
 #          $5 - (Optional for functions f_msg_ui/txt_str_nok) Pause for $5 seconds to allow text to be read.
+#               Default is pause for 3 seconds.
 #          $6 - (Optional) Text string to substitute for the "OK" label on the "OK" button.
 #          $7 - (Optional) Text string to substitute for the "Cancel" label on the "Cancel" button.
 #    Uses: None.
@@ -1472,12 +2528,20 @@ f_yn_defaults () {
 #             echo "Line 3 of text file" >>$TEMP_FILE
 #             f_message $GUI "OK" "Test of Text file" $TEMP_FILE
 #
+# Debug hint: If the box has the minimum size regardless of length or width of text,
+#             the variable $TEMP_FILE may have been unset (i.e. unset TEMP_FILE).
+#
+#             >>> If the $TEMP_FILE is undefined,   <<<
+#             >>> you will have a minimum box size. <<<
+#
+#             >>> TEMP_FILE must be defined even if $4 is a string. <<<
+#
 # Summary: This will display a title and some text using dialog/whiptail/text.
 #          It will automatically calculate the optimum size of the displayed
 #          Dialog or Whiptail box depending on screen resolution, number of lines
-#          of text, and length of sentences to be displayed. 
+#          of text, and length of sentences to be displayed.
 #
-#          It is a lengthy function, but using it allows for an easy way to display 
+#          It is a lengthy function, but using it allows for an easy way to display
 #          some text (in a string or text file) using either Dialog, Whiptail or text.
 #
 #          You do not have to worry about the differences in syntax between Dialog
@@ -1494,7 +2558,7 @@ f_message () {
               # Dialog boxes "--msgbox" "--infobox" can use option --colors with "\Z" commands for font color bold/normal.
               # Dialog box "--textbox" and Whiptail cannot use option --colors with "\Z" commands for font color bold/normal.
               #
-              # If text strings have Dialog "\Z" commands for font color bold/normal, 
+              # If text strings have Dialog "\Z" commands for font color bold/normal,
               # they must be used AFTER \n (line break) commands.
               # Example: "This is a test.\n\Z1\ZbThis is in bold-red letters.\n\ZnThis is in normal font."
               #
@@ -1505,7 +2569,7 @@ f_message () {
               XSCREEN=$(stty size | awk '{ print $2 }')
               #
               # Is $4 a text string or a text file?
-              if [ -r "$4" ] ; then
+              if [ -e "$4" ] ; then
                  #
                  # If $4 is a text file, then calculate number of lines and length
                  # of sentences to calculate height and width of Dialog box.
@@ -1586,9 +2650,9 @@ f_message () {
 # +-------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1 - Text string or text file. 
+#  Inputs: $1 - Text string or text file.
 #    Uses: None.
-# Outputs: ZNO. 
+# Outputs: ZNO.
 #
 # Summary: Used by f_message. For text UI only.
 #          Change text colors according to \Z commands in the text string or file.
@@ -1675,7 +2739,7 @@ f_msg_color () {
 # +---------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1 - Text string or text file. 
+#  Inputs: $1 - Text file.
 #    Uses: None.
 # Outputs: XBOX, YBOX.
 #
@@ -1707,20 +2771,20 @@ f_msg_ui_file_box_size () {
 # +------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1 - "text", "dialog" or "whiptail" The CLI GUI application in use.
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
 #          $2 - "OK"  [OK] button at end of text.
 #               "NOK" No [OK] button or "Press Enter key to continue"
 #               at end of text but pause n seconds
 #               to allow reader to read text by using sleep n command.
 #          $3 - Title.
-#          $4 - Text file. 
+#          $4 - Text file.
 #          $5 - Box Height in characters.
 #          $6 - Box Width  in characters.
 #          $7 - (Optional) Text string to substitute for the "OK" label on the "OK" button.
 #          $8 - (Optional) Text string to substitute for the "Cancel" label on the "Cancel" button.
 #
 #    Uses: None.
-# Outputs: ERROR. 
+# Outputs: ERROR.
 #
 # Summary: Used by f_message. For Dialog or Whiptail UI only.
 #          Display contents of a text file using a Dialog or Whiptail textbox with an "OK" button.
@@ -1748,7 +2812,7 @@ f_msg_ui_file_ok () {
                  Y=$YSCREEN
               fi
               #
-              # Dialog needs about 10 more spaces for the right and left window frame. 
+              # Dialog needs about 10 more spaces for the right and left window frame.
               let X=$6+10
               # If line length exceeds screen/window width then set textbox width.
               if [ $X -ge $XSCREEN ] ; then
@@ -1767,7 +2831,7 @@ f_msg_ui_file_ok () {
                  Y=$YSCREEN
               fi
               #
-              # Whiptail needs about 5 more spaces for the right and left window frame. 
+              # Whiptail needs about 5 more spaces for the right and left window frame.
               let X=$6+5
               # If line length exceeds screen/window width then set textbox width.
               if [ $X -ge $XSCREEN ] ; then
@@ -1785,7 +2849,7 @@ f_msg_ui_file_ok () {
 # +------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
 #          $2 - "OK"  [OK] button at end of text.
 #               "NOK" No [OK] button or "Press Enter key to continue"
 #               at end of text but pause n seconds
@@ -1819,7 +2883,7 @@ f_msg_ui_file_nok () {
                  Y=$YSCREEN
               fi
               #
-              # Dialog needs about 10 more spaces for the right and left window frame. 
+              # Dialog needs about 10 more spaces for the right and left window frame.
               let X=$6+10
               # If line length exceeds screen/window width then set textbox width.
               if [ $X -ge $XSCREEN ] ; then
@@ -1834,9 +2898,12 @@ f_msg_ui_file_nok () {
               STRING=$(echo $STRING | sed 's/\\n /\\n/g')
               dialog --colors --title "$3" --infobox "$STRING" $Y $X
               #
+              # Is the pause for n seconds specified?
               if [ -z $7 ] ; then
+                 # No, set a default n seconds to pause.
                  sleep 3
               else
+                 # Yes, use n seconds to pause.
                  sleep "$7"
               fi
            ;;
@@ -1851,7 +2918,7 @@ f_msg_ui_file_nok () {
                  Y=$YSCREEN
               fi
               #
-              # Whiptail needs about 5 more spaces for the right and left window frame. 
+              # Whiptail needs about 5 more spaces for the right and left window frame.
               let X=$6+5
               # If line length exceeds screen/window width then set textbox width.
               if [ $X -ge $XSCREEN ] ; then
@@ -1871,7 +2938,9 @@ f_msg_ui_file_nok () {
               #STRING=$(echo $STRING | sed 's/\\n /\\n/g')
               #whiptail --title "$3" --infobox "$STRING" $Y $X
               #
+              # Is the pause for n seconds specified?
               #if [ -z $7 ] ; then
+              # No, set a default n seconds to pause.
               #   sleep 3
               #else
               #   sleep "$7"
@@ -1886,7 +2955,7 @@ f_msg_ui_file_nok () {
 # +--------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1 - Text string or text file. 
+#  Inputs: $1 - Text string.
 #    Uses: None.
 # Outputs: XBOX, YBOX, ZNO (string stripped of Dialog "\Z" commands).
 #
@@ -1952,7 +3021,7 @@ f_msg_ui_str_box_size () {
               # Filter out "\Z[0-7]", "\Zb", \ZB", "\Zr", "\ZR", "\Zu", "\ZU", "\Zn".
               ZNO=$(echo $1 | sed -e 's|\\Z0||g' -e 's|\\Z1||g' -e 's|\\Z2||g' -e 's|\\Z3||g' -e 's|\\Z4||g' -e 's|\\Z5||g' -e 's|\\Z6||g' -e 's|\\Z7||g' -e 's|\\Zb||g' -e 's|\\ZB||g' -e 's|\\Zr||g' -e 's|\\ZR||g' -e 's|\\Zu||g' -e 's|\\ZU||g' -e 's|\\Zn||g')
               #
-              # No, line length is $4 string length. 
+              # No, line length is $4 string length.
               XBOX=$(echo -n "$ZNO" | wc -c)
               # Only one sentence and one line in the $1 string.
               YBOX=1
@@ -1966,19 +3035,19 @@ f_msg_ui_str_box_size () {
 # +------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
 #          $2 - "OK"  [OK] button at end of text.
 #               "NOK" No [OK] button or "Press Enter key to continue"
 #               at end of text but pause n seconds
 #               to allow reader to read text by using sleep n command.
 #          $3 - Title.
-#          $4 - Text string or text file. 
+#          $4 - Text string or text file.
 #          $5 - Box Height in characters.
 #          $6 - Box Width  in characters.
 #          $7 - (Optional) Text string to substitute for the "OK" label on the "OK" button.
 #          $8 - (Optional) Text string to substitute for the "Cancel" label on the "Cancel" button.
 #    Uses: None.
-# Outputs: ERROR. 
+# Outputs: ERROR.
 #
 # Summary: Used by f_message. For Dialog or Whiptail UI only.
 #          Display contents of a text string using a Dialog or Whiptail msgbox with an "OK" button.
@@ -2004,14 +3073,14 @@ f_msg_ui_str_ok () {
       #
       case $1 in
            dialog)
-              # Dialog needs about 5 more lines for the header and [OK] button.
-              let Y=$5+5
+              # Dialog needs about 6 more lines for the header and [OK] button.
+              let Y=$5+6
               # If number of lines exceeds screen/window height then set textbox height.
               if [ $Y -ge $YSCREEN ] ; then
                  Y=$YSCREEN
               fi
               #
-              # Dialog needs about 10 more spaces for the right and left window frame. 
+              # Dialog needs about 10 more spaces for the right and left window frame.
               let X=$6+10
               # If line length exceeds screen/window width then set textbox width.
               if [ $X -ge $XSCREEN ] ; then
@@ -2032,7 +3101,7 @@ f_msg_ui_str_ok () {
                  Y=$YSCREEN
               fi
               #
-              # Whiptail needs about 5 more spaces for the right and left window frame. 
+              # Whiptail needs about 5 more spaces for the right and left window frame.
               let X=$6+5
               # If line length exceeds screen/window width then set textbox width.
               if [ $X -ge $XSCREEN ] ; then
@@ -2066,19 +3135,19 @@ f_msg_ui_str_ok () {
 # +------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
 #          $2 - "OK"  [OK] button at end of text.
 #               "NOK" No [OK] button or "Press Enter key to continue"
 #               at end of text but pause n seconds
 #               to allow reader to read text by using sleep n command.
 #          $3 - Title.
-#          $4 - Text string or text file. 
+#          $4 - Text string or text file.
 #          $5 - Box Height in characters.
 #          $6 - Box Width  in characters.
 #          $7 - Pause for $7 seconds to allow text to be read.
 #          XSCREEN, YSCREEN.
 #    Uses: None.
-# Outputs: ERROR. 
+# Outputs: ERROR.
 #
 # Summary: Used by f_message. For Dialog or Whiptail UI only.
 #          Display contents of a text string using a Dialog or Whiptail msgbox without an "OK" button.
@@ -2102,7 +3171,7 @@ f_msg_ui_str_nok () {
                  Y=$YSCREEN
               fi
               #
-              # Dialog needs about 10 more spaces for the right and left window frame. 
+              # Dialog needs about 10 more spaces for the right and left window frame.
               let X=$6+6
               # If line length exceeds screen/window width then set textbox width.
               if [ $X -ge $XSCREEN ] ; then
@@ -2111,9 +3180,12 @@ f_msg_ui_str_nok () {
               #
               dialog --colors --no-ok --title "$3" --infobox "$4" $Y $X
               #
+              # Is the pause for n seconds specified?
               if [ -z $7 ] ; then
+                 # No, set a default n seconds to pause.
                  sleep 3
               else
+                 # Yes, use n seconds to pause.
                  sleep "$7"
               fi
            ;;
@@ -2128,7 +3200,7 @@ f_msg_ui_str_nok () {
                  Y=$YSCREEN
               fi
               #
-              # Whiptail needs about 5 more spaces for the right and left window frame. 
+              # Whiptail needs about 5 more spaces for the right and left window frame.
               let X=$6+5
               # If line length exceeds screen/window width then set textbox width.
               if [ $X -ge $XSCREEN ] ; then
@@ -2149,15 +3221,15 @@ f_msg_ui_str_nok () {
 # +------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
 #          $2 - "OK"  [OK] button at end of text.
 #               "NOK" No [OK] button or "Press Enter key to continue"
 #               at end of text but pause n seconds
 #               to allow reader to read text by using sleep n command.
 #          $3 - Title.
-#          $4 - Text string or text file. 
+#          $4 - Text string or text file.
 #    Uses: None.
-# Outputs: ERROR. 
+# Outputs: ERROR.
 #
 # Summary: Used by f_message. For Text UI only.
 #          Display contents of a text string with "Press 'Enter' key to continue".
@@ -2189,7 +3261,7 @@ f_msg_txt_str_ok () {
 # +------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
 #          $2 - "OK"  [OK] button at end of text.
 #               "NOK" No [OK] button or "Press Enter key to continue"
 #               at end of text but pause n seconds
@@ -2222,9 +3294,12 @@ f_msg_txt_str_nok () {
       echo
       echo
       #
+      # Is the pause for n seconds specified?
       if [ -z $5 ] ; then
+         # No, set a default n seconds to pause.
          sleep 3
       else
+         # Yes, use n seconds to pause.
          sleep "$5"
       fi
       #
@@ -2237,15 +3312,15 @@ f_msg_txt_str_nok () {
 # +------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
 #          $2 - "OK"  [OK] button at end of text.
 #               "NOK" No [OK] button or "Press Enter key to continue"
 #               at end of text but pause n seconds
 #               to allow reader to read text by using sleep n command.
 #          $3 - Title.
-#          $4 - Text string or text file. 
+#          $4 - Text string or text file.
 #    Uses: None.
-# Outputs: ERROR. 
+# Outputs: ERROR.
 #
 # Summary: Used by f_message. For Text UI only.
 #          Display contents of a text file using command Less.
@@ -2270,7 +3345,7 @@ f_msg_txt_file_ok () {
 # +------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
 #          $2 - "OK"  [OK] button at end of text.
 #               "NOK" No [OK] button or "Press Enter key to continue"
 #               at end of text but pause n seconds
@@ -2279,7 +3354,7 @@ f_msg_txt_file_ok () {
 #          $4 - Text string or text file.
 #          $5 - Pause for $5 seconds to allow text to be read.
 #    Uses: None.
-# Outputs: ERROR. 
+# Outputs: ERROR.
 #
 # Summary: Used by f_message. For Text UI only.
 #          Display contents of a text file with pause for $5 seconds.
@@ -2298,9 +3373,13 @@ f_msg_txt_file_nok () {
       echo
       # Display text file contents.
       cat $4
+      #
+      # Is the pause for n seconds specified?
       if [ -z $5 ] ; then
+         # No, set a default n seconds to pause.
          sleep 3
       else
+         # Yes, use n seconds to pause.
          sleep "$5"
       fi
       #
@@ -2316,7 +3395,7 @@ f_msg_txt_file_nok () {
 #     Rev: 2021-03-07
 #  Inputs: $1 - file of menu choice strings.
 #    Uses: ARRAY_NUM, ARRAY_NAME, ARRAY_VALUE, TEMP_FILE, XSTR.
-# Outputs: MAX_CHOICE_LENGTH, MAX_SUMMARY_LENGTH, arrays CHOICE(n), SUMMARY(n), FUNC(n). 
+# Outputs: MAX_CHOICE_LENGTH, MAX_SUMMARY_LENGTH, arrays CHOICE(n), SUMMARY(n), FUNC(n).
 #
 # Summary: Create an arrays CHOICE, SUMMARY, FUNC to store menu option information.
 #
@@ -2356,7 +3435,7 @@ f_menu_arrays () {
                esac
             done < $1  # Read lines from file $1.
       #
-      # Calculate number of lines or Menu Choices to find maximum menu lines 
+      # Calculate number of lines or Menu Choices to find maximum menu lines
       # for Dialog or Whiptail.
       MAX_LINES=$(wc --lines <$TEMP_FILE)
       #
@@ -2416,9 +3495,11 @@ f_menu_arrays () {
 # +----------------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
 #          $2 - GENERATED_FILE.
 #          $3 - Menu Title.
+#                  (String must either begin and end with double-quotes
+#                  or must have underscores substituting for spaces).
 #          $4 - MAX_CHOICE_LENGTH.
 #          $5 - TEMP_FILE
 #    Uses: X, Y, XNUM, YNUM, ARRAY_NAME, ARRAY_LEN, PAD, CHOICE.
@@ -2454,7 +3535,7 @@ f_update_menu_txt () {
       echo "#" >>$2
       echo "# *** Function f_menu_txt$EXT ***" >>$2
       echo "#" >>$2
-      echo "#  Inputs: $1=GUI" >>$2
+      echo "#  Inputs: \$1 - \"text\", \"dialog\" or \"whiptail\" The command-line user-interface application in use." >>$2
       echo "#    Uses: X, MENU_TITLE, ARRAY_NAME, ARRAY_LEN, CHOICE, SUMMARY, FUNC." >>$2
       echo "# Outputs: None." >>$2
       echo "#" >>$2
@@ -2470,6 +3551,7 @@ f_update_menu_txt () {
       echo "      until [ \"\$CHOICE\" = \"QUIT\" ]" >>$2
       echo "            do    # Start of menu until loop." >>$2
       echo "               clear  #Clear screen." >>$2
+      # Format string, substitute spaces for underscores.
       MENU_TITLE=$(echo $3 | tr '_' ' ') # Do not >>$2 this line.
       echo "               MENU_TITLE=\"$MENU_TITLE\"" >>$2
       echo "               echo \"               \$MENU_TITLE\"; echo" >>$2
@@ -2577,9 +3659,11 @@ f_update_menu_txt () {
 # +----------------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
 #          $2 - GENERATED_FILE.
 #          $3 - Menu Title.
+#                  (String must either begin and end with double-quotes
+#                  or must have underscores substituting for spaces).
 #          $4 - MAX_LENGTH
 #          $5 - MAX_LINES
 #          $6 - TEMP_FILE
@@ -2616,8 +3700,8 @@ f_update_menu_gui () {
       echo "#" >>$2
       echo "# *** Function f_menu_gui$EXT ***" >>$2
       echo "#" >>$2
-      echo "#  Inputs: \$1=GUI." >>$2
-      echo "#          \$2=MENU_TITLE" >>$2
+      echo "#  Inputs: \$1 - \"text\", \"dialog\" or \"whiptail\" The command-line user-interface application in use." >>$2
+      echo "#          \$2 - MENU_TITLE" >>$2
       echo "#    Uses: VERSION, THIS_FILE, CHOICE, SUMMARY, MENU_TITLE." >>$2
       echo "# Outputs: None." >>$2
       echo "#" >>$2
@@ -2639,6 +3723,7 @@ f_update_menu_gui () {
       #
       echo "      until [ \"\$CHOICE\" = \"QUIT\" ]" >>$2
       echo "            do    # Start of Menu until loop." >>$2
+      # Format string, substitute spaces for underscores.
                            MENU_TITLE=$(echo $3 | tr '_' ' ')
       echo "               MENU_TITLE=\"$MENU_TITLE\"" >>$2
       #
@@ -2662,14 +3747,14 @@ f_update_menu_gui () {
       #
       case $1 in
            dialog)
-              if [ $3 = "Main_Menu" ] ; then    
+              if [ $3 = "Main_Menu" ] ; then
                  echo "               CHOICE=\$(\$GUI --no-cancel --clear --title \"\$MENU_TITLE\" --menu \"\n\nUse (up/down arrow keys) or (letters):\" $Y $X $Z \\" >>$2
               else
                  echo "               CHOICE=\$(\$GUI --clear --title \"\$MENU_TITLE\" --menu \"\n\nUse (up/down arrow keys) or (letters):\" $Y $X $Z \\" >>$2
               fi
            ;;
            whiptail)
-              if [ $3 = "Main_Menu" ] ; then    
+              if [ $3 = "Main_Menu" ] ; then
                  echo "               CHOICE=\$(\$GUI --nocancel --clear --title \"\$MENU_TITLE\" --menu \"\n\nUse (up/down arrow keys) or (letters):\" $Y $X $Z \\" >>$2
               else
                  echo "               CHOICE=\$(\$GUI --clear --title \"\$MENU_TITLE\" --menu \"\n\nUse (up/down arrow keys) or (letters):\" $Y $X $Z \\" >>$2
@@ -2720,7 +3805,7 @@ f_update_menu_gui () {
       if [ -r $TEMP_FILE ] ; then
          rm $TEMP_FILE
       fi
-      unset X Y XNUM ARRAY_NAME ARRAY_LEN CHOICE SUMMARY FUNC 
+      unset X Y XNUM ARRAY_NAME ARRAY_LEN CHOICE SUMMARY FUNC
       #
 } # End of function f_update_menu_gui.
 #
@@ -2733,7 +3818,7 @@ f_update_menu_gui () {
 #    Uses: ARRAY_FILE, GENERATED_FILE, MENU_TITLE.
 # Outputs: None.
 #
-# Summary: Template for Main-Menu 
+# Summary: Template for Main-Menu
 #          This Main Menu function checks its script for the Main Menu
 #          options delimited by "#@@" and if it does not find any, then
 #          it it defaults to the specified library script.
@@ -2814,7 +3899,7 @@ f_menu_main_TEMPLATE () { # Create and display the Main Menu.
 #    Uses: ARRAY_FILE, GENERATED_FILE, MENU_TITLE.
 # Outputs: None.
 #
-# Summary: Template for Sub-Menus 
+# Summary: Template for Sub-Menus
 #          Simpler implementation than the Main Menu function.
 #          It assumes that this function is in a separate script library
 #          file which contains the Sub-Menu options delimited by "#@@".
@@ -2871,13 +3956,15 @@ f_menu_sub_TEMPLATE () {
 # +----------------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
-#          $2=GENERATED_FILE.
-#          $3=Menu Title.
-#          $4=MAX_LENGTH.
-#          $5=MAX_LINES.
-#          $6=MAX_CHOICE_LENGTH
-#          $7=TEMP_FILE
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
+#          $2 - GENERATED_FILE.
+#          $3 - Menu Title.
+#                  (String must either begin and end with double-quotes
+#                  or must have underscores substituting for spaces).
+#          $4 - MAX_LENGTH.
+#          $5 - MAX_LINES.
+#          $6 - MAX_CHOICE_LENGTH
+#          $7 - TEMP_FILE
 #    Uses: GENERATED_FILE, ARRAY_NAME, ARRAY_LEN, XNUM.
 # Outputs: None.
 #
@@ -2890,10 +3977,10 @@ f_create_show_menu () {
       #
       case $1 in
            "dialog" | "whiptail")
-              f_update_menu_gui $1 $2 $3 $4 $5 $7
+              f_update_menu_gui $1 $2 "$3" $4 $5 $7
            ;;
            "text")
-              f_update_menu_txt $1 $2 $3 $6 $7
+              f_update_menu_txt $1 $2 "$3" $6 $7
            ;;
       esac
       #
@@ -2904,8 +3991,8 @@ f_create_show_menu () {
       EXT=$(echo $2 | sed 's|\/|-|g')
       #
       case $1 in
-           "dialog" | "whiptail") 
-              f_menu_gui$EXT $1 $3
+           "dialog" | "whiptail")
+              f_menu_gui$EXT $1 "$3"
               clear  # Clear screen.
            ;;
            "text")
@@ -2923,11 +4010,12 @@ f_create_show_menu () {
 # |             Function f_mount           |
 # +----------------------------------------+
 #
-#     Rev: 2021-03-07
-#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
-#          $2=File server Directory
-#          $3=Mount Point (Directory)
-#    Uses: None
+#     Rev: 2022-01-21
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
+#          $2 - File server Directory
+#          $3 - Mount Point (Directory)
+#          $4 - Default User Name (OPTIONAL)
+#    Uses: USERNAME_DEFAULT
 # Outputs: ERROR, TEMP_FILE.
 #
 # Summary: Mount directory using Samba and CIFS.
@@ -2937,11 +4025,23 @@ f_create_show_menu () {
 #
 f_mount () {
       #
-      mountpoint $3 >/dev/null 2>$TEMP_FILE # Write any error messages to file $TEMP_FILE. Get status of mountpoint, mounted?.
+      mountpoint $3 >/dev/null 2>$TEMP_FILE
+      # Write any error messages to file $TEMP_FILE. Get status of mountpoint, mounted?.
       ERROR=$?
+      #
+      # Is the directory mounted?
       if [ $ERROR -ne 0 ] ; then
-         # Mount directory.
-         f_username $1 "$USER" $3
+         # No, mount the directory.
+         #
+         # Set default user name.
+         USERNAME_DEFAULT=$4
+         # Is the default user name a passed parameter?
+         if [ -z $4 ] ; then
+            # No, set user name to $USER.
+            USERNAME_DEFAULT=$USER
+         fi
+         #
+         f_username $1 "$USERNAME_DEFAULT" $3
          if [ $ERROR -eq 0 ] ; then
             f_password $1 $3
             if [ $ERROR -eq 0 ] ; then
@@ -2952,6 +4052,8 @@ f_mount () {
          fi
       fi
       #
+      unset USERNAME_DEFAULT
+      #
 }  # End of function f_mount.
 #
 # +----------------------------------------+
@@ -2959,7 +4061,7 @@ f_mount () {
 # +----------------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
 #          $2 - DL_SOURCE ("Local" or "Web")
 #          $3 - SERVER_DIR File server directory.
 #          $4 - MP_DIR Mount-point directory.
@@ -2993,7 +4095,7 @@ f_download_file () { # Create and display the Main Menu.
                  # So download from Web Repository.
                  f_download_from_web_site $1 $5 $6
               else
-                 # Sucessful mount of LAN File Server directory. 
+                 # Sucessful mount of LAN File Server directory.
                  # Continue with download from Local Repository on LAN File Server.
                  f_download_from_local_repository $LOCAL_REPO_DIR $6
                  #
@@ -3027,7 +4129,7 @@ f_download_file () { # Create and display the Main Menu.
 # +----------------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
 #          $2 - DL_REPOSITORY Download Repository URL on the web.
 #          $3 - DL_FILE File to download.
 #    Uses: LINE.
@@ -3090,7 +4192,7 @@ f_download_from_web_site () {
 # +-----------------------------------------------+
 #
 #     Rev: 2021-03-07
-#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
+#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
 #          $2 - Local Repository Directory.
 #          $3 - File to download.
 #    Uses: TEMP_FILE.

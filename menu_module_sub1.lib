@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# ©2021 Copyright 2021 Robert D. Chin
+# ©2022 Copyright 2022 Robert D. Chin
 # Email: RDevChin@Gmail.com
 #
 # Usage: source menu_module_main.lib
@@ -43,7 +43,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2021-04-20 00:13"
+VERSION="2022-05-26 11:28"
 #
 # Commented out THIS_FILE since it will conflict other scripts which
 # use this library.
