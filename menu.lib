@@ -1,0 +1,199 @@
+#!/bin/bash
+#
+# ©2023 Copyright 2023 Robert D. Chin
+# Email: RDevChin@Gmail.com
+#
+# Usage: source menu.lib
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program. If not, see <https://www.gnu.org/licenses/>.
+#
+# +----------------------------------------+
+# |        Default Variable Values         |
+# +----------------------------------------+
+#
+VERSION="2022-06-20 23:59"
+#
+# Commented out THIS_FILE since it will conflict other scripts which
+# use this library.
+#THIS_FILE=$(basename $0)
+#
+# +----------------------------------------+
+# |            Brief Description           |
+# +----------------------------------------+
+#
+#& Brief Description
+#&
+#& This Library of functions for the Demonstration Menu is a
+#& child dependency used by the following scripts.
+#&
+#& Parent script: menu.sh.
+#&
+#& See script menu.sh for Edit History.
+#&
+#& Usage: source menu.lib
+#&
+#&    This program is free software: you can redistribute it and/or modify
+#&    it under the terms of the GNU General Public License as published by
+#&    the Free Software Foundation, either version 3 of the License, or
+#&    (at your option) any later version.
+#&
+#&
+#&    This program is distributed in the hope that it will be useful,
+#&    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#&    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#&    GNU General Public License for more details.
+#&
+#&    You should have received a copy of the GNU General Public License
+#&    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+# +----------------------------------------+
+# |           Code Change History          |
+# +----------------------------------------+
+#
+## Code Change History
+##
+## (Please see script "menu.sh" for Code History information.)
+#
+# +----------------------------------------+
+# |        Function f_check_version        |
+# +----------------------------------------+
+#
+#     Rev: 2021-03-25
+#  Inputs: $1 - UI "dialog" or "whiptail" or "text".
+#          $2 - [OPTIONAL] File name to compare.
+#          FILE_TO_COMPARE.
+#    Uses: SERVER_DIR, MP_DIR, TARGET_DIR, TARGET_FILE, VERSION, TEMP_FILE, ERROR.
+# Outputs: ERROR.
+#
+# Summary: Check the version of a single, local file or script,
+#          FILE_TO_COMPARE with the version of repository file.
+#          If the repository file has latest version, then copy all
+#          dependent files and libraries from the repository to local PC.
+#
+# TO DO enhancement: If local (LAN) repository is unavailable, then
+#          connect to repository on the web if available.
+#
+# Dependencies: f_version_compare.
+#
+f_check_version () {
+      #
+      #
+      #=================================================================
+      # EDIT THE LINES BELOW TO DEFINE THE LAN FILE SERVER DIRECTORY,
+      # LOCAL MOUNTPOINT DIRECTORY, LOCAL REPOSITORY DIRECTORY AND
+      # FILE TO COMPARE BETWEEN THE LOCAL PC AND (LAN) LOCAL REPOSITORY.
+      #=================================================================
+      #
+      #
+      # LAN File Server shared directory.
+      # SERVER_DIR="[FILE_SERVER_DIRECTORY_NAME_GOES_HERE]"
+        SERVER_DIR="//file_server/public"
+      #
+      # Local PC mount-point directory.
+      # MP_DIR="[LOCAL_MOUNT-POINT_DIRECTORY_NAME_GOES_HERE]"
+        MP_DIR="/mnt/file_server/public"
+      #
+      # Local PC mount-point with LAN File Server Local Repository full directory path.
+      # Example:
+      #                   File server shared directory is "//file_server/public".
+      # Repository directory under the shared directory is "scripts/BASH/Repository".
+      #                 Local PC Mount-point directory is "/mnt/file_server/public".
+      #
+      # Local PC mount-point with LAN File Server Local Repository full directory path.
+      # LOCAL_REPO_DIR="$MP_DIR/[DIRECTORY_PATH_TO_LOCAL_REPOSITORY]"
+        LOCAL_REPO_DIR="$MP_DIR/scripts/BASH/Repository"
+      #
+      # Local PC file to be compared.
+      if [ $# -eq 2 ] ; then
+         # There are 2 arguments that have been passed to this function.
+         # $2 contains the file name to compare.
+         FILE_TO_COMPARE=$2
+      else
+         # $2 is null, so specify file name.
+         if [ -z "$FILE_TO_COMPARE" ] ; then
+            # FILE_TO_COMPARE is undefined so specify file name.
+            FILE_TO_COMPARE=$(basename $0)
+         fi
+      fi
+      #
+      # Version of Local PC file to be compared.
+      VERSION=$(grep --max-count=1 "VERSION" $FILE_TO_COMPARE)
+      #
+      FILE_LIST=$THIS_DIR/$THIS_FILE"_file_temp.txt"
+      ERROR=0
+      #
+      #
+      #=================================================================
+      # EDIT THE LINES BELOW TO SPECIFY THE FILE NAMES TO UPDATE.
+      # FILE NAMES INCLUDE ALL DEPENDENT SCRIPTS AND LIBRARIES.
+      #=================================================================
+      #
+      #
+      # Create list of files to update and write to temporary file, FILE_LIST.
+      #
+      echo "menu.sh"                   > $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      echo "menu.lib"                 >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      echo "menu_01.lib"              >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      echo "menu_02.lib"              >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      echo "common_bash_function.lib" >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
+      #
+      f_version_compare $1 $SERVER_DIR $MP_DIR $LOCAL_REPO_DIR $FILE_TO_COMPARE "$VERSION" $FILE_LIST
+      #
+      if [ -r  $FILE_LIST ] ; then
+         rm  $FILE_LIST
+      fi
+      #
+}  # End of function f_check_version.
+#
+# +----------------------------------------+
+# |          Function f_dir_listing        |
+# +----------------------------------------+
+#
+#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#          THIS_DIR, THIS_FILE.
+#    Uses: None.
+# Outputs: None.
+#
+# Summary: List contents of the directory.
+#
+# Dependencies: f_messages.
+#
+f_dir_listing () {
+      #
+      ls -lh > $TEMP_FILE
+      f_message $1 "OK" "(use arrow keys to scroll up/down/side-ways)" $TEMP_FILE
+      #
+}  # End of function f_dir_listing.
+#
+# +----------------------------------------+
+# |              Function f_df             |
+# +----------------------------------------+
+#
+#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#          THIS_DIR, THIS_FILE.
+#    Uses: None.
+# Outputs: None.
+#
+# Summary: Display file system information.
+#
+# Dependencies: f_messages.
+#
+f_df () {
+      #
+      df -hT > $TEMP_FILE
+      f_message $1 "OK" "(use arrow keys to scroll up/down/side-ways)" $TEMP_FILE
+      #
+}  # End of function f_df.
+#

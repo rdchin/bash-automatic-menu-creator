@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# ©2022 Copyright 2022 Robert D. Chin
+# ©2023 Copyright 2023 Robert D. Chin
 # Email: RDevChin@Gmail.com
 #
 # Usage: bash menu.sh
@@ -24,7 +24,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2022-05-26 11:28"
+VERSION="2022-06-20 23:59"
 THIS_FILE=$(basename $0)
 FILE_TO_COMPARE=$THIS_FILE
 TEMP_FILE=$THIS_FILE"_temp.txt"
@@ -76,9 +76,10 @@ GENERATED_FILE=$THIS_FILE"_menu_generated.lib"
 FILE_LIST=$THIS_FILE"_file_temp.txt"
 #
 # Format: [File Name]^[Local/Web]^[Local repository directory]^[web repository directory]
-echo "menu_module_main.lib^Local^$LOCAL_REPO_DIR^https://raw.githubusercontent.com/rdchin/bash-automatic-menu-creator/master/"  > $FILE_LIST
-echo "menu_module_sub0.lib^Local^$LOCAL_REPO_DIR^https://raw.githubusercontent.com/rdchin/bash-automatic-menu-creator/master/" >> $FILE_LIST
-echo "menu_module_sub1.lib^Local^$LOCAL_REPO_DIR^https://raw.githubusercontent.com/rdchin/bash-automatic-menu-creator/master/" >> $FILE_LIST
+echo "menu.lib^Local^$LOCAL_REPO_DIR^https://raw.githubusercontent.com/rdchin/bash-automatic-menu-creator/master/"  > $FILE_LIST
+echo "menu_01.lib^Local^$LOCAL_REPO_DIR^https://raw.githubusercontent.com/rdchin/bash-automatic-menu-creator/master/" >> $FILE_LIST
+echo "menu_02.lib^Local^$LOCAL_REPO_DIR^https://raw.githubusercontent.com/rdchin/bash-automatic-menu-creator/master/" >> $FILE_LIST
+echo "menu_items.lib^Local^$LOCAL_REPO_DIR^https://raw.githubusercontent.com/rdchin/bash-automatic-menu-creator/master/" >> $FILE_LIST
 echo "common_bash_function.lib^Local^$LOCAL_REPO_DIR^https://raw.githubusercontent.com/rdchin/BASH_function_library/master/"   >> $FILE_LIST
 #
 # Create a name for a temporary file which will have a list of files which need to be downloaded.
@@ -92,11 +93,12 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 #&
 #& This script will generate either a CLI text menu, or "Dialog" or "Whiptail"
 #& UI menu from an array using data in clear text in scripts:
-#& menu_module_main.lib, menu_module_sub1.lib
+#& menu_items.lib
 #& or any other menu_modules... you wish to add.
 #&
-#& Required scripts: menu.sh, menu_module_main.lib,
-#&                   menu_module_sub0.lib, menu_module_sub1.lib
+#& Required scripts: menu.sh, menu.lib,
+#&                   menu_01.lib, menu_02.lib
+#&                   menu_items.lib
 #&                   common_bash_function.lib
 #&
 #& Usage: bash menu.sh
@@ -186,9 +188,35 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ##
 ## (After each edit made, please update Code History and VERSION.)
 ##
-## Includes changes to menu_module_main.lib.
+## Includes changes to menu.lib, menu_01.lib, menu_02.lib, and
+##                     menu_items.lib.
 ##
-## 2022-05-26 *Release 3.0 "Cherlotte"
+## 2022-06-19 *f_menu_main improved comments.
+##
+## 2022-06-18 *f_create_menu_2, f_menu_make deleted.
+##             f_create_menu_2 renamed to f_create_a_menu and f_menu_make
+##             both moved to common_bash_function_library.lib
+##
+## 2022-06-17 *Complete rewrite of menu creation and generation scheme.
+##             Allows comment lines of menu items of multiple menus to be
+##             in a single text file or distributed in multiple text files.
+##             No longer is a need for a separate library file per menu
+##             containing the menu items with the executable menu functions.
+##             For example, rather than 8 files for 8 menus, you can even
+##             have 2 files for as many menus as you wish.
+##            *f_create_menu_2, f_menu_make added.
+##            *menu_items.lib file added.
+##            *menu.lib renamed from menu_module_main.lib.
+##            *menu_01.lib renamed from menu_module_sub0.lib.
+##            *menu_02.lib renamed from menu_module_sub1.lib.
+##
+## 2022-06-16 *f_create_menu deleted from menu_module_main.lib after moving
+##             function to common_bash_function.lib.
+##
+## 2022-06-04 *Section "Main Program" rewrote detection and verification of
+##             UI and setting of $GUI.
+##
+## 2022-05-26 *Release 3.0 "Charlotte"
 ##
 ## 2022-05-25 *Section "Customize Menu choice options below" improved the
 ##             comments to clarify the required parameters.
@@ -430,7 +458,7 @@ f_display_common () {
 # |          Function f_menu_main          |
 # +----------------------------------------+
 #
-#     Rev: 2021-03-07
+#     Rev: 2022-06-19
 #  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
 #    Uses: ARRAY_FILE, GENERATED_FILE, MENU_TITLE.
 # Outputs: None.
@@ -442,62 +470,53 @@ f_display_common () {
 #
 # Dependencies: f_menu_arrays, f_create_show_menu.
 #
-f_menu_main () { # Create and display the Main Menu.
+f_menu_main () {
       #
+      # Create and display the Main Menu.
+      #
+      TEMP_FILE=$THIS_DIR/$THIS_FILE"_menu_main_temp.txt"
+      #
+      # GENERATED_FILE (The name of a temporary library file which contains the code to display the sub-menu).
       GENERATED_FILE=$THIS_DIR/$THIS_FILE"_menu_main_generated.lib"
-      #
-      # Does this file have menu items in the comment lines starting with "#@@"?
-      grep --silent ^\#@@ $THIS_DIR/$THIS_FILE
-      ERROR=$?
-      # exit code 0 - menu items in this file.
-      #           1 - no menu items in this file.
-      #               file name of file containing menu items must be specified.
-      if [ $ERROR -eq 0 ] ; then
-         # Extract menu items from this file and insert them into the Generated file.
-         # This is required because f_menu_arrays cannot read this file directly without
-         # going into an infinite loop.
-         grep ^\#@@ $THIS_DIR/$THIS_FILE >$GENERATED_FILE
-         #
-         # Specify file name with menu item data.
-         ARRAY_FILE="$GENERATED_FILE"
-      else
-         #
-         #
-         #================================================================================
-         # EDIT THE LINE BELOW TO DEFINE $ARRAY_FILE AS THE ACTUAL FILE NAME (LIBRARY)
-         # WHERE THE MENU ITEM DATA IS LOCATED. THE LINES OF DATA ARE PREFIXED BY "#@@".
-         #================================================================================
-         #
-         #
-         # Specify library file name with menu item data.
-         # ARRAY_FILE="[FILENAME_GOES_HERE]"
-           ARRAY_FILE="$THIS_DIR/menu_module_main.lib"
-      fi
-      #
-      # Create arrays from data.
-      f_menu_arrays $ARRAY_FILE
-      #
-      # Calculate longest line length to find maximum menu width
-      # for Dialog or Whiptail using lengths calculated by f_menu_arrays.
-      let MAX_LENGTH=$MAX_CHOICE_LENGTH+$MAX_SUMMARY_LENGTH
-      #
-      # Create generated menu script from array data.
       #
       # Note: ***If Menu title contains spaces,
       #       ***the size of the menu window will be too narrow.
       #
       # Menu title MUST use underscores instead of spaces.
       MENU_TITLE="Example_Menu"
-      TEMP_FILE=$THIS_DIR/$THIS_FILE"_menu_main_temp.txt"
       #
-      f_create_show_menu $1 $GENERATED_FILE $MENU_TITLE $MAX_LENGTH $MAX_LINES $MAX_CHOICE_LENGTH $TEMP_FILE
+      # ARRAY_FILE (Temporary file) includes menu items imported from $ARRAY_SOURCE_FILE of a single menu.
+      ARRAY_FILE=$THIS_DIR/$THIS_FILE"_menu_array_generated.lib"
       #
-      if [ -r $GENERATED_FILE ] ; then
-         rm $GENERATED_FILE
+      #
+      #================================================================================
+      # EDIT THE LINE BELOW TO DEFINE $ARRAY_FILE AS THE ACTUAL FILE NAME (LIBRARY)
+      # WHERE THE MENU ITEM DATA IS LOCATED. THE LINES OF DATA ARE PREFIXED BY "#@@".
+      #================================================================================
+      #
+      #
+      # Specify library file name with menu item data.
+      # ARRAY_SOURCE_FILE (Not a temporay file) includes menu items from multiple menus.
+      # ARRAY_SOURCE_FILE="[FILENAME_GOES_HERE]"
+      ARRAY_SOURCE_FILE="$THIS_DIR/menu_items.lib"
+      #
+      # List of inputs for f_create_a_menu.
+      #
+      #  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
+      #          $2 - GENERATED_FILE (The name of a temporary library file containing the suggested phrase "generated.lib" which contains the code to display the sub-menu).
+      #          $3 - MENU_TITLE (Title of the sub-menu)
+      #          $4 - TEMP_FILE (Temporary file).
+      #          $5 - ARRAY_FILE (Temporary file) includes menu items imported from $ARRAY_SOURCE_FILE of a single menu.
+      #          $6 - ARRAY_SOURCE_FILE (Not a temporay file) includes menu items from multiple menus.
+      #
+      f_create_a_menu $1 $GENERATED_FILE $MENU_TITLE $TEMP_FILE $ARRAY_FILE $ARRAY_SOURCE_FILE
+      #
+      if [ -e $TEMP_FILE ] ; then
+         rm $TEMP_FILE
       fi
       #
-      if [ -r $TEMP_FILE ] ; then
-         rm $TEMP_FILE
+      if [ -e  $GENERATED_FILE ] ; then
+         rm  $GENERATED_FILE
       fi
       #
 } # End of function f_menu_main.
@@ -969,21 +988,45 @@ f_script_path
 # Set Temporary file using $THIS_DIR from f_script_path.
 TEMP_FILE=$THIS_DIR/$THIS_FILE"_temp.txt"
 #
-# If command already specifies GUI, then do not detect GUI.
+# If command already specifies $GUI, then do not detect UI, but verify that
+# it is an installed and valid UI.
 # i.e. "bash menu.sh dialog" or "bash menu.sh text".
-if [ -z $GUI ] ; then
-   # Test for GUI (Whiptail or Dialog) or pure text environment.
-   f_detect_ui
-fi
-#
-# Final Check of Environment
-#GUI="whiptail"  # Diagnostic line.
-#GUI="dialog"    # Diagnostic line.
-#GUI="text"      # Diagnostic line.
-#
 # Test for Optional Arguments.
 # Also sets variable GUI.
 f_arguments $1 $2
+#
+# Was a UI specified in the command as a passed parameter argument?
+if [ -z "$GUI" ] ; then
+   # No, no UI specified on the command-line.
+   # Set variable GUI.
+   # Detect user-interface environment type, "Whiptail", "Dialog", or pure text environment.
+   f_detect_ui
+else
+   case $GUI in
+        whiptail | dialog)
+           # User-interface environment was already specified by user by
+           # an argument, passed-parameter in the command-line.
+           # Verify that argument is an installed, valid UI environment type.
+           command -v $GUI >/dev/null
+           # "&>/dev/null" does not work in Debian distro.
+           # 1=standard messages, 2=error messages, &=both.
+           ERROR=$?
+           # Is $GUI installed?
+           if [ $ERROR -eq 1 ] ; then
+              # No, $GUI is not installed.
+              # Set $GUI to an installed environment.
+              f_detect_ui
+           fi
+           #
+           unset ERROR
+        ;;
+   esac
+fi
+#
+# Override detected or selected $GUI for testing purposes.
+#GUI="whiptail"  # Diagnostic line.
+#GUI="dialog"    # Diagnostic line.
+#GUI="text"      # Diagnostic line.
 #
 # Delete temporary files.
 if [ -r  $FILE_LIST ] ; then
