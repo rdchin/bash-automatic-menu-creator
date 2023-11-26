@@ -24,7 +24,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2022-06-20 23:59"
+VERSION="2023-11-25 20:40"
 THIS_FILE=$(basename $0)
 FILE_TO_COMPARE=$THIS_FILE
 TEMP_FILE=$THIS_FILE"_temp.txt"
@@ -191,6 +191,8 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ## Includes changes to menu.lib, menu_01.lib, menu_02.lib, and
 ##                     menu_items.lib.
 ##
+## 2023-11-25 *Improved comments to be more consistent.
+##
 ## 2023-01-23 *Release 4.0 "Daphne"
 
 ## 2022-06-17 *Complete rewrite of menu creation and generation scheme.
@@ -223,8 +225,8 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ## 2022-06-16 *f_create_menu deleted from menu_module_main.lib after
 ##             moving function to common_bash_function.lib.
 ##
-## 2022-06-04 *Section "Main Program" rewrote detection and verification
-##             of UI and setting of $GUI.
+## 2022-06-04 *Section "Main Program" rewrote detection and verification of
+##             UI and setting of $GUI.
 ##
 ## 2022-05-26 *Release 3.0 "Charlotte"
 ##             This release version now includes a standardized Library
@@ -239,12 +241,12 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ## 2022-05-25 *Section "Customize Menu choice options below" improved the
 ##             comments to clarify the required parameters.
 ##
-## 2022-05-07 *f_create_menu added to simplify code, eliminate redundant
+## 2022-05-07 *f_create_menu added to simplify code and eliminate redundant
 ##             functions which only used different variable values.
 ##
-## 2022-04-20 *fdl_download_missing_scripts prevent downloading from the
-##             remote repository if the local repository was unavailable
-##             and the script was only in the local repository.
+## 2022-04-20 *fdl_download_missing_scripts fixed bug to prevent downloading
+##             from the remote repository if the local repository was
+##             unavailable and the script was only in the local repository.
 ##
 ## 2022-03-13 *Section "Example Menu" updated to latest standards.
 ##
@@ -269,12 +271,12 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ##            *Comment cleanup. Move the appended comments to start on the
 ##             previous line to improve readability.
 ##            *fdl_source bug ERROR not initialized fixed.
-##            *Section "Default Variable Values" defined FILE_TO_COMPARE
-##             and defined THIS_FILE=$(basename $0) to reduce maintenance.
+##            *Section "Default Variable Values" defined FILE_TO_COMPARE and
+##             defined THIS_FILE=$(basename $0) to reduce maintenance.
 ##
 ## 2021-03-12 *Updated to latest standards and improved comments.
-##            *fdl_download_missing_scripts added 2 arguments for file
-##             names as arguments.
+##            *fdl_download_missing_scripts added 2 arguments for file names
+##             as arguments.
 ##            *fdl_download_missing_scripts, f_run_app, and application
 ##             functions changed to allow missing dependent scripts to be
 ##             automatically downloaded rather than simply displaying an
@@ -298,14 +300,14 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ##
 ## 2021-02-21 *Section "Code Change History" added instructions.
 ##
-## 2021-02-19 *fdl_download_missing_scripts added to modulize existing
-##             code under Section "Main Program" to allow easier deletion 
-##             of code the "Update Version" feature is not desired.
+## 2021-02-19 *fdl_download_missing_scripts added to modulize existing code
+##             under Section "Main Program" to allow easier deletion of code
+##             the "Update Version" feature is not desired.
 ##            *Functions related to "Update Version" renamed with an "fdl"
 ##             prefix to identify dependent functions to delete if that
 ##             function is not desired.
-##            *Section "Code Change History" added instructions on how
-##             to disable/delete "Update Version" feature or "Main Menu".
+##            *Section "Code Change History" added instructions on how to
+##             disable/delete "Update Version" feature or "Main Menu".
 ##
 ## 2021-02-13 *Changed menu item wording from "Exit to command-line"
 ##                                         to "Exit this menu."
@@ -370,11 +372,9 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ##            *f_menu_arrays, f_update_menu_txt/gui bug fixed to not
 ##             unset TEMP_FILE variable since it is used globally.
 ##
-## 2020-05-06 *f_msg_ui_file_box_size, f_msg_ui_file_ok bug fixed in
-##             display.
+## 2020-05-06 *f_msg_ui_file_box_size, f_msg_ui_file_ok bug fixed in display.
 ##
-## 2020-05-04 *f_update_menu_gui changed menu display parameters for
-##             Whiptail.
+## 2020-05-04 *f_update_menu_gui adjusted menu display parameters for Whiptail.
 ##
 ## 2020-04-22 *f_message split into several functions for clarity and
 ##             simplicity f_msg_(txt/ui)_(file/string)_(ok/nok).
@@ -531,7 +531,7 @@ f_menu_main () {
       #          $3 - MENU_TITLE (Title of the sub-menu)
       #          $4 - TEMP_FILE (Temporary file).
       #          $5 - ARRAY_FILE (Temporary file) includes menu items imported from $ARRAY_SOURCE_FILE of a single menu.
-      #          $6 - ARRAY_SOURCE_FILE (Not a temporay file) includes menu items from multiple menus.
+      #          $6 - ARRAY_SOURCE_FILE (Not a temporary file) includes menu items from multiple menus.
       #
       f_create_a_menu $1 $GENERATED_FILE $MENU_TITLE $TEMP_FILE $ARRAY_FILE $ARRAY_SOURCE_FILE
       #
@@ -550,8 +550,8 @@ f_menu_main () {
 # +----------------------------------------+
 #
 #     Rev: 2021-03-08
-#  Inputs: $1=GitHub Repository
-#          $2=file name to download.
+#  Inputs: $1 - GitHub Repository
+#          $2 - file name to download.
 #    Uses: None.
 # Outputs: None.
 #
@@ -608,8 +608,8 @@ fdl_dwnld_file_from_web_site () {
 # +-----------------------------------------------+
 #
 #     Rev: 2021-03-08
-#  Inputs: $1=Local Repository Directory.
-#          $2=File to download.
+#  Inputs: $1 - Local Repository Directory.
+#          $2 - File to download.
 #    Uses: TEMP_FILE.
 # Outputs: ERROR.
 #
@@ -669,9 +669,9 @@ fdl_dwnld_file_from_local_repository () {
 # |       Function fdl_mount_local      |
 # +-------------------------------------+
 #
-#     Rev: 2021-03-10
-#  Inputs: $1=Server Directory.
-#          $2=Local Mount Point Directory
+#     Rev: 2023-10-10
+#  Inputs: $1 - Server Directory.
+#          $2 - Local Mount Point Directory
 #          TEMP_FILE
 #    Uses: TARGET_DIR, UPDATE_FILE, ERROR, SMBUSER, PASSWORD.
 # Outputs: ERROR.
@@ -726,8 +726,8 @@ fdl_mount_local () {
 # |        Function fdl_source         |
 # +------------------------------------+
 #
-#     Rev: 2021-03-25
-#  Inputs: $1=File name to source.
+#     Rev: 2022-10-10
+#  Inputs: $1 - File name to source.
 # Outputs: ERROR.
 #
 # Summary: Source the provided library file and echo error message.
