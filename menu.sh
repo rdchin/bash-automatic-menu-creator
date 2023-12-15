@@ -191,17 +191,17 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ## Includes changes to menu.lib, menu_01.lib, menu_02.lib, and
 ##                     menu_items.lib.
 ##
-## 2023-11-25 *Improved comments to be more consistent.
+## 2023-12-14 *Section "Main" changed from: f_test_environment $1
+##                            changed   to: f_test_environment $GUI
+##             If string parameter $1 was not a UI, then f_arguments would
+##             exit out of the script cleanly, but really want to use $GUI
+##             as the argument. (See common_bash_function.lib, f_argments).
+##
+## 2023-11-25 *f_menu_main bug fixed mis-named ARRAY_SOURCE_FILE.
+##
+## 2023-10-10 *Improved comments to be more consistent.
 ##
 ## 2023-01-23 *Release 4.0 "Daphne"
-
-## 2022-06-17 *Complete rewrite of menu creation and generation scheme.
-##             Allows comment lines of menu items of multiple menus to be
-##             in a single text file or distributed in multiple text files.
-##             No longer is a need for a separate library file per menu
-##             containing the menu items with executable menu functions.
-##             For example, rather than 8 files for 8 menus, you can even
-##             have 2 files for as many menus as you wish.
 ##
 ## 2022-06-19 *f_menu_main improved comments.
 ##
@@ -213,7 +213,7 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ##             Allows comment lines of menu items of multiple menus to be
 ##             in a single text file or distributed in multiple text files.
 ##             No longer is a need for a separate library file per menu
-##             containing the menu items with executable menu functions.
+##             containing the menu items with the executable menu functions.
 ##             For example, rather than 8 files for 8 menus, you can even
 ##             have 2 files for as many menus as you wish.
 ##            *f_create_menu_2, f_menu_make added.
@@ -222,8 +222,8 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ##            *menu_01.lib renamed from menu_module_sub0.lib.
 ##            *menu_02.lib renamed from menu_module_sub1.lib.
 ##
-## 2022-06-16 *f_create_menu deleted from menu_module_main.lib after
-##             moving function to common_bash_function.lib.
+## 2022-06-16 *f_create_menu deleted from menu_module_main.lib after moving
+##             function to common_bash_function.lib.
 ##
 ## 2022-06-04 *Section "Main Program" rewrote detection and verification of
 ##             UI and setting of $GUI.
@@ -309,7 +309,7 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ##            *Section "Code Change History" added instructions on how to
 ##             disable/delete "Update Version" feature or "Main Menu".
 ##
-## 2021-02-13 *Changed menu item wording from "Exit to command-line"
+## 2021-02-13 *Changed menu item wording from "Exit to command-line" prompt.
 ##                                         to "Exit this menu."
 ##
 ## 2021-02-11 *Updated to latest standards.
@@ -352,10 +352,6 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ## 2020-06-23 *Deleted all code functions which are included in the
 ##             BASH function library, "common_bash_function.lib".
 ##
-## 2020-06-22 *Release 1.0.1 "Amy"
-##             This is a bug fix release to correct display of
-##             menu item "About".
-##
 ## 2020-06-22 *Release 1.0 "Amy"
 ##             This version is the last version without a BASH library
 ##             dependency.
@@ -369,8 +365,8 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ##            *f_message, f_msg_ui_file_box_size, f_msg_ui_str_box_size,
 ##             f_ui_file_ok/nok, f_ui_str_ok/nok f_yn_question/defaults
 ##             specified parameter passing.
-##            *f_menu_arrays, f_update_menu_txt/gui bug fixed to not
-##             unset TEMP_FILE variable since it is used globally.
+##            *f_menu_arrays, f_update_menu_txt/gui bug fixed to not unset
+##             TEMP_FILE variable since it is used globally.
 ##
 ## 2020-05-06 *f_msg_ui_file_box_size, f_msg_ui_file_ok bug fixed in display.
 ##
@@ -381,7 +377,7 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ##            *f_yn_question split off f_yn_defaults.
 ##
 ## 2020-04-19 *Found bug in VERSION setting in f_about, f_code_history,
-##             f_help_message. To do set $VERSION using correct $THIS_FILE.
+##             f_help_message. Need to set $VERSION using correct $THIS_FILE.
 ##
 ## 2020-04-18 *Updated scripts for bug fixes and enhancements.
 ##
@@ -1067,7 +1063,7 @@ fi
 # fi
 #
 # Test for BASH environment.
-f_test_environment $1
+f_test_environment $GUI
 #
 # If an error occurs, the f_abort() function will be called.
 # trap 'f_abort' 0
