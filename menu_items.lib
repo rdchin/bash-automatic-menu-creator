@@ -16,30 +16,30 @@
 #
 # General Format: <#@@> <Menu Option> <#@@> <Description of Menu Option> <#@@> <Corresponding function or action or command>
 #
-# Format of <Corresponding function or action or command> when using f_create_a_menu
-#        f_create_menu^"text", "dialog", or "whiptail"^menu_generated.lib^Menu Name^Temporary File Name^Library name containing menu entries
+# Format of <Corresponding function or action or command> when using f_menu_main_all_menus.
+#        f_menu_main_all_menus^"text", "dialog", or "whiptail"^Menu Name^Library name containing menu entries
 #
-# List of inputs for f_create_a_menu.
+# List of inputs for f_menu_main_all_menus.
 #
-#  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
-#          $2 - GENERATED_FILE (The name of a temporary library file containing the suggested phrase "generated.lib" which contains the code to display the sub-menu).
-#          $3 - MENU_TITLE (Title of the sub-menu)
-#          $4 - TEMP_FILE (Temporary file).
-#          $5 - ARRAY_FILE (Temporary file) includes menu items imported from $ARRAY_SOURCE_FILE of a single menu.
-#          $6 - ARRAY_SOURCE_FILE (Not a temporay file) includes menu items from multiple menus.
+#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
+#          $2 - MENU_TITLE Title of menu which must also match the header
+#               and tail strings for the menu data in the ARRAY_SOURCE_FILE.
+#              !!!Menu title MUST use underscores instead of spaces!!!
+#          $3 - ARRAY_SOURCE_FILE is the file name where the menu data is stored.
+#               This can be the run-time script or a separate *.lib library file.
 #
 #! +--------------------------------------------------------------+
 #! | Start Listing Example Menu                                   |
 #! |               (Required header, do not delete).              |
 #! +--------------------------------------------------------------+
 #
-#@@Exit#@@Exit this menu.#@@break
+#@@Exit#@@Exit to command line.#@@break
 #
 #@@Directory Listing#@@list files in a directory.#@@f_dir_listing^$GUI
 #
 #@@File system list#@@List of mounted file systems.#@@f_df^$GUI
 #
-#@@Next Page#@@Next page of choices.#@@f_create_a_menu^$GUI^$THIS_DIR/$THIS_FILE"_sub_menu0_generated.lib"^Sub-menu_Zero^$THIS_DIR/$THIS_FILE"_sub_menu0_temp.txt"^$THIS_DIR/$THIS_FILE"_sub_menu0_items_generated.lib"^$THIS_DIR/menu_items.lib
+#@@Next Page#@@Next page of choices.#@@f_menu_main_all_menus^$GUI^Sub-menu_Zero^$THIS_DIR/menu_items.lib
 #
 #@@About#@@Version information of this script#@@f_about^$GUI
 #
@@ -68,7 +68,7 @@
 #
 #@@GNight Moon#@@Print GNight Moon.#@@f_gnight_moon
 #
-#@@Next Page#@@Next page of choices.#@@f_create_a_menu^$GUI^$THIS_DIR/$THIS_FILE"_sub_menu1_generated.lib"^Sub-menu_One^$THIS_DIR/$THIS_FILE"_sub_menu1_temp.txt"^$THIS_DIR/$THIS_FILE"_sub_menu1_items_generated.lib"^$THIS_DIR/menu_items.lib
+#@@Next Page#@@Next page of choices.#@@f_menu_main_all_menus^$GUI^Sub-menu_One^$THIS_DIR/menu_items.lib
 #
 #! End Listing Sub-menu Zero (Required line, do not delete).
 #

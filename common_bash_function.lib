@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# ©2023 Copyright 2023 Robert D. Chin
+# ©2024 Copyright 2024 Robert D. Chin
 # Email: RDevChin@Gmail.com
 #
 # Usage: source common_bash_function.lib
@@ -23,7 +23,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2023-12-30 23:13"
+VERSION="2024-01-19 21:26"
 #
 # WARNING: Do not define $THIS_FILE within a library script.
 #
@@ -60,9 +60,9 @@ VERSION="2023-12-30 23:13"
 #&
 #&    "fzf" is under the The MIT License (MIT) and Copyright (c) 2013-2023
 #&    by Junegunn Choi.
-#&     
-#&    "fzf" is an adaptable command-line fuzzy finder with an interactive 
-#&    interface. 
+#&
+#&    "fzf" is an adaptable command-line fuzzy finder with an interactive
+#&    interface.
 #&
 #&    "fzf" is used by the functions, f_select_dir_fzf and f_select_file.
 #&
@@ -76,6 +76,21 @@ VERSION="2023-12-30 23:13"
 ## Code Change History
 ##
 ## (After each edit made, please update Code History and VERSION.)
+##
+## 2024-01-19 *f_menu_main_all_menus_TEMPLATE added.
+##            *f_menu_main_TEMPLATE_2 deleted in favor of f_menu_main_all_menus_TEMPLATE.
+##            *f_menu_main_all_plus_TEMPLATE deleted in favor of f_menu_main_all_menus_TEMPLATE.
+##
+## 2024-01-16 *f_check_version_TEMPLATE, f_version_compare added
+##             "Silent Mode" parameter and only ask question to update
+##             if an update is needed.
+##
+## 2024-01-13 *f_menu_main_TEMPLATE improved comments, documentation.
+##            *f_menu_main_TEMPLATE_2, f_menu_main_all_plus_TEMPLATE added.
+##            *f_menu_sub_TEMPLATE deleted.
+##
+## 2023-12-31 *f_show_mount_points include $HOSTNAME in display.
+##            *f_create_a_menu improved documentation.
 ##
 ## 2023-12-29 *f_select_dir_verify force a standard so that all dir names
 ##             end in a trailing "/" or no "/")
@@ -96,14 +111,14 @@ VERSION="2023-12-30 23:13"
 ##             case statements.
 ##            *f_show_mount_points simplified.
 ##
-## 2023-12-17 *f_select_dir, f_select_file improved look and feel with 
+## 2023-12-17 *f_select_dir, f_select_file improved look and feel with
 ##             better dynamic resizing of Dialog box size with a warning
 ##             message if X-window size is too small for Dialog box.
 ##            *f_select_file bug fixed to display warning if a directory is
 ##             selected rather than a file. Added a messoge if Dialog
 ##             fselect "Cancel" button is pressed.
 ##
-## 2023-11-23 *f_show_mount_points added to display both LAN Samba shares, 
+## 2023-11-23 *f_show_mount_points added to display both LAN Samba shares,
 ##             and mount-points and locally mounted devices. such as
 ##             USB drives, and even RAID md devices.
 ##
@@ -552,15 +567,16 @@ f_display_common_TEMPLATE () {
            ;;
       esac
       #
-} # End of function f_display_common.
+} # End of function f_display_common_TEMPLATE.
 #
 # +----------------------------------------+
 # |        Function f_check_version_TEMPLATE        |
 # +----------------------------------------+
 #
-#     Rev: 2022-05-19
+#     Rev: 2024-01-16
 #  Inputs: $1 - "text", "dialog" or "whiptail" the command-line user-interface in use.
 #          $2 - [OPTIONAL] File name to compare.
+#          $3 - [OPTIONAL] 1=Silent mode.
 #          FILE_TO_COMPARE.
 #    Uses: SERVER_DIR, MP_DIR, LOCAL_REPO_DIR, $FILE_TO_COMPARE, FILE_LIST,
 #          VERSION, TEMP_FILE, ERROR.
@@ -651,7 +667,7 @@ f_check_version_TEMPLATE () {
       #echo "[ FILE NAME3 GOES HERE ]" >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
       #echo "[ FILE NAME4 GOES HERE ]" >> $FILE_LIST  # <<<--- INSERT ACTUAL FILE NAME HERE.
       #
-      f_version_compare $1 $SERVER_DIR $MP_DIR $LOCAL_REPO_DIR $FILE_TO_COMPARE "$VERSION" $FILE_LIST
+      f_version_compare $1 "$SERVER_DIR" "$MP_DIR" "$LOCAL_REPO_DIR" "$FILE_TO_COMPARE" "$VERSION" "$FILE_LIST" $3
       #
       if [ -r  $FILE_LIST ] ; then
          rm  $FILE_LIST
@@ -665,7 +681,7 @@ f_check_version_TEMPLATE () {
 # |       Function f_version_compare       |
 # +----------------------------------------+
 #
-#     Rev: 2022-05-19
+#     Rev: 2024-01-16
 #  Inputs: $1 - "text", "dialog" or "whiptail" the command-line user-interface in use.
 #          $2 - Samba File server Directory
 #          $3 - Local Mount Point (Directory)
@@ -673,6 +689,8 @@ f_check_version_TEMPLATE () {
 #          $5 - File server Target File name.
 #          $6 - Version of Local file. String.
 #          $7 - Temporary file name with list of files to be upgraded.
+#          $8 - 1=Silent mode without displaying questions or status.
+#               Display error messages only.
 #    Uses: LINE, VER, VER_MSG, VERSION_RELEASE, ERROR2.
 # Outputs: ERROR, ANS.
 #
@@ -721,21 +739,27 @@ f_version_compare () {
                VER_REPO=$(echo $VER_REPO | sed 's/VERSION=//' | sed 's/\"//g')
                #
                VER_MSG=$7"_MSG.txt"
-               echo "Replace Files on this PC?" > $VER_MSG
-               echo >> $VER_MSG
-
-               echo "***Original Software Version on this PC***" >> $VER_MSG
-               echo "$VER_LOCAL" >> $VER_MSG
-               echo >> $VER_MSG
-               echo "***Replace with***" >> $VER_MSG
-               echo "$VER_REPO" >> $VER_MSG
-               echo >> $VER_MSG
-               echo "Replace files below:" >> $VER_MSG
-               cat $7 >> $VER_MSG
-               echo >> $VER_MSG
-               echo "with files from Local Repository at" >> $VER_MSG
-               echo "$4" >> $VER_MSG
-               f_message $1 "OK" "List of Files to be Copied" $VER_MSG
+               #
+               # f_message $1 "OK" "Diagnostic Line common_bash_function.lib 737" "Silent Mode=$8 VER_LOCAL=$VER_LOCAL VER_REPO=$VER_REPO"  # Diagnostic line.
+               #
+               # Is "Silent Mode" deactivated and update needed?
+               if [ -z "$8" ] && [ "$VER_LOCAL" != "$VER_REPO" ]; then
+                  # Yes, display message.
+                  echo "Replace Files on this PC?" > $VER_MSG
+                  echo >> $VER_MSG
+                  echo "***Original Software Version on this PC***" >> $VER_MSG
+                  echo "$VER_LOCAL" >> $VER_MSG
+                  echo >> $VER_MSG
+                  echo "***Replace with***" >> $VER_MSG
+                  echo "$VER_REPO" >> $VER_MSG
+                  echo >> $VER_MSG
+                  echo "Replace files below:" >> $VER_MSG
+                  cat $7 >> $VER_MSG
+                  echo >> $VER_MSG
+                  echo "with files from Local Repository at" >> $VER_MSG
+                  echo "$4" >> $VER_MSG
+                  f_message $1 "OK" "List of Files to be Copied" $VER_MSG
+               fi
                #
                # Delete temporary file.
                if [ -e $VER_MSG ] ; then
@@ -751,8 +775,16 @@ f_version_compare () {
             f_message $1 "OK" "Error Mounting Local Repository Directory" "Failed to mount Local Repository Directory \"$4\". Cannot compare script versions."
          fi
          #
-         if [ $ERROR -eq 0 ] ; then
-            f_yn_question $1 "N" "Copy from Repository?" "Original software version on this PC:\n   $VER_LOCAL\n\nReplace with Repository software version:\n   $VER_REPO\n\nand OVERWRITE original files on this PC?"
+         # Is an update needed?
+         if [ $ERROR -eq 0 ] && [ "$VER_LOCAL" != "$VER_REPO" ]; then
+             Is "Silent Mode" activated?
+            if [ -z "$8" ] ; then
+               # "Silent Mode" inactive, display question.
+               f_yn_question $1 "N" "Copy from Repository?" "Original software version on this PC:\n   $VER_LOCAL\n\nReplace with Repository software version:\n   $VER_REPO\n\nand OVERWRITE original files on this PC?"
+            else
+               # "Silent Mode" active, force automatic copy from Repository.
+               ANS=0
+            fi
             #
             if [ $ANS -eq 0 ] ; then
                # Yes, copy from repository.
@@ -786,9 +818,19 @@ f_version_compare () {
                   f_message $1 "OK" "Error occurred" $TEMP_FILE
                   ERROR=1
                else
-                  f_message $1 "NOK" "Successful Update" "Latest version was successfully copied for use.\nScript must be re-started to use the latest version." 2
                   ERROR=0
+                  # Is "Silent Mode" activated?
+                  if [ -z "$8" ] ; then
+                     # "Silent Mode" inactive, display question.
+                     f_message $1 "NOK" "Successful Update" "Latest version was successfully copied for use.\nScript must be re-started to use the latest version."
+                  fi
                fi
+            fi
+         else
+            # Is "Silent Mode" activated?
+            if [ -z "$8" ] ; then
+               # "Silent Mode" inactive, display question.
+               f_message $1 "NOK" "Software Not Updated" "Software is at the latest version. No update needed."
             fi
          fi
       fi
@@ -907,9 +949,9 @@ f_arguments () {
            ;;
            --update | -u)
               if [ -z $GUI ] ; then
-                 f_check_version text $SERVER_DIR $MP_DIR $LOCAL_REPO_DIR $FILE_TO_COMPARE $VERSION_TO_COMPARE $FILE_LIST
+                 f_check_version text
               else
-                 f_check_version $GUI $SERVER_DIR $MP_DIR $LOCAL_REPO_DIR $FILE_TO_COMPARE $VERSION_TO_COMPARE $FILE_LIST
+                 f_check_version $GUI
               fi
               #
               clear # Blank the screen.
@@ -1489,8 +1531,7 @@ f_show_mount_points () {
       # Blank the screen.
       clear
       #
-      date >$TEMP_FILE
-      echo >>$TEMP_FILE
+      echo "Local PC is "$HOSTNAME"." >$TEMP_FILE
       echo "------------------------------------------------------------------" >>$TEMP_FILE
       echo "Display status of any shared directories from remote file servers." >>$TEMP_FILE
       echo "------------------------------------------------------------------" >>$TEMP_FILE
@@ -1921,7 +1962,7 @@ f_web_browser () {
          #================================================================================
          # EDIT $WEB_BROWSER_APPS BELOW TO LIST FAVORITE WEB BROWSER APPS FOR CLI.
          # THE WEB BROWSER APPS ARE LISTED IN THE ORDER OF PREFERENCE.
-         # THE FIRST APP IN THE LIST IS THE ONE FIRST USED (IF INSTALLED). 
+         # THE FIRST APP IN THE LIST IS THE ONE FIRST USED (IF INSTALLED).
          # IF NOT INSTALLED, THE FOR-LOOP WILL TRY THE NEXT APP.
          #================================================================================
          #
@@ -1935,7 +1976,7 @@ f_web_browser () {
          #================================================================================
          # EDIT $WEB_BROWSER_APPS BELOW TO LIST FAVORITE WEB BROWSER APPS FOR X-WINDOWS.
          # THE WEB BROWSER APPS ARE LISTED IN THE ORDER OF PREFERENCE.
-         # THE FIRST APP IN THE LIST IS THE ONE FIRST USED (IF INSTALLED). 
+         # THE FIRST APP IN THE LIST IS THE ONE FIRST USED (IF INSTALLED).
          # IF NOT INSTALLED, THE FOR-LOOP WILL TRY THE NEXT APP.
          #================================================================================
          #
@@ -1964,7 +2005,7 @@ f_web_browser () {
              fi
           done
       #
-      # Was a web browser detected? 
+      # Was a web browser detected?
       # For-loop outputs $WEB_BROWSER_FOUND.
       if [ $RUNAPP -eq 1 ] ; then
          # Set output to $WEB_BROWSER.
@@ -2016,7 +2057,7 @@ f_select_dir () {
       fi
       #
       case $1 in
-           dialog)              
+           dialog)
               # Is the length of $DIR_DESCR String longer than 28 characters?
               # Truncate string length so Dialog f_select works on an 80x24 character VGA display.
               #DIR_DESCR=${DIR_DESCR:0:28}
@@ -2065,7 +2106,7 @@ f_select_dir () {
                        #
                        # The dialog --dselect --backtitle "Please choose $DIR_DESCR"
                        # will only display if screen/window resolution is at least 30 lines vertically.
-                       # If less than 30 lines, the directory browser --dselect 
+                       # If less than 30 lines, the directory browser --dselect
                        # will still be displayed but without the --backtitle.
                        #
                        # If number of lines exceeds screen/window height then set textbox height.
@@ -2145,7 +2186,7 @@ f_select_dir () {
                           # Application "fzf" limitation is you can only select sub-directories
                           # of the default directory during the While-loop.
                           # You cannot select a different parent directory from the default directory.
-                          # i.e. if you select a file from "/home/user/Documents" 
+                          # i.e. if you select a file from "/home/user/Documents"
                           #      then you cannot select a file from "/home/user/Downloads",
                           #      but you could select a file from "/home/user/Documents/unread"
                           #
@@ -2270,7 +2311,7 @@ f_select_dir_fzf () {
       while [ "$ERROR" -eq 0 ]
             do
                # The DEFAULT_DIR will change to the sub-directory selected during each loop in the while-loop.
-               # If the user aborts the selection or wants to select another sub-directory, 
+               # If the user aborts the selection or wants to select another sub-directory,
                # then DEFAULT_DIR is set to $3 by f_select_dir_verify to start over from the original directory.
                DIR_SELECTED=$(find $DIR_OLD -maxdepth 1 -type d 2>/dev/null | fzf --query="^$DEFAULT_DIR" --pointer="=>" --prompt "Type file name and use up-down arrows. Esc key to skip. Select: ")
                ERROR=$?
@@ -2331,7 +2372,7 @@ f_select_dir_verify () {
       DIR_SELECTED=$3
       #
       case $1 in
-           dialog) 
+           dialog)
               # Was any directory selected?
               if [ $ERROR -eq 0 ] && [ -n $DIR_SELECTED ] ; then
                  f_yn_question $1 "Y" "Confirm $DIR_DESCR name" "$DIR_DESCR name:\n$DIR_SELECTED\n\nIs the $DIR_DESCR name correct?"
@@ -2386,8 +2427,7 @@ f_select_dir_verify () {
                  # No, the $DIR_SELECTED is not correct.
               fi
               # No, a directory was not selected.
-   
-           ;;               
+           ;;
            whiptail | text)
               # Was any directory selected?
               if [ $ERROR -eq 0 ] && [ -n $DIR_SELECTED ] ; then
@@ -2536,7 +2576,7 @@ f_select_file () {
                        #
                        # The dialog --fselect --backtitle "Please choose $FILE_DESCR"
                        # will only display if screen/window resolution is at least 30 lines vertically.
-                       # If less than 30 lines, the directory browser --dselect 
+                       # If less than 30 lines, the directory browser --dselect
                        # will still be displayed but without the --backtitle.
                        #
                        # If window size is less than 80 x 24, then Dialog f_select_dir will not work properly.
@@ -2579,7 +2619,7 @@ f_select_file () {
                     done
               # Process output of file selection.
               f_select_file_output $1 "$FILE_DESCR" "$DEFAULT_DIR" "$TEMP_FILE2" $4
-              # Outputs ANS a string with selected file names separated by spaces. 
+              # Outputs ANS a string with selected file names separated by spaces.
               # (List of selected files delimited by spaces: "DIR1/FILE1 DIR2/FILE2 DIR3/FILE3...")
            ;;
            whiptail | text)
@@ -2632,7 +2672,7 @@ f_select_file () {
                              # Application "fzf" limitation is you can only select sub-directories
                              # of the default directory during the While-loop.
                              # You cannot select a different parent directory from the default directory.
-                             # i.e. if you select a file from "/home/user/Documents" 
+                             # i.e. if you select a file from "/home/user/Documents"
                              #      then you cannot select a file from "/home/user/Downloads",
                              #      but you could select a file from "/home/user/Documents/unread"
                              #
@@ -2680,7 +2720,7 @@ f_select_file () {
               #
               # Process output of file selection.
               f_select_file_output $1 "$FILE_DESCR" "$DEFAULT_DIR" "$TEMP_FILE2" $4
-              # Outputs ANS a string with selected file names separated by spaces. 
+              # Outputs ANS a string with selected file names separated by spaces.
               # (List of selected files delimited by spaces: "DIR1/FILE1 DIR2/FILE2 DIR3/FILE3...")
            ;;
       esac
@@ -2745,7 +2785,7 @@ f_select_file_verify () {
                else
                   # No, multiple files can be selected, so continue.
                   case $1 in
-                  dialog) 
+                  dialog)
                      f_message $1 "NOK" "File Entered" "File name accepted. Enter next file name or press \"Done choosing\" button.\n\n$FILE_SELECTED" 2
                   ;;
                   whiptail | text)
@@ -4750,19 +4790,182 @@ f_update_menu_gui () {
       #
 }  # End of function f_update_menu_gui.
 #
+# +-----------------------------------------+
+# | Function f_menu_main_all_menus_TEMPLATE          |
+# +-----------------------------------------+
+#
+#     Rev: 2024-01-19
+#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
+#          $2 - MENU_TITLE Title of menu which must also match the header
+#               and tail strings for the menu data in the ARRAY_SOURCE_FILE.
+#              !!!Menu title MUST use underscores instead of spaces!!!
+#          $3 - ARRAY_SOURCE_FILE is the file name where the menu data is stored.
+#               This can be the run-time script or a separate *.lib library file.
+#    Uses: ARRAY_SOURCE_FILE, ARRAY_TEMP_FILE, GENERATED_FILE, MENU_TITLE, TEMP_FILE.
+# Outputs: None.
+#
+# Summary: Display any menu. Use this same function to display
+#          both Main-Menu and any sub-menus. The Main Menu and all sub-menu data
+#          are in a separte library file from the run-time script or program.
+#          A single library file contains data for multiple menus (many menus/1 library file),
+#          In this scheme, multiple menu data is in the library file,
+#          which may also contain various functions in addition to the menu data.
+#
+#          Simply state the Path/Filename of the library file, ARRAY_SOURCE_FILE
+#          which contains the menu data.
+#
+# Dependencies: f_menu_arrays, f_create_show_menu.
+#
+# PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
+#              THIS FUNCTION INTO THE MAIN SCRIPT WHICH WILL CALL IT.
+#
+f_menu_main_all_menus_TEMPLATE () {
+      #
+      #
+      #================================================================================
+      # EDIT THE LINE BELOW TO DEFINE $ARRAY_SOURCE_FILE AS THE ACTUAL FILE NAME
+      # WHERE THE MENU ITEM DATA IS LOCATED. THE LINES OF DATA ARE PREFIXED BY "#@@".
+      #================================================================================
+      #
+      #
+      # Note: Alternate menu data storage scheme.
+      # For a separate library file for each menu data (1 menu/1 library file),
+      # or for the run-time program to contain the Main Menu data (1 Main menu/run-time script),
+      # then see f_menu_main_TEMPLATE in common_bash_function.lib
+      #
+      # Specify the library file name with menu item data.
+      # ARRAY_SOURCE_FILE (Not a temporay file) includes menu items
+      # from one or more menus (multiple menus/1 library file ARRAY_SOURCE_FILE).
+      ARRAY_SOURCE_FILE=$3
+      #
+      #
+      #================================================================================
+      # EDIT THE LINE BELOW TO DEFINE MENU_TITLE AS THE ACTUAL TITLE OF THE MENU THAT
+      # CONTAINS THE MENU ITEM DATA. THE LINES OF DATA ARE PREFIXED BY "#@@".
+      #================================================================================
+      #
+      #
+      # Note: ***If Menu title contains spaces,
+      #       ***the size of the menu window will be too narrow.
+      #
+      # Menu title MUST use underscores instead of spaces.
+      MENU_TITLE=$2
+      #
+      # Examples of valid $2 parameters:
+      # MENU_TITLE="Main_Menu"
+      # MENU_TITLE="Task_Menu"
+      # MENU_TITLE="Utility_Menu"
+      #
+      # The MENU_TITLE must match the strings in the ARRAY_SOURCE_FILE.
+      #
+      #       The run-time script file, "ice_cream.sh" may also contain the data
+      #       for both Main menu and sub-menus if it follows the same format below.
+      #
+      #       If you have a lot of menus, you may want to have all the menu data
+      #       in a separate library file.
+      #
+      #       Example:
+      #
+      #       The file "all_ice_cream_menus.lib" contains the data for both
+      #       Main menu: "Tasty Ice Cream Menu"
+      #        Sub-menu: "Ice Cream Toppings Menu".
+      #
+      #  Each menu (Main Menu and sub-menus) must have Header and Tail strings.
+      #  Main menu header/tail strings:
+      #  Header string: "Start Listing Tasty Ice Cream Menu" (with spaces " ")
+      #    Tail string: "End Listing Tasty Ice Cream Menu"
+      #
+      #  Sub-menu header/tail strings:
+      #  Header string: "Start Listing Ice Cream Toppings Menu"
+      #    Tail string: "End Listing Ice Cream Toppings Menu"
+      #
+      #
+      #  Example:
+      #
+      #  ARRAY_SOURCE_FILE="All_Ice_Cream_Menus.lib"
+      #
+      #  Listing of $ARRAY_SOURCE_FILE (All_Ice_Cream_Menus.lib)
+      #          which includes menu item data:
+      #
+      #  Start Listing Tasty Ice Cream Menu (Required header, do not delete).
+      #      Data for Menu item 1
+      #      Data for Menu item 2
+      #      Data for Menu item 3
+      #  End  Listing Tasty Ice Cream Menu (Required line, do not delete).
+      #
+      #  Start Listing Ice Cream Toppings Menu (Required header, do not delete).
+      #      Data for Menu item 1
+      #      Data for Menu item 2
+      #      Data for Menu item 3
+      #  End Listing Ice Cream Toppings Menu (Required line, do not delete).
+      #
+      #
+      TEMP_FILE=$THIS_DIR/$THIS_FILE"_menu_temp.txt"
+      #
+      # GENERATED_FILE (The name of a temporary library file which contains the code to display the sub-menu).
+      GENERATED_FILE=$THIS_DIR/$THIS_FILE"_menu_generated.lib"
+      #
+      # ARRAY_TEMP_FILE (Temporary file) includes menu items imported from $ARRAY_SOURCE_FILE of a single menu.
+      ARRAY_TEMP_FILE=$THIS_DIR/$THIS_FILE"_menu_array_generated.lib"
+      #
+      # ARRAY_FILE is used by f_update_menu_gui and f_update_menu_txt.
+      # It is not included in formal passed parameters but is used anyways
+      # in the $GENERATED_FILE as a line: "source $ARRAY_FILE".
+      # I wanted to retire this variable name, but it has existed in the
+      # common_bash_function.lib library for quite a while.
+      ARRAY_FILE=$GENERATED_FILE
+      #
+      # When using f_create_a_menu, all subsequent sub-menus do not need a separate
+      # hard-coded function, since f_create_a_menu will generate sub-menu functions as needed.
+      #
+      # List of inputs for f_create_a_menu.
+      #
+      #  Inputs: $1 - "text", "dialog" or "whiptail" The command-line user-interface application in use.
+      #          $2 - GENERATED_FILE (The name of a temporary library file containing the suggested phrase "generated.lib" which contains the code to display the sub-menu).
+      #          $3 - MENU_TITLE (Title of the sub-menu)
+      #          $4 - TEMP_FILE (Temporary file).
+      #          $5 - ARRAY_TEMP_FILE (Temporary file) includes menu items imported from $ARRAY_SOURCE_FILE of a single menu.
+      #          $6 - ARRAY_SOURCE_FILE (Not a temporary file) includes menu items from multiple menus.
+      #
+      f_create_a_menu $1 $GENERATED_FILE $MENU_TITLE $TEMP_FILE $ARRAY_TEMP_FILE $ARRAY_SOURCE_FILE
+      #
+      if [ -e $TEMP_FILE ] ; then
+         rm $TEMP_FILE
+      fi
+      #
+      if [ -e  $GENERATED_FILE ] ; then
+         rm  $GENERATED_FILE
+      fi
+      #
+} # End of function f_menu_main_all_menus_TEMPLATE
+#
 # +----------------------------------------+
 # |          Function f_menu_main_TEMPLATE          |
 # +----------------------------------------+
 #
-#     Rev: 2022-10-05
+#     Rev: 2024-01-13
 #  Inputs: $1 - "text", "dialog" or "whiptail" the command-line user-interface in use.
-#    Uses: ARRAY_FILE, GENERATED_FILE, MENU_TITLE.
+#    Uses: ARRAY_SOURCE_FILE, GENERATED_FILE, MENU_TITLE, TEMP_FILE,
+#          MAX_LENGTH, MAX_CHOICE_LENGTH, MAX_SUMMARY_LENGTH.
 # Outputs: None.
 #
-# Summary: Template for Main-Menu
-#          This Main Menu function checks its script for the Main Menu
+# Summary: Template for Main-Menu where the ARRAY_SOURCE_FILE can contain data for only 1 menu.
+#          For sub-menus, this template and the sub-menu data must both be in a separate ARRAY_SOURCE_FILE.
+#
+#          Please see f_menu_main_all_menus_TEMPLATE for a much more flexible menu template
+#          for both Main Menus and sub-menus.
+#
+#          This Main Menu function checks the run-time script for the Main Menu
 #          options delimited by "#@@" and if it does not find any, then
 #          it it defaults to the specified library script.
+#
+#          Either the run-time file or library file can contain menu item data for a SINGLE menu only.
+#          With this scheme, a separate library file is needed for each menu (1 menu/1 library file).
+#          So the Main menu data may be either in the run-time script or in a separate library file.
+#
+#          Note: Alternate menu data storage scheme.
+#          For a single library file containg data for multiple menus (many menus/1 library file),
+#          then see f_menu_multiple_TEMPLATE in common_bash_function.lib.
 #
 # Dependencies: f_menu_arrays, f_create_show_menu.
 #
@@ -4770,6 +4973,12 @@ f_update_menu_gui () {
 #              THIS FUNCTION INTO THE MAIN SCRIPT WHICH WILL CALL IT.
 #
 f_menu_main_TEMPLATE () {
+      #
+      # Note: ***If Menu title contains spaces,
+      #       ***the size of the menu window will be too narrow.
+      #
+      # Menu title MUST use underscores instead of spaces.
+      MENU_TITLE="Main_Menu"
       #
       # Create and display the Main Menu.
       GENERATED_FILE=$THIS_DIR/$THIS_FILE"_menu_main_generated.lib"
@@ -4780,6 +4989,7 @@ f_menu_main_TEMPLATE () {
       # exit code 0 - menu items in this file.
       #           1 - no menu items in this file.
       #               file name of file containing menu items must be specified.
+      #
       if [ $ERROR -eq 0 ] ; then
          # Extract menu items from this file and insert them into the Generated file.
          # This is required because f_menu_arrays cannot read this file directly without
@@ -4787,7 +4997,7 @@ f_menu_main_TEMPLATE () {
          grep ^\#@@ $THIS_DIR/$THIS_FILE >$GENERATED_FILE
          #
          # Specify file name with menu item data.
-         ARRAY_FILE="$GENERATED_FILE"
+         ARRAY_SOURCE_FILE="$GENERATED_FILE"
       else
          #
          #
@@ -4798,13 +5008,21 @@ f_menu_main_TEMPLATE () {
          #==================================================================
          #
          #
+         # Note: Alternate menu data storage scheme.
+         # For a single library file containg data for multiple menus (many menus/1 library file),
+         # then see f_menu_multiple_TEMPLATE in common_bash_function.lib.
+         #
          # Specify library file name with menu item data.
+         # Library file contains menu item data for a SINGLE menu only.
+         # With this scheme, a separate library file is needed for each menu (1 menu/1 library file).
+         # So the Main menu data may be either in the run-time script or in a separate library file.
+         #
          # ARRAY_FILE="[FILENAME_GOES_HERE]"
-           ARRAY_FILE="$THIS_DIR/[FILENAME_GOES_HERE]"
+           ARRAY_SOURCE_FILE="$THIS_DIR/[FILENAME_GOES_HERE]"
       fi
       #
       # Create arrays from data.
-      f_menu_arrays $ARRAY_FILE
+      f_menu_arrays $ARRAY_SOURCE_FILE
       #
       # Calculate longest line length to find maximum menu width
       # for Dialog or Whiptail using lengths calculated by f_menu_arrays.
@@ -4812,13 +5030,15 @@ f_menu_main_TEMPLATE () {
       #
       # Create generated menu script from array data.
       #
-      # Note: ***If Menu title contains spaces,
-      #       ***the size of the menu window will be too narrow.
-      #
-      # Menu title MUST use underscores instead of spaces.
-      MENU_TITLE="Main_Menu"
       TEMP_FILE=$THIS_DIR/$THIS_FILE"_menu_main_temp.txt"
       #
+      # ARRAY_FILE is used by f_update_menu_gui and f_update_menu_txt.
+      # It is not included in formal passed parameters but is used anyways
+      # in the $GENERATED_FILE as a line: "source $ARRAY_FILE".
+      # I wanted to retire this variable name, but it has existed in the
+      # common_bash_function.lib library for quite a while.
+      ARRAY_FILE=$GENERATED_FILE
+      #
       f_create_show_menu $1 $GENERATED_FILE $MENU_TITLE $MAX_LENGTH $MAX_LINES $MAX_CHOICE_LENGTH $TEMP_FILE
       #
       if [ -r $GENERATED_FILE ] ; then
@@ -4829,69 +5049,7 @@ f_menu_main_TEMPLATE () {
          rm $TEMP_FILE
       fi
       #
-}  # End of function f_menu_main.
-#
-# +----------------------------------------+
-# |          Function f_menu_SUB-MENU_TEMPLATE  |
-# +----------------------------------------+
-#
-#     Rev: 2021-03-07
-#  Inputs: $1 - "text", "dialog" or "whiptail" the command-line user-interface in use.
-#    Uses: ARRAY_FILE, GENERATED_FILE, MENU_TITLE.
-# Outputs: None.
-#
-# Summary: Template for Sub-Menus
-#          (See also f_create_menu which may be used in place of this function.)
-#
-#          Simpler implementation than the Main Menu function.
-#          It assumes that this function is in a separate script library
-#          file which contains the Sub-Menu options delimited by "#@@".
-#
-#          Whereas the Main Menu function checks its script for the
-#          Main Menu options delimited by "#@@" and if it does not
-#          find any then it defaults to the specified library script.
-#
-# Dependencies: f_menu_arrays, f_create_show_menu.
-#
-f_menu_sub_TEMPLATE () {
-      #
-      GENERATED_FILE=$THIS_DIR/$THIS_FILE"_menu_sub-01_generated.lib"
-      #
-      # Create generated menu script from array data.
-      #
-      # Note: ***If Sub-Menu title contains spaces,
-      #       ***the size of the menu window will be too narrow.
-      #
-      # Sub-Menu title MUST use underscores instead of spaces.
-      MENU_TITLE="Sub-menu_Menu"  # Menu title must substitute underscores for spaces
-      TEMP_FILE=$THIS_DIR/$THIS_FILE"_menu_sub-01_temp.txt"
-      #
-      #
-      #==================================================================
-      # EDIT THE LINE BELOW TO DEFINE $ARRAY_FILE AS THE ACTUAL FILE NAME
-      # (LIBRARY) WHERE THE MENU ITEM DATA IS LOCATED. THE LINES OF DATA
-      # ARE PREFIXED BY "#@@".
-      #==================================================================
-      #
-      #
-      # Specify library file name with menu item data.
-      ARRAY_FILE="[FILENAME_GOES_HERE]"
-      #
-      # Create arrays from data.
-      f_menu_arrays $ARRAY_FILE
-      #
-      # Create generated menu script from array data.
-      f_create_show_menu $1 $GENERATED_FILE $MENU_TITLE $MAX_LENGTH $MAX_LINES $MAX_CHOICE_LENGTH $TEMP_FILE
-      #
-      if [ -r $GENERATED_FILE ] ; then
-         rm $GENERATED_FILE
-      fi
-      #
-      if [ -r $TEMP_FILE ] ; then
-         rm $TEMP_FILE
-      fi
-      #
-}  # End of function f_menu_sub.
+}  # End of function f_menu_main_TEMPLATE.
 #
 # +----------------------------------------+
 # |         Function f_create_a_menu       |
@@ -4902,12 +5060,52 @@ f_menu_sub_TEMPLATE () {
 #          $2 - GENERATED_FILE (The name of a temporary library file containing the suggested phrase "generated.lib" which contains the code to display the sub-menu).
 #          $3 - MENU_TITLE (Title of the sub-menu)
 #          $4 - TEMP_FILE (Temporary file).
-#          $5 - ARRAY_FILE (Temporary file) includes menu items imported from $ARRAY_SOURCE_FILE of a single menu.
+#          $5 - ARRAY_TEMP_FILE (Temporary file) includes menu items imported from $ARRAY_SOURCE_FILE of a single menu.
 #          $6 - ARRAY_SOURCE_FILE (Not a temporay file) includes menu items from multiple menus.
 #    Uses: None.
 # Outputs: None.
 #
-# Summary: Display sub-menu. This may replace f_menu_sub_TEMPLATE.
+# Summary: Display Main Menu and/or Sub-menus using menu data from a single file which includes all the menu items for multiple menus.
+#          So rather than having a separate file for the data of each menu, this allows you to have data for multiple menus in a single file.
+#          This may replace f_menu_sub_TEMPLATE.
+#
+#       The run-time script file, "ice_cream.sh" may also contain the data
+#       for both Main menu and sub-menus if it follows the same format below.
+#
+#       If you have a lot of menus, you may want to have all the menu data
+#       in a separate library file.
+#
+#       Example:
+#       The file "All_Ice_Cream_Menus.lib" contains the data for both
+#       Main menu: "Tasty Ice Cream Menu"
+#        Sub-menu: "Ice Cream Toppings Menu".
+#
+#       Each menu (Main Menu and sub-menus) must have Header and Tail strings.
+#       Main menu header/tail strings:
+#       Header string: "Start Listing Tasty Ice Cream Menu" (with spaces " ")
+#         Tail string: "End Listing Tasty Ice Cream Menu"
+#       must be used in the header/tail string sentences of the menu item data.
+#
+#       Sub-menu header/tail strings:
+#       Header string: "Start Listing Ice Cream Toppings Menu"
+#         Tail string: "End Listing Ice Cream Toppings Menu"
+#
+#       ARRAY_SOURCE_FILE="All_Ice_Cream_Menus.lib"
+#
+#       Listing of $ARRAY_SOURCE_FILE (All_Ice_Cream_Menus.lib)
+#               which includes menu item data:
+#
+#       Start Listing Tasty Ice Cream Menu (Required header, do not delete).
+#           Data for Menu item 1
+#           Data for Menu item 2
+#           Data for Menu item 3
+#       End  Listing Tasty Ice Cream Menu (Required line, do not delete).
+#
+#       Start Listing Ice Cream Toppings Menu (Required header, do not delete).
+#           Data for Menu item 1
+#           Data for Menu item 2
+#           Data for Menu item 3
+#       End Listing Ice Cream Toppings Menu (Required line, do not delete).
 #
 # Dependencies: f_menu_make, f_menu_arrays, f_create_show_menu.
 #
@@ -4961,7 +5159,7 @@ f_create_a_menu () {
 #          $2 - GENERATED_FILE (The name of a temporary library file containing the suggested phrase "generated.lib" which contains the code to display the sub-menu).
 #          $3 - MENU_TITLE (Title of the sub-menu)
 #          $4 - TEMP_FILE (Temporary file).
-#          $5 - ARRAY_FILE (Temporary file) includes menu items imported from $ARRAY_SOURCE_FILE of a single menu.
+#          $5 - ARRAY_TEMP_FILE (Temporary file) includes menu items imported from $ARRAY_SOURCE_FILE of a single menu.
 #    Uses: None.
 # Outputs: None.
 #
@@ -5033,7 +5231,7 @@ f_menu_make () {
       ENDING_LINE=$(grep -n "End Listing $MENU_TITLE"     $4 | awk -F ":" '{print $1 }')
       #
       # Copy text between $STARTING_LINE and $ENDING_LINE into a text file.
-      # Create sed command "$STARTING_LINE,$ENDING_LINEp" i.e. "31,51p".
+      # Create sed command "$STARTING_LINE,$ENDING_LINEp" i.e. "31,51p" for STARTING_LINE=31, ENDING_LINE=51.
       SEDSTR="$STARTING_LINE,$ENDING_LINE"
       SEDSTR=$SEDSTR"p"
       #

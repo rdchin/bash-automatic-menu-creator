@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# ©2023 Copyright 2023 Robert D. Chin
+# ©2024 Copyright 2024 Robert D. Chin
 # Email: RDevChin@Gmail.com
 #
 # Usage: source menu.lib
@@ -23,7 +23,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2023-11-25 20:40"
+VERSION="2024-01-20 18:01"
 #
 # Commented out THIS_FILE since it will conflict other scripts which
 # use this library.
@@ -71,7 +71,7 @@ VERSION="2023-11-25 20:40"
 # +----------------------------------------+
 #
 #     Rev: 2021-03-25
-#  Inputs: $1 - UI "dialog" or "whiptail" or "text".
+#  Inputs: $1 - "text", "dialog" or "whiptail" the command-line user-interface in use.
 #          $2 - [OPTIONAL] File name to compare.
 #          FILE_TO_COMPARE.
 #    Uses: SERVER_DIR, MP_DIR, TARGET_DIR, TARGET_FILE, VERSION, TEMP_FILE, ERROR.
@@ -161,7 +161,7 @@ f_check_version () {
 # |          Function f_dir_listing        |
 # +----------------------------------------+
 #
-#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#  Inputs: $1 - "text", "dialog" or "whiptail" the command-line user-interface in use.
 #          THIS_DIR, THIS_FILE.
 #    Uses: None.
 # Outputs: None.
@@ -181,7 +181,7 @@ f_dir_listing () {
 # |              Function f_df             |
 # +----------------------------------------+
 #
-#  Inputs: $1=GUI - "dialog" or "whiptail" The CLI GUI application in use.
+#  Inputs: $1 - "text", "dialog" or "whiptail" the command-line user-interface in use.
 #          THIS_DIR, THIS_FILE.
 #    Uses: None.
 # Outputs: None.
