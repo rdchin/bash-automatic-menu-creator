@@ -24,7 +24,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2024-01-20 18:01"
+VERSION="2024-02-19 15:04"
 THIS_FILE=$(basename $0)
 FILE_TO_COMPARE=$THIS_FILE
 TEMP_FILE=$THIS_FILE"_temp.txt"
@@ -43,20 +43,20 @@ GENERATED_FILE=$THIS_FILE"_menu_generated.lib"
 #
 # LAN File Server shared directory.
 # SERVER_DIR="[FILE_SERVER_DIRECTORY_NAME_GOES_HERE]"
-  SERVER_DIR="//file_server/public"
+  SERVER_DIR="//file_server/files"
 #
 # Local PC mount-point directory.
 # MP_DIR="[LOCAL_MOUNT-POINT_DIRECTORY_NAME_GOES_HERE]"
-  MP_DIR="/mnt/file_server/public"
+  MP_DIR="/mnt/file_server/files"
 #
 # Local PC mount-point with LAN File Server Local Repository full directory path.
 # Example:
-#                   File server shared directory is "//file_server/public".
+#                   File server shared directory is "//file_server/files".
 # Repostory directory under the shared directory is "scripts/BASH/Repository".
-#                 Local PC Mount-point directory is "/mnt/file_server/public".
+#                 Local PC Mount-point directory is "/mnt/file_server/files".
 #
 # LOCAL_REPO_DIR="$MP_DIR/[DIRECTORY_PATH_TO_LOCAL_REPOSITORY]"
-  LOCAL_REPO_DIR="$MP_DIR/scripts/BASH/Local_Repository"
+  LOCAL_REPO_DIR="$MP_DIR/Local_Repository"
 #
 #
 #=================================================================
@@ -190,6 +190,16 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ##
 ## Includes changes to menu.lib, menu_01.lib, menu_02.lib, and
 ##                     menu_items.lib.
+##
+## 2024-02-19 *f_menu_main_all_menus added replacing f_menu_main.
+##            *f_menu_main deleted in favor of f_menu_main_all_menus.
+##            *Section "Main Program" changed from: f_menu_main
+##                                    changed   to: f_menu_main_all_menus
+##             These changes use the menu template "f_menu_main_all_menus"
+##             which may be used for all menus. It is more versatile and
+##             requires fewer passed parameters making it simpler to use.
+##
+## 2024-02-05 *menu_items.lib updated to latest standards, included VERSION.
 ##
 ## 2024-01-20 *Release 5.0 "Erin".
 ##
@@ -1187,7 +1197,8 @@ f_about $GUI "NOK" 1
 #              !!!Menu title MUST use underscores instead of spaces!!!
 #          $3 - ARRAY_SOURCE_FILE is the file name where the menu data is stored.
 #               This can be the run-time script or a separate *.lib library file.
-f_menu_main_all_menus $GUI "Example_Menu" "menu_items.lib"
+#
+f_menu_main_all_menus $GUI "Example_Menu" "$THIS_DIR/menu_items.lib"
 #
 # Delete temporary files.
 #

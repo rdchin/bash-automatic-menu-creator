@@ -1,3 +1,71 @@
+#!/bin/bash
+#
+# ©2024 Copyright 2024 Robert D. Chin
+# Email: RDevChin@Gmail.com
+#
+# Usage: source menu_items.lib
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program. If not, see <https://www.gnu.org/licenses/>.
+#
+# +----------------------------------------+
+# |        Default Variable Values         |
+# +----------------------------------------+
+#
+VERSION="2024-02-19 15:04"
+#
+# Commented out THIS_FILE since it will conflict other scripts which
+# use this library.
+#THIS_FILE=$(basename $0)
+#
+# +----------------------------------------+
+# |            Brief Description           |
+# +----------------------------------------+
+#
+#& Brief Description
+#&
+#& This Library of functions for the Demonstration Menu is a
+#& child dependency used by the following scripts.
+#&
+#& Parent script: menu.sh.
+#&
+#& See script menu.sh for Edit History.
+#&
+#& Usage: source menu.lib
+#&
+#&    This program is free software: you can redistribute it and/or modify
+#&    it under the terms of the GNU General Public License as published by
+#&    the Free Software Foundation, either version 3 of the License, or
+#&    (at your option) any later version.
+#&
+#&
+#&    This program is distributed in the hope that it will be useful,
+#&    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#&    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#&    GNU General Public License for more details.
+#&
+#&    You should have received a copy of the GNU General Public License
+#&    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+# +----------------------------------------+
+# |           Code Change History          |
+# +----------------------------------------+
+#
+## Code Change History
+##
+## (Please see script "menu.sh" for Code History information.)
+#
 # +--------------------------------------------------------------------------+
 # |                                                                          |
 # |                 Customize Menu choice options below.                     |
@@ -7,26 +75,22 @@
 #                 >>> !!!Warning!!! <<<
 #
 # The Menu Item Descriptions cannot have semi-colons, colons, asterisks,
-# single-quotes (apostrophes), double-quotes, ampersands, greater-than and less-than signs.
+# single-quotes (apostrophes), double-quotes, ampersands, greater-than
+# and less-than signs.
 #
-# Forbidden characters include ; : * ' " & > <
+# Forbidden characters include ; : * ' " & > < \
 #
 # These characters will compromise the creation of arrays which
 # in turn creates the menu.
+#
+# Note: The single-quotes (') and double-quotes (") and back-slashes (\)
+#       are ignored when the arrays are created, even if they are included
+#       in the Menu Item Description.
 #
 # General Format: <#@@> <Menu Option> <#@@> <Description of Menu Option> <#@@> <Corresponding function or action or command>
 #
 # Format of <Corresponding function or action or command> when using f_menu_main_all_menus.
 #        f_menu_main_all_menus^"text", "dialog", or "whiptail"^Menu Name^Library name containing menu entries
-#
-# List of inputs for f_menu_main_all_menus.
-#
-#  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
-#          $2 - MENU_TITLE Title of menu which must also match the header
-#               and tail strings for the menu data in the ARRAY_SOURCE_FILE.
-#              !!!Menu title MUST use underscores instead of spaces!!!
-#          $3 - ARRAY_SOURCE_FILE is the file name where the menu data is stored.
-#               This can be the run-time script or a separate *.lib library file.
 #
 #! +--------------------------------------------------------------+
 #! | Start Listing Example Menu                                   |

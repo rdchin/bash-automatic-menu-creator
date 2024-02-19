@@ -23,7 +23,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2024-01-20 18:01"
+VERSION="2024-02-19 15:04"
 #
 # Commented out THIS_FILE since it will conflict other scripts which
 # use this library.
@@ -99,21 +99,21 @@ f_check_version () {
       #
       # LAN File Server shared directory.
       # SERVER_DIR="[FILE_SERVER_DIRECTORY_NAME_GOES_HERE]"
-        SERVER_DIR="//file_server/public"
+        SERVER_DIR="//file_server/files"
       #
       # Local PC mount-point directory.
       # MP_DIR="[LOCAL_MOUNT-POINT_DIRECTORY_NAME_GOES_HERE]"
-        MP_DIR="/mnt/file_server/public"
+        MP_DIR="/mnt/file_server/files"
       #
       # Local PC mount-point with LAN File Server Local Repository full directory path.
       # Example:
-      #                   File server shared directory is "//file_server/public".
+      #                   File server shared directory is "//file_server/files".
       # Repository directory under the shared directory is "scripts/BASH/Repository".
-      #                 Local PC Mount-point directory is "/mnt/file_server/public".
+      #                 Local PC Mount-point directory is "/mnt/file_server/files".
       #
       # Local PC mount-point with LAN File Server Local Repository full directory path.
       # LOCAL_REPO_DIR="$MP_DIR/[DIRECTORY_PATH_TO_LOCAL_REPOSITORY]"
-        LOCAL_REPO_DIR="$MP_DIR/scripts/BASH/Repository"
+        LOCAL_REPO_DIR="$MP_DIR/Local_Repository"
       #
       # Local PC file to be compared.
       if [ $# -eq 2 ] ; then
