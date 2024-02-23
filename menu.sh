@@ -24,7 +24,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2024-02-22 23:02"
+VERSION="2024-02-23 13:02"
 THIS_FILE=$(basename $0)
 FILE_TO_COMPARE=$THIS_FILE
 TEMP_FILE=$THIS_FILE"_temp.txt"
@@ -63,7 +63,7 @@ MP_DIR="/mnt/file_server/files"
 #
 #
 #=================================================================
-# EDIT THE LINES BELOW TO SPECIFY THE FILE NAMES TO UPDATE.;
+# EDIT THE LINES BELOW TO SPECIFY THE FILE NAMES TO UPDATE.
 # FILE NAMES INCLUDE ALL DEPENDENT SCRIPTS LIBRARIES.
 #=================================================================
 #
@@ -77,6 +77,10 @@ MP_DIR="/mnt/file_server/files"
 # scripts and libraries.
 #
 FILE_LIST=$THIS_FILE"_file_temp.txt"
+#
+# Web Repository i.e. Hosted by GitHub.com or another web site.
+#
+# Warning: If the Github Repository is "Private", then anonymous downloads are not permitted.
 #
 # Format: [File Name]^[Local/Web]^[Local repository directory]^[web repository directory]
 echo "menu.lib^Local^$LOCAL_REPO_DIR^https://raw.githubusercontent.com/rdchin/bash-automatic-menu-creator/master/"  > $FILE_LIST
@@ -193,6 +197,8 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ##
 ## Includes changes to menu.lib, menu_01.lib, menu_02.lib, and
 ##                     menu_items.lib.
+##
+## 2024-02-23 *f_menu_main_all_menus updated to latest version.
 ##
 ## 2024-02-22 *f_check_version updated to latest version.
 ##            *fdl_download_missing_scripts
@@ -505,7 +511,7 @@ f_display_common () {
       # Display text (all lines beginning ("^") with $2 but do not print $2).
       # sed substitutes null for $2 at the beginning of each line
       # so it is not printed.
-      sed -n "s/$2//"p $THIS_DIR/$THIS_FILE >> $TEMP_FILE
+      sed --silent "s/$2//p" $THIS_DIR/$THIS_FILE >> $TEMP_FILE
       #
       case $3 in
            "NOK" | "nok")
@@ -522,7 +528,7 @@ f_display_common () {
 # | Function f_menu_main_all_menus          |
 # +-----------------------------------------+
 #
-#     Rev: 2024-01-19
+#     Rev: 2024-02-15
 #  Inputs: $1 - "text", "dialog" or "whiptail" the preferred user-interface.
 #          $2 - MENU_TITLE Title of menu which must also match the header
 #               and tail strings for the menu data in the ARRAY_SOURCE_FILE.
@@ -534,10 +540,10 @@ f_display_common () {
 #
 # Summary: Display any menu. Use this same function to display
 #          both Main-Menu and any sub-menus. The Main Menu and all sub-menu data
-#          are in a separte library file from the run-time script or program.
-#          A single library file contains data for multiple menus (many menus/1 library file),
-#          In this scheme, multiple menu data is in the library file,
-#          which may also contain various functions in addition to the menu data.
+#          may either be in the run-time script (*.sh) or a separate library (*.lib)
+#
+#          A single script/library file contains data for multiple menus
+#          where there may be 1 or more menus within 1 file.
 #
 #          Simply state the Path/Filename of the library file, ARRAY_SOURCE_FILE
 #          which contains the menu data.
@@ -586,47 +592,36 @@ f_menu_main_all_menus () {
       #
       # The MENU_TITLE must match the strings in the ARRAY_SOURCE_FILE.
       #
-      #       The run-time script file, "ice_cream.sh" may also contain the data
-      #       for both Main menu and sub-menus if it follows the same format below.
-      #
-      #       If you have a lot of menus, you may want to have all the menu data
-      #       in a separate library file.
-      #
-      #       Example:
-      #
-      #       The file "all_ice_cream_menus.lib" contains the data for both
-      #       Main menu: "Tasty Ice Cream Menu"
-      #        Sub-menu: "Ice Cream Toppings Menu".
-      #
-      #  Each menu (Main Menu and sub-menus) must have Header and Tail strings.
-      #  Main menu header/tail strings:
-      #  Header string: "Start Listing Tasty Ice Cream Menu" (with spaces " ")
-      #    Tail string: "End Listing Tasty Ice Cream Menu"
-      #
-      #  Sub-menu header/tail strings:
-      #  Header string: "Start Listing Ice Cream Toppings Menu"
-      #    Tail string: "End Listing Ice Cream Toppings Menu"
-      #
-      #
       #  Example:
+      #   The run-time script file, "ice_cream.sh" may also contain the data
+      #   for both Main menu and sub-menus.
       #
-      #  ARRAY_SOURCE_FILE="All_Ice_Cream_Menus.lib"
+      #     MENU_TITLE="All_Ice_Cream_Menu"
+      #     ARRAY_SOURCE_FILE="ice_cream.sh"
       #
-      #  Listing of $ARRAY_SOURCE_FILE (All_Ice_Cream_Menus.lib)
+      #   If you have a lot of menus, you may want to have all the menu data
+      #   for both Main menu and sub-menus in a separate library file,
+      #   "all_ice_cream_menus.lib".
+      #
+      #     MENU_TITLE="All_Ice_Cream_Menu"
+      #     ARRAY_SOURCE_FILE="all_ice_cream_menus.lib"
+      #
+      # Format for $ARRAY_SOURCE_FILE: ("ice_cream.sh" or "all_ice_cream_menus.lib")
+      #
+      #  Listing of $ARRAY_SOURCE_FILE ("ice_cream.sh" or "all_ice_cream_menus.lib")
       #          which includes menu item data:
       #
       #  Start Listing Tasty Ice Cream Menu (Required header, do not delete).
       #      Data for Menu item 1
       #      Data for Menu item 2
       #      Data for Menu item 3
-      #  End  Listing Tasty Ice Cream Menu (Required line, do not delete).
+      #  End Listing Tasty Ice Cream Menu (Required line, do not delete).
       #
       #  Start Listing Ice Cream Toppings Menu (Required header, do not delete).
       #      Data for Menu item 1
       #      Data for Menu item 2
       #      Data for Menu item 3
       #  End Listing Ice Cream Toppings Menu (Required line, do not delete).
-      #
       #
       TEMP_FILE=$THIS_DIR/$THIS_FILE"_menu_temp.txt"
       #
@@ -665,7 +660,7 @@ f_menu_main_all_menus () {
          rm  $GENERATED_FILE
       fi
       #
-} # End of function f_menu_main_all_menus
+} # End of function f_menu_main_all_menus.
 #
 # +----------------------------------------+
 # |  Function fdl_dwnld_file_from_web_site |
