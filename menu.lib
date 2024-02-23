@@ -23,7 +23,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2024-02-19 15:04"
+VERSION="2024-02-22 23:02"
 #
 # Commented out THIS_FILE since it will conflict other scripts which
 # use this library.
@@ -70,11 +70,15 @@ VERSION="2024-02-19 15:04"
 # |        Function f_check_version        |
 # +----------------------------------------+
 #
-#     Rev: 2021-03-25
+#     Rev: 2024-02-22
 #  Inputs: $1 - "text", "dialog" or "whiptail" the command-line user-interface in use.
 #          $2 - [OPTIONAL] File name to compare.
+#          $3 - [OPTIONAL] to control display of messages and interactive user questions.
+#                          null (default) - Display error and status messages and interactive user questions.
+#                          1              - Display error messages only (Silent mode).
 #          FILE_TO_COMPARE.
-#    Uses: SERVER_DIR, MP_DIR, TARGET_DIR, TARGET_FILE, VERSION, TEMP_FILE, ERROR.
+#    Uses: SERVER_DIR, MP_DIR, LOCAL_REPO_DIR, $FILE_TO_COMPARE, FILE_LIST,
+#          VERSION, TEMP_FILE, ERROR.
 # Outputs: ERROR.
 #
 # Summary: Check the version of a single, local file or script,
@@ -86,6 +90,10 @@ VERSION="2024-02-19 15:04"
 #          connect to repository on the web if available.
 #
 # Dependencies: f_version_compare.
+#
+# PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
+#              THIS FUNCTION INTO ANY SCRIPT WHICH DEPENDS ON THE
+#              LIBRARY FILE "common_bash_function.lib".
 #
 f_check_version () {
       #
@@ -99,21 +107,27 @@ f_check_version () {
       #
       # LAN File Server shared directory.
       # SERVER_DIR="[FILE_SERVER_DIRECTORY_NAME_GOES_HERE]"
-        SERVER_DIR="//file_server/files"
+      if [ -z "$SERVER_DIR" ] ; then
+        SERVER_DIR="//file_server/public"
+      fi
       #
       # Local PC mount-point directory.
       # MP_DIR="[LOCAL_MOUNT-POINT_DIRECTORY_NAME_GOES_HERE]"
-        MP_DIR="/mnt/file_server/files"
+      if [ -z "$MP_DIR" ] ; then
+        MP_DIR="/mnt/file_server/public"
+      fi
       #
       # Local PC mount-point with LAN File Server Local Repository full directory path.
       # Example:
-      #                   File server shared directory is "//file_server/files".
+      #                   File server shared directory is "//file_server/public".
       # Repository directory under the shared directory is "scripts/BASH/Repository".
-      #                 Local PC Mount-point directory is "/mnt/file_server/files".
+      #                 Local PC Mount-point directory is "/mnt/file_server/public".
       #
       # Local PC mount-point with LAN File Server Local Repository full directory path.
       # LOCAL_REPO_DIR="$MP_DIR/[DIRECTORY_PATH_TO_LOCAL_REPOSITORY]"
-        LOCAL_REPO_DIR="$MP_DIR/Local_Repository"
+      if [ -z "$LOCAL_REPO_DIR" ] ; then
+        LOCAL_REPO_DIR="$MP_DIR/scripts/BASH/Repository"
+      fi
       #
       # Local PC file to be compared.
       if [ $# -eq 2 ] ; then
@@ -131,8 +145,18 @@ f_check_version () {
       # Version of Local PC file to be compared.
       VERSION=$(grep --max-count=1 "VERSION" $FILE_TO_COMPARE)
       #
+      # Initialize variables.
       FILE_LIST=$THIS_DIR/$THIS_FILE"_file_temp.txt"
       ERROR=0
+      #
+      # Delete any existing file.
+      # This assures that FILE_LIST is not appended to but is newly created
+      # in the code below. Added because typo may occur when using redirection
+      # where typo ">>" is used instead of ">" at FILE NAME1.
+      # i.e. typo at echo "[ FILE NAME1 GOES HERE ]"  >> $FILE_LIST
+      if [ -e $FILE_LIST ] ; then
+         rm $FILE_LIST
+      fi
       #
       #
       #=================================================================

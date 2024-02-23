@@ -24,7 +24,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2024-02-19 15:04"
+VERSION="2024-02-22 23:02"
 THIS_FILE=$(basename $0)
 FILE_TO_COMPARE=$THIS_FILE
 TEMP_FILE=$THIS_FILE"_temp.txt"
@@ -34,6 +34,9 @@ GENERATED_FILE=$THIS_FILE"_menu_generated.lib"
 #================================================================
 # EDIT THE LINES BELOW TO SET REPOSITORY SERVERS AND DIRECTORIES
 # AND TO INCLUDE ALL DEPENDENT SCRIPTS AND LIBRARIES TO DOWNLOAD.
+#
+# ALSO PLEASE EDIT f_check_version
+#
 #================================================================
 #
 #
@@ -43,11 +46,11 @@ GENERATED_FILE=$THIS_FILE"_menu_generated.lib"
 #
 # LAN File Server shared directory.
 # SERVER_DIR="[FILE_SERVER_DIRECTORY_NAME_GOES_HERE]"
-  SERVER_DIR="//file_server/files"
+SERVER_DIR="//file_server/files"
 #
 # Local PC mount-point directory.
 # MP_DIR="[LOCAL_MOUNT-POINT_DIRECTORY_NAME_GOES_HERE]"
-  MP_DIR="/mnt/file_server/files"
+MP_DIR="/mnt/file_server/files"
 #
 # Local PC mount-point with LAN File Server Local Repository full directory path.
 # Example:
@@ -56,11 +59,11 @@ GENERATED_FILE=$THIS_FILE"_menu_generated.lib"
 #                 Local PC Mount-point directory is "/mnt/file_server/files".
 #
 # LOCAL_REPO_DIR="$MP_DIR/[DIRECTORY_PATH_TO_LOCAL_REPOSITORY]"
-  LOCAL_REPO_DIR="$MP_DIR/Local_Repository"
+ LOCAL_REPO_DIR="$MP_DIR/Local_Repository"
 #
 #
 #=================================================================
-# EDIT THE LINES BELOW TO SPECIFY THE FILE NAMES TO UPDATE.
+# EDIT THE LINES BELOW TO SPECIFY THE FILE NAMES TO UPDATE.;
 # FILE NAMES INCLUDE ALL DEPENDENT SCRIPTS LIBRARIES.
 #=================================================================
 #
@@ -190,6 +193,18 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ##
 ## Includes changes to menu.lib, menu_01.lib, menu_02.lib, and
 ##                     menu_items.lib.
+##
+## 2024-02-22 *f_check_version updated to latest version.
+##            *fdl_download_missing_scripts
+##             fdl_mount_local
+##             fdl_dwnld_file_from_web_site
+##             fdl_dwnld_file_from_local_repository
+##             Tested downloading all files, libraries and scripts
+##             and installation from GitHub.com Repository files.
+##
+##             You can even install everything by downloading only this
+##             single stand-alone script then it will download all other
+##             necessary scripts and libraries automatically.
 ##
 ## 2024-02-19 *f_menu_main_all_menus added replacing f_menu_main.
 ##            *f_menu_main deleted in favor of f_menu_main_all_menus.
@@ -656,7 +671,7 @@ f_menu_main_all_menus () {
 # |  Function fdl_dwnld_file_from_web_site |
 # +----------------------------------------+
 #
-#     Rev: 2021-03-08
+#     Rev: 2024-02-21
 #  Inputs: $1 - GitHub Repository
 #          $2 - file name to download.
 #    Uses: None.
@@ -672,13 +687,12 @@ f_menu_main_all_menus () {
 fdl_dwnld_file_from_web_site () {
       #
       # $1 ends with a slash "/" so can append $2 immediately after $1.
-      echo
-      echo ">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<"
-      echo ">>> Download file from Web Repository <<<"
-      echo ">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<"
-      echo
       wget --show-progress $1$2
       ERROR=$?
+      #
+      # Make downloaded file executable.
+      chmod 755 $2
+      #
       if [ $ERROR -ne 0 ] ; then
             echo
             echo ">>>>>>>>>>>>>><<<<<<<<<<<<<<"
@@ -687,26 +701,7 @@ fdl_dwnld_file_from_web_site () {
             echo
             echo "Error copying from Web Repository file: \"$2.\""
             echo
-      else
-         # Make file executable (useable).
-         chmod +x $2
-         #
-         if [ -x $2 ] ; then
-            # File is good.
-            ERROR=0
-         else
-            echo
-            echo ">>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<"
-            echo ">>> File Error after download from Web Repository <<<"
-            echo ">>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<"
-            echo
-            echo "$2 is missing or file is not executable."
-            echo
-         fi
       fi
-      #
-      # Make downloaded file executable.
-      chmod 755 $2
       #
 } # End of function fdl_dwnld_file_from_web_site.
 #
@@ -714,7 +709,7 @@ fdl_dwnld_file_from_web_site () {
 # | Function fdl_dwnld_file_from_local_repository |
 # +-----------------------------------------------+
 #
-#     Rev: 2021-03-08
+#     Rev: 2024-02-21
 #  Inputs: $1 - Local Repository Directory.
 #          $2 - File to download.
 #    Uses: TEMP_FILE.
@@ -728,13 +723,11 @@ fdl_dwnld_file_from_web_site () {
 #
 fdl_dwnld_file_from_local_repository () {
       #
-      echo
-      echo ">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<"
-      echo ">>> File Copy from Local Repository <<<"
-      echo ">>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<"
-      echo
       eval cp -p $1/$2 .
       ERROR=$?
+      #
+      # Make downloaded file executable.
+      chmod 755 $2
       #
       if [ $ERROR -ne 0 ] ; then
          echo
@@ -745,23 +738,6 @@ fdl_dwnld_file_from_local_repository () {
          echo -e "Error copying from Local Repository file: \"$2.\""
          echo
          ERROR=1
-      else
-         # Make file executable (useable).
-         chmod +x $2
-         #
-         if [ -x $2 ] ; then
-            # File is good.
-            ERROR=0
-         else
-            echo
-            echo ">>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<"
-            echo ">>> File Error after copy from Local Repository <<<"
-            echo ">>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<"
-            echo
-            echo -e "File \"$2\" is missing or file is not executable."
-            echo
-            ERROR=1
-         fi
       fi
       #
       if [ $ERROR -eq 0 ] ; then
@@ -776,12 +752,12 @@ fdl_dwnld_file_from_local_repository () {
 # |       Function fdl_mount_local      |
 # +-------------------------------------+
 #
-#     Rev: 2023-10-10
+#     Rev: 2024-02-21
 #  Inputs: $1 - Server Directory.
 #          $2 - Local Mount Point Directory
 #          TEMP_FILE
 #    Uses: TARGET_DIR, UPDATE_FILE, ERROR, SMBUSER, PASSWORD.
-# Outputs: ERROR.
+# Outputs: QUIT, ERROR.
 #
 # Summary: Mount directory using Samba and CIFS and echo error message.
 #          Cannot be dependent on "common_bash_function.lib" as this library
@@ -791,40 +767,115 @@ fdl_dwnld_file_from_local_repository () {
 #
 fdl_mount_local () {
       #
-      # Mount local repository on mount-point.
-      # Write any error messages to file $TEMP_FILE. Get status of mountpoint, mounted?.
-      mountpoint $2 >/dev/null 2>$TEMP_FILE
+      TEMP_FILE=$THIS_DIR/$THIS_FILE"_temp.txt"
+      #
+      # Get status of mountpoint, mounted? Do not display status.
+      mountpoint $2 >/dev/null
       ERROR=$?
-      if [ $ERROR -ne 0 ] ; then
-         # Mount directory.
-         # Cannot use any user prompted read answers if this function is in a loop where file is a loop input.
-         # The read statements will be treated as the next null parameters in the loop without user input.
-         # To solve this problem, specify input from /dev/tty "the keyboard".
+      if [ $ERROR -eq 0 ] ; then
+         # Directory is already mounted.
+         # Outputs ERROR=0.
+         # Quit loop.
+         QUIT=1
+      else
+         # Mount failed, Do you want to try again?
+         DEFAULT_ANS="Y"
+         QUES_STR="Failed to mount\n\nShare-point: $1\nonto\nMount-point: $2n\nTry another password to mount $1?"
          #
-         echo
-         read -p "Enter user name: " SMBUSER < /dev/tty
-         echo
-         read -s -p "Enter Password: " PASSWORD < /dev/tty
-         echo sudo mount -t cifs $1 $2
-         sudo mount -t cifs -o username="$SMBUSER" -o password="$PASSWORD" $1 $2
+         clear  # Blank screen.
          #
-         # Write any error messages to file $TEMP_FILE. Get status of mountpoint, mounted?.
-         mountpoint $2 >/dev/null 2>$TEMP_FILE
-         ERROR=$?
+         # Does $QUES_STR contain "\n"?  Does the string $QUES_STR contain multiple sentences?
+         case $QUES_STR in
+              *\n*)
+                 # Yes, string $QUES_STR contains multiple sentences.
+                 #
+                 # Command-Line interface (CLI) does not have option "--colors" with "\Z" commands for font color bold/normal.
+                 # Use command "sed" with "-e" to filter out multiple "\Z" commands.
+                 # Filter out "\Z[0-7]", "\Zb", \ZB", "\Zr", "\ZR", "\Zu", "\ZU", "\Zn".
+                 ZNO=$(echo $QUES_STR | sed -e 's|\\Z0||g' -e 's|\\Z1||g' -e 's|\\Z2||g' -e 's|\\Z3||g' -e 's|\\Z4||g' -e 's|\\Z5||g' -e 's|\\Z6||g' -e 's|\\Z7||g' -e 's|\\Zb||g' -e 's|\\ZB||g' -e 's|\\Zr||g' -e 's|\\ZR||g' -e 's|\\Zu||g' -e 's|\\ZU||g' -e 's|\\Zn||g')
+                 TEXT_STR="$ZNO"
+              ;;
+              *)
+                 # No, string $QUES_STR contains a single sentence.
+                 #
+                 # Create a text file from the string.
+                 TEXT_STR="$QUES_STR"
+              ;;
+         esac
          #
-         if [ $ERROR -ne 0 ] ; then
+         case $DEFAULT_ANS in
+              [Yy] | [Yy][Ee][Ss])
+                 # "Yes" is the default answer.
+                 echo -e -n "$TEXT_STR (Y/n) "; read ANS # < /dev/tty
+                 #
+                 case $ANS in
+                      [Nn] | [Nn][Oo])
+                         ANS=1  # No.
+                      ;;
+                      *)
+                         ANS=0  # Yes (Default).
+                      ;;
+                 esac
+              ;;
+              [Nn] | [Nn][Oo])
+                 # "No" is the default answer.
+                 echo -e -n "$TEXT_STR (y/N) "; read ANS # < /dev/tty
+                 case $ANS in
+                      [Yy] | [Yy][Ee] | [Yy][Ee][Ss])
+                         ANS=0  # Yes.
+                      ;;
+                      *)
+                         ANS=1  # No (Default).
+                      ;;
+                 esac
+              ;;
+         esac
+         #
+         # Outputs user response to $ANS.
+         # Try another password to mount $1?"
+         if [ $ANS -eq 0 ] ; then
+            # Yes, try another SMB username and password to mount Share-point.
+            QUIT=0
+            # Try again to mount.
+            # Set the default username to the SMB username entered previously.
+            #
+            # Cannot use any user prompted read answers if this function is in a loop where file is a loop input.
+            # The read statements will be treated as the next null parameters in the loop without user input.
+            # To solve this problem, specify input from /dev/tty "the keyboard".
+            #
             echo
-            echo ">>>>>>>>>><<<<<<<<<<<"
-            echo ">>> Mount failure <<<"
-            echo ">>>>>>>>>><<<<<<<<<<<"
+            echo "Mounting share-point $1 onto local mount-point $2"
             echo
-            echo -e "Directory mount-point \"$2\" is not mounted."
+            read -p "Enter user name: " SMBUSER < /dev/tty
             echo
-            echo -e "Mount using Samba failed. Are \"samba\" and \"cifs-utils\" installed?"
-            echo "------------------------------------------------------------------------"
-            echo
+            read -s -p "Enter Password: " PASSWORD < /dev/tty
+            echo sudo mount -t cifs $1 $2
+            sudo mount -t cifs -o username="$SMBUSER" -o password="$PASSWORD" $1 $2
+            unset SMBUSER PASSWORD
+            #
+            # Write any error messages to file $TEMP_FILE. Get status of mountpoint, mounted?.
+            mountpoint $2 >/dev/null 2>$TEMP_FILE
+            ERROR=$?
+            #
+            if [ $ERROR -eq 0 ] ; then
+               # Successful mounting of share-point $1 onto local mount-point $2.
+               # Outputs ERROR=0.
+               QUIT=1
+            else
+               # Failed to mount share-point $1 onto local mount-point $2.
+               # Outputs ERROR=1.
+               QUIT=0
+            fi
+         else
+            # No, do not try another password just return to previous menu. Exit loop.
+            # Quit f_mount loop, return to previous menu.
+            # Outputs ERROR=1.
+            QUIT=1
          fi
-         unset SMBUSER PASSWORD
+      fi
+      #
+      if [ -e  $TEMP_FILE ] ; then
+         rm  $TEMP_FILE
       fi
       #
 } # End of function fdl_mount_local.
@@ -875,7 +926,7 @@ fdl_source () {
 # |  Function fdl_download_missing_scripts |
 # +----------------------------------------+
 #
-#     Rev: 2021-03-11
+#     Rev: 2024-02-21
 #  Inputs: $1 - File containing a list of all file dependencies.
 #          $2 - File name of generated list of missing file dependencies.
 # Outputs: ANS.
@@ -898,6 +949,10 @@ fdl_source () {
 #
 fdl_download_missing_scripts () {
       #
+      # Initialize variables.
+      #
+      TEMP_FILE=$THIS_FILE"_temp.txt"
+      #
       # Delete any existing temp file.
       if [ -r  $2 ] ; then
          rm  $2
@@ -907,24 +962,26 @@ fdl_download_missing_scripts () {
       # Create new list of files that need to be downloaded.
       # ****************************************************
       #
-      # While-loop will read the file names listed in FILE_LIST (list of
+      # While-loop will read the file names listed in FILE_LIST ($1 list of
       # script and library files) and detect which are missing and need
-      # to be downloaded and then put those file names in FILE_DL_LIST.
+      # to be downloaded and then put those file names in FILE_DL_LIST ($2).
+      #
+      #
+      # Download files from Local Repository or Web GitHub Repository
+      # or extract files from the compressed file "cli-app-menu-new-main.zip"
+      # which may be downloaded from the repository on the Github.com website.
       #
       while read LINE
             do
+               ERROR=0
+               #
                FILE=$(echo $LINE | awk -F "^" '{ print $1 }')
-               if [ ! -x $FILE ] ; then
-                  # File needs to be downloaded or is not executable.
-                  # Write any error messages to file $TEMP_FILE.
-                  chmod +x $FILE 2>$TEMP_FILE
-                  ERROR=$?
-                  #
-                  if [ $ERROR -ne 0 ] ; then
-                     # File needs to be downloaded. Add file name to a file list in a text file.
-                     # Build list of files to download.
-                     echo $LINE >> $2
-                  fi
+               #
+               # Does the file exist?
+               if [ ! -e $FILE ] ; then
+                  # No, file needs to be downloaded.
+                  # Build list of files to download so add file name to download list.
+                  echo $LINE >> $2
                fi
             done < $1
       #
@@ -940,13 +997,31 @@ fdl_download_missing_scripts () {
                   echo $LINE | awk -F "^" '{ print $1 }'
                done < $2
          echo
-         echo "You will need to present credentials."
+         echo "You may need to present credentials, unless anonymous downloads are permitted."
          echo
          echo -n "Press '"Enter"' key to continue." ; read X ; unset X
          #
          #----------------------------------------------------------------------------------------------
          # From list of files to download created above $FILE_DL_LIST, download the files one at a time.
          #----------------------------------------------------------------------------------------------
+         #
+         # Downloaded the list of files $DL_FILE from the Local Repository?
+         grep Local^ $2 >/dev/null
+         ERROR=$?
+         #
+         # Initialize for while-loop.
+         QUIT=0
+         #
+         # Are any of the missing files to be downloaded from the Local Repository?
+         if [ $ERROR -eq 0 ] ; then
+            # Yes, there are files to be downloaded from the Local Repository.
+            #
+            # Are LAN File Server directories available on Local Mount-point?
+             while [ $QUIT -ne 1 ]  # Start loop.
+                   do
+                     fdl_mount_local $SERVER_DIR $MP_DIR
+                   done
+         fi
          #
          while read LINE
                do
@@ -959,17 +1034,16 @@ fdl_download_missing_scripts () {
                   # Initialize Error Flag.
                   ERROR=0
                   #
-                  # If a file only found in the Local Repository has source changed
-                  # to "Web" because LAN connectivity has failed, then do not download.
+                  # If a file which only exists in the Local Repository has
+                  # its source changed to "Web" because LAN connectivity has
+                  # failed, then do not download since the file is not in a
+                  # GitHub.com Repository.
                   if [ -z $DL_REPOSITORY ] && [ $DL_SOURCE = "Web" ] ; then
                      ERROR=1
                   fi
-                  #
                   case $DL_SOURCE in
                        Local)
                           # Download from Local Repository on LAN File Server.
-                          # Are LAN File Server directories available on Local Mount-point?
-                          fdl_mount_local $SERVER_DIR $MP_DIR
                           #
                           if [ $ERROR -ne 0 ] ; then
                              # Failed to mount LAN File Server directory on Local Mount-point.
@@ -990,8 +1064,10 @@ fdl_download_missing_scripts () {
                        Web)
                           # Download from Web Repository.
                           fdl_dwnld_file_from_web_site $DL_REPOSITORY $DL_FILE
-                          if [ $ERROR -ne 0 ] ; then
-                             # Failed so mount LAN File Server directory on Local Mount-point.
+                          if [ $ERROR -ne 0 ] && [ $LOCAL_REPO_CRED_FAIL -eq 0 ] ; then
+                             # Failed to download from Web Repository.
+                             # So download from Local Repository.
+                             # Try to mount LAN File Server directory on Local Mount-point.
                              fdl_mount_local $SERVER_DIR $MP_DIR
                              #
                              if [ $ERROR -eq 0 ] ; then
