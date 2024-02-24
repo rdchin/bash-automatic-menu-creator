@@ -24,7 +24,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2024-02-24 16:26"
+VERSION="2024-02-24 18:27"
 THIS_FILE=$(basename $0)
 FILE_TO_COMPARE=$THIS_FILE
 TEMP_FILE=$THIS_FILE"_temp.txt"
@@ -103,8 +103,9 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 #& This script will generate either a CLI text menu, or "Dialog" or
 #& "Whiptail" UI menu from an array using data in clear text in a file.
 #&
-#& One *.sh or *.lib file may contain data for many menus and the code is
+#& A single script file may contain data for many menus and the code is
 #& designed especially for the easy set up of menus and sub-menus.
+#&
 #& All menus are edited by changing or adding/deleting comment lines.
 #& The code will use that data to automatically display the menu in your
 #& preferred UI without any additional coding on your part.
@@ -203,6 +204,11 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ##
 ## Includes changes to menu.lib, menu_01.lib, menu_02.lib, and
 ##                     menu_items.lib.
+##
+## 2024-02-24 *Updated to latest version.
+##             *Section "Brief Description changed text to delete string
+##             "*.sh and *.lib" because it was displaying all scripts in
+##             the directory. Really weird error.
 ##
 ## 2024-02-23 *f_menu_main_all_menus updated to latest version.
 ##
