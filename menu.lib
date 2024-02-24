@@ -23,7 +23,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2024-02-23 13:02"
+VERSION="2024-02-24 16:26"
 #
 # Commented out THIS_FILE since it will conflict other scripts which
 # use this library.
@@ -35,14 +35,25 @@ VERSION="2024-02-23 13:02"
 #
 #& Brief Description
 #&
-#& This Library of functions for the Demonstration Menu is a
-#& child dependency used by the following scripts.
+#& This script demonstrates the display of menus which have their items
+#& in clear text comment lines in a file which is easily edited.
 #&
-#& Parent script: menu.sh.
+#& This script will generate either a CLI text menu, or "Dialog" or
+#& "Whiptail" UI menu from an array using data in clear text in a file.
 #&
-#& See script menu.sh for Edit History.
+#& One *.sh or *.lib file may contain data for many menus and the code is
+#& designed especially for the easy set up of menus and sub-menus.
+#& All menus are edited by changing or adding/deleting comment lines.
+#& The code will use that data to automatically display the menu in your
+#& preferred UI without any additional coding on your part.
 #&
-#& Usage: source menu.lib
+#& Required scripts: menu.sh, menu.lib,
+#&                   menu_01.lib, menu_02.lib
+#&                   menu_items.lib
+#&                   common_bash_function.lib
+#&
+#& Usage: bash menu.sh
+#&        (not sh menu.sh)
 #&
 #&    This program is free software: you can redistribute it and/or modify
 #&    it under the terms of the GNU General Public License as published by
@@ -56,7 +67,7 @@ VERSION="2024-02-23 13:02"
 #&    GNU General Public License for more details.
 #&
 #&    You should have received a copy of the GNU General Public License
-#&    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#&    along with this program. If not, see <https://www.gnu.org/licenses/>.
 #
 # +----------------------------------------+
 # |           Code Change History          |
@@ -108,13 +119,13 @@ f_check_version () {
       # LAN File Server shared directory.
       # SERVER_DIR="[FILE_SERVER_DIRECTORY_NAME_GOES_HERE]"
       if [ -z "$SERVER_DIR" ] ; then
-        SERVER_DIR="//file_server/public"
+        SERVER_DIR="//file_server/files"
       fi
       #
       # Local PC mount-point directory.
       # MP_DIR="[LOCAL_MOUNT-POINT_DIRECTORY_NAME_GOES_HERE]"
       if [ -z "$MP_DIR" ] ; then
-        MP_DIR="/mnt/file_server/public"
+        MP_DIR="/mnt/file_server/files"
       fi
       #
       # Local PC mount-point with LAN File Server Local Repository full directory path.
@@ -126,7 +137,7 @@ f_check_version () {
       # Local PC mount-point with LAN File Server Local Repository full directory path.
       # LOCAL_REPO_DIR="$MP_DIR/[DIRECTORY_PATH_TO_LOCAL_REPOSITORY]"
       if [ -z "$LOCAL_REPO_DIR" ] ; then
-        LOCAL_REPO_DIR="$MP_DIR/scripts/BASH/Repository"
+        LOCAL_REPO_DIR="$MP_DIR/Local_Repository"
       fi
       #
       # Local PC file to be compared.

@@ -23,7 +23,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2024-02-23 13:02"
+VERSION="2024-02-24 16:26"
 #
 # Commented out THIS_FILE since it will conflict other scripts which
 # use this library.
@@ -93,7 +93,7 @@ VERSION="2024-02-23 13:02"
 #        f_menu_main_all_menus^"text", "dialog", or "whiptail"^Menu Name^Library name containing menu entries
 #
 #! +--------------------------------------------------------------+
-#! | Start Listing Example Menu                                   |
+#! | Start Listing Template Menu                                  |
 #! |               (Required header, do not delete).              |
 #! +--------------------------------------------------------------+
 #
@@ -113,7 +113,7 @@ VERSION="2024-02-23 13:02"
 #
 #@@Help#@@Display help message.#@@f_help_message^$GUI
 #
-#! End Listing Example Menu (Required line, do not delete).
+#! End Listing Template Menu (Required line, do not delete).
 #
 #! +--------------------------------------------------------------+
 #! | Start Listing Sub-menu Zero                                  |

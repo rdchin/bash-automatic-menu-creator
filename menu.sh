@@ -24,7 +24,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2024-02-23 13:02"
+VERSION="2024-02-24 16:26"
 THIS_FILE=$(basename $0)
 FILE_TO_COMPARE=$THIS_FILE
 TEMP_FILE=$THIS_FILE"_temp.txt"
@@ -46,10 +46,12 @@ GENERATED_FILE=$THIS_FILE"_menu_generated.lib"
 #
 # LAN File Server shared directory.
 # SERVER_DIR="[FILE_SERVER_DIRECTORY_NAME_GOES_HERE]"
+# SERVER_DIR="//file_server/files"
 SERVER_DIR="//file_server/files"
 #
 # Local PC mount-point directory.
 # MP_DIR="[LOCAL_MOUNT-POINT_DIRECTORY_NAME_GOES_HERE]"
+# MP_DIR="/mnt/file_server/files"
 MP_DIR="/mnt/file_server/files"
 #
 # Local PC mount-point with LAN File Server Local Repository full directory path.
@@ -59,7 +61,14 @@ MP_DIR="/mnt/file_server/files"
 #                 Local PC Mount-point directory is "/mnt/file_server/files".
 #
 # LOCAL_REPO_DIR="$MP_DIR/[DIRECTORY_PATH_TO_LOCAL_REPOSITORY]"
- LOCAL_REPO_DIR="$MP_DIR/Local_Repository"
+# LOCAL_REPO_DIR="$MP_DIR/Local_Repository"
+LOCAL_REPO_DIR="$MP_DIR/Local_Repository"
+#
+# Web Repository i.e. Hosted by GitHub.com or another web site.
+# WEB_REPOSITORY_URL="raw.githubusercontent.com/user/project/branch"
+WEB_REPOSITORY_URL="raw.githubusercontent.com/rdchin/bash-automatic-menu-creator/master/"
+#
+# Warning: If the Github Repository is "Private", then anonymous downloads are not permitted.
 #
 #
 #=================================================================
@@ -68,26 +77,16 @@ MP_DIR="/mnt/file_server/files"
 #=================================================================
 #
 #
-# --------------------------------------------
-# Create a list of all dependent library files
-# and write to temporary file, FILE_LIST.
-# --------------------------------------------
-#
 # Temporary file FILE_LIST contains a list of file names of dependent
 # scripts and libraries.
-#
 FILE_LIST=$THIS_FILE"_file_temp.txt"
 #
-# Web Repository i.e. Hosted by GitHub.com or another web site.
-#
-# Warning: If the Github Repository is "Private", then anonymous downloads are not permitted.
-#
 # Format: [File Name]^[Local/Web]^[Local repository directory]^[web repository directory]
-echo "menu.lib^Local^$LOCAL_REPO_DIR^https://raw.githubusercontent.com/rdchin/bash-automatic-menu-creator/master/"  > $FILE_LIST
-echo "menu_01.lib^Local^$LOCAL_REPO_DIR^https://raw.githubusercontent.com/rdchin/bash-automatic-menu-creator/master/" >> $FILE_LIST
-echo "menu_02.lib^Local^$LOCAL_REPO_DIR^https://raw.githubusercontent.com/rdchin/bash-automatic-menu-creator/master/" >> $FILE_LIST
-echo "menu_items.lib^Local^$LOCAL_REPO_DIR^https://raw.githubusercontent.com/rdchin/bash-automatic-menu-creator/master/" >> $FILE_LIST
-echo "common_bash_function.lib^Local^$LOCAL_REPO_DIR^https://raw.githubusercontent.com/rdchin/BASH_function_library/master/"   >> $FILE_LIST
+echo "menu.lib^Local^$LOCAL_REPO_DIR^WEB_REPOSITORY_URL"  > $FILE_LIST
+echo "menu_01.lib^Local^$LOCAL_REPO_DIR^WEB_REPOSITORY_URL" >> $FILE_LIST
+echo "menu_02.lib^Local^$LOCAL_REPO_DIR^WEB_REPOSITORY_URL" >> $FILE_LIST
+echo "menu_items.lib^Local^$LOCAL_REPO_DIR^WEB_REPOSITORY_URL" >> $FILE_LIST
+echo "common_bash_function.lib^Local^$LOCAL_REPO_DIR^$WEB_REPOSITORY_URL" >> $FILE_LIST
 #
 # Create a name for a temporary file which will have a list of files which need to be downloaded.
 FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
@@ -98,10 +97,17 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 #
 #& Brief Description
 #&
-#& This script will generate either a CLI text menu, or "Dialog" or "Whiptail"
-#& UI menu from an array using data in clear text in scripts:
-#& menu_items.lib
-#& or any other menu_modules... you wish to add.
+#& This script demonstrates the display of menus which have their items
+#& in clear text comment lines in a file which is easily edited.
+#&
+#& This script will generate either a CLI text menu, or "Dialog" or
+#& "Whiptail" UI menu from an array using data in clear text in a file.
+#&
+#& One *.sh or *.lib file may contain data for many menus and the code is
+#& designed especially for the easy set up of menus and sub-menus.
+#& All menus are edited by changing or adding/deleting comment lines.
+#& The code will use that data to automatically display the menu in your
+#& preferred UI without any additional coding on your part.
 #&
 #& Required scripts: menu.sh, menu.lib,
 #&                   menu_01.lib, menu_02.lib
@@ -172,17 +178,17 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 #    3) Delete instructions to update script in Section "Help and Usage".
 #
 # To disable the Main Menu:
-#    1) Comment out the call to function f_menu_main under "Run Main Code"
-#       in Section "Start of Main Program".
+#    1) Comment out the call to function f_menu_main_all_menus under
+#       "Run Main Code" in Section "Start of Main Program".
 #    2) Add calls to desired functions under "Run Main Code"
 #       in Section "Start of Main Program".
 #
 # To completely remove the Main Menu and its code:
-#    1) Delete the call to function f_menu_main under "Run Main Code" in
-#       Section "Start of Main Program".
+#    1) Delete the call to function f_menu_main_all_menus under
+#       "Run Main Code" in Section "Start of Main Program".
 #    2) Add calls to desired functions under "Run Main Code"
 #       in Section "Start of Main Program".
-#    3) Delete the function f_menu_main.
+#    3) Delete the function f_menu_main_all_menus.
 #    4) Delete "Menu Choice Options" in this script located under
 #       Section "Customize Menu choice options below".
 #       The "Menu Choice Options" lines begin with "#@@".
@@ -456,17 +462,21 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ##             Whiptail frame size to the amount of text.
 ##            *Optimized the generation of menus.
 ##
-## 2018-01-17 *Initial Release.
+## 2018-01-17 *Initial release.
 #
 # +------------------------------------+
 # |     Function f_display_common      |
 # +------------------------------------+
 #
-#     Rev: 2021-03-31
-#  Inputs: $1=UI - "text", "dialog" or "whiptail" the preferred user-interface.
-#          $2=Delimiter of text to be displayed.
-#          $3="NOK", "OK", or null [OPTIONAL] to control display of "OK" button.
-#          $4=Pause $4 seconds [OPTIONAL]. If "NOK" then pause to allow text to be read.
+#     Rev: 2024-02-24
+#  Inputs: $1 - "text", "dialog" or "whiptail" the command-line user-interface in use.
+#          $2 - Delimiter of text to be displayed.
+#          $3 - [OPTIONAL] to control display of prompt to continue.
+#                          null (Default) - "OK" button or text prompt, display until either Enter key or "OK" button is pressed.
+#                          "OK"           - "OK" button or text prompt, display until either Enter key or "OK" button is pressed.
+#                          "NOK"          - No "OK" button or text prompt, display for $3 seconds before continuing automatically.
+#          $4 - [OPTIONAL] to control pause duration. Only used if $3="NOK".
+#                          $4 seconds pause to allow text to be read before continuing automatically.
 #          THIS_DIR, THIS_FILE, VERSION.
 #    Uses: X.
 # Outputs: None.
@@ -474,6 +484,10 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 # Summary: Display lines of text beginning with a given comment delimiter.
 #
 # Dependencies: f_message.
+#
+# PLEASE NOTE: RENAME THIS FUNCTION WITHOUT SUFFIX "_TEMPLATE" AND COPY
+#              THIS FUNCTION INTO ANY SCRIPT WHICH DEPENDS ON THE
+#              LIBRARY FILE "common_bash_function.lib".
 #
 f_display_common () {
       #
@@ -1127,7 +1141,7 @@ fdl_download_missing_scripts () {
 # ***     Start of Main Program      ***
 # **************************************
 # **************************************
-#     Rev: 2021-03-11
+#     Rev: 2024-02-24
 #
 #
 if [ -e $TEMP_FILE ] ; then
@@ -1269,7 +1283,7 @@ f_about $GUI "NOK" 1
 #          $3 - ARRAY_SOURCE_FILE is the file name where the menu data is stored.
 #               This can be the run-time script or a separate *.lib library file.
 #
-f_menu_main_all_menus $GUI "Example_Menu" "$THIS_DIR/menu_items.lib"
+f_menu_main_all_menus $GUI "Template_Menu" "$THIS_DIR/menu_items.lib"
 #
 # Delete temporary files.
 #
