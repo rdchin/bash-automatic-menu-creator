@@ -24,7 +24,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2024-02-24 18:27"
+VERSION="2024-02-25 17:54"
 THIS_FILE=$(basename $0)
 FILE_TO_COMPARE=$THIS_FILE
 TEMP_FILE=$THIS_FILE"_temp.txt"
@@ -81,11 +81,11 @@ WEB_REPOSITORY_URL="raw.githubusercontent.com/rdchin/bash-automatic-menu-creator
 # scripts and libraries.
 FILE_LIST=$THIS_FILE"_file_temp.txt"
 #
-# Format: [File Name]^[Local/Web]^[Local repository directory]^[web repository directory]
-echo "menu.lib^Local^$LOCAL_REPO_DIR^WEB_REPOSITORY_URL"  > $FILE_LIST
-echo "menu_01.lib^Local^$LOCAL_REPO_DIR^WEB_REPOSITORY_URL" >> $FILE_LIST
-echo "menu_02.lib^Local^$LOCAL_REPO_DIR^WEB_REPOSITORY_URL" >> $FILE_LIST
-echo "menu_items.lib^Local^$LOCAL_REPO_DIR^WEB_REPOSITORY_URL" >> $FILE_LIST
+# Format: [File Name]^[Local/Web]^[Local repository directory]^[Web repository directory]
+echo "menu.lib^Local^$LOCAL_REPO_DIR^$WEB_REPOSITORY_URL"  > $FILE_LIST
+echo "menu_01.lib^Local^$LOCAL_REPO_DIR^$WEB_REPOSITORY_URL" >> $FILE_LIST
+echo "menu_02.lib^Local^$LOCAL_REPO_DIR^$WEB_REPOSITORY_URL" >> $FILE_LIST
+echo "menu_items.lib^Local^$LOCAL_REPO_DIR^$WEB_REPOSITORY_URL" >> $FILE_LIST
 echo "common_bash_function.lib^Local^$LOCAL_REPO_DIR^$WEB_REPOSITORY_URL" >> $FILE_LIST
 #
 # Create a name for a temporary file which will have a list of files which need to be downloaded.
@@ -204,6 +204,11 @@ FILE_DL_LIST=$THIS_FILE"_file_dl_temp.txt"
 ##
 ## Includes changes to menu.lib, menu_01.lib, menu_02.lib, and
 ##                     menu_items.lib.
+##
+## 2024-02-25 *Section "Default Variable Values" corrected Web Repository
+##             reference for $FILE_LIST.
+##            *fdl_dwnld_file_from_local_repository
+##             fdl_dwnld_file_from_web_site improved informational messages.
 ##
 ## 2024-02-24 *Updated to latest version.
 ##             *Section "Brief Description changed text to delete string
@@ -714,7 +719,15 @@ fdl_dwnld_file_from_web_site () {
             echo ">>> wget download failed <<<"
             echo ">>>>>>>>>>>>>><<<<<<<<<<<<<<"
             echo
-            echo "Error copying from Web Repository file: \"$2.\""
+            echo "Error copying file: \"$2.\""
+            echo
+            echo "from GitHub Repository:"
+            echo "$WEB_REPOSITORY_URL"
+            echo
+            echo -e "Warning: If the Github Repository is \"Private\","
+            echo "         then anonymous downloads are not permitted."
+            echo
+            echo ">>>>>>>>>>>>>><<<<<<<<<<<<<<"
             echo
       fi
       #
@@ -750,7 +763,12 @@ fdl_dwnld_file_from_local_repository () {
          echo ">>> File Copy Error from Local Repository <<<"
          echo ">>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<"
          echo
-         echo -e "Error copying from Local Repository file: \"$2.\""
+         echo -e "Error copying file: \"$2.\""
+         echo
+         echo "from Local Repository:"
+         echo "$LOCAL_REPO_DIR"
+         echo
+         echo ">>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<"
          echo
          ERROR=1
       fi

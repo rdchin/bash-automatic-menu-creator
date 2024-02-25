@@ -23,7 +23,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2024-02-24 18:27"
+VERSION="2024-02-25 17:54"
 #
 # Commented out THIS_FILE since it will conflict other scripts which
 # use this library.
@@ -41,8 +41,9 @@ VERSION="2024-02-24 18:27"
 #& This script will generate either a CLI text menu, or "Dialog" or
 #& "Whiptail" UI menu from an array using data in clear text in a file.
 #&
-#& One *.sh or *.lib file may contain data for many menus and the code is
+#& A single script file may contain data for many menus and the code is
 #& designed especially for the easy set up of menus and sub-menus.
+#&
 #& All menus are edited by changing or adding/deleting comment lines.
 #& The code will use that data to automatically display the menu in your
 #& preferred UI without any additional coding on your part.
