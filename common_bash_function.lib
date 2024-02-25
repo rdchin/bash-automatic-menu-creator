@@ -23,7 +23,7 @@
 # |        Default Variable Values         |
 # +----------------------------------------+
 #
-VERSION="2024-02-24 16:44"
+VERSION="2024-02-25 00:34"
 #
 # WARNING: Do not define $THIS_FILE within a library script.
 #
@@ -76,6 +76,8 @@ VERSION="2024-02-24 16:44"
 ## Code Change History
 ##
 ## (After each edit made, please update Code History and VERSION.)
+##
+## 2024-02-25 *f_menu_make added debugging message if menu data is bad.
 ##
 ## 2024-02-24 *f_display_common_TEMPLATE changed sed options.
 ##
@@ -5478,15 +5480,31 @@ f_menu_make () {
       STARTING_LINE=$(grep -n "Start Listing $MENU_TITLE" $4 | awk -F ":" '{print $1 }')
       ENDING_LINE=$(grep -n "End Listing $MENU_TITLE"     $4 | awk -F ":" '{print $1 }')
       #
-      # Copy text between $STARTING_LINE and $ENDING_LINE into a text file.
-      # Create sed command "$STARTING_LINE,$ENDING_LINEp" i.e. "31,51p" for STARTING_LINE=31, ENDING_LINE=51.
-      SEDSTR="$STARTING_LINE,$ENDING_LINE"
-      SEDSTR=$SEDSTR"p"
-      #
-      # Use eval command because of substitution of variable $SEDSTR for the actual sed command.
-      eval sed -n '$SEDSTR' $4 > $3
-      #
-      unset MENU_TITLE SEDSTR STARTING_LINE ENDING_LINE
+      if [ -z "$STARTING_LINE" ] || [ -z "$ENDING_LINE" ] ; then
+         echo >> $TEMP_FILE
+         echo "Data for the menu \"$MENU_TITLE\" was not found in the file:" > $TEMP_FILE
+         echo "$4" >> $TEMP_FILE
+         echo >> $TEMP_FILE
+         echo "A possible cause for this error is that the menu titles do not" >> $TEMP_FILE
+         echo "match between what is in the file and what f_menu_main_all_menus" >> $TEMP_FILE
+         echo "specified as a parameter." >> $TEMP_FILE
+         echo >> $TEMP_FILE
+         echo "When calling function f_menu_main_all_menus, make sure that it is using" >> $TEMP_FILE
+         echo "the same Menu Title as used in the file" >> $TEMP_FILE
+         echo "$4" >> $TEMP_FILE
+         f_message $1 "OK" "Error Creating Menu" $TEMP_FILE
+         exit 1
+      else
+         # Copy text between $STARTING_LINE and $ENDING_LINE into a text file.
+         # Create sed command "$STARTING_LINE,$ENDING_LINEp" i.e. "31,51p" for STARTING_LINE=31, ENDING_LINE=51.
+         SEDSTR="$STARTING_LINE,$ENDING_LINE"
+         SEDSTR=$SEDSTR"p"
+         #
+         # Use eval command because of substitution of variable $SEDSTR for the actual sed command.
+         eval sed -n '$SEDSTR' $4 > $3
+         #
+         unset MENU_TITLE SEDSTR STARTING_LINE ENDING_LINE
+      fi
       #
 }  # End of function f_menu_make.
 #
